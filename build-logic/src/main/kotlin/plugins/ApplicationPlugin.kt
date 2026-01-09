@@ -1,5 +1,10 @@
 package plugins
 
+import constants.JAVA_VERSION
+import constants.MIN_SDK
+import constants.TARGET_SDK
+import constants.VERSION_CODE
+import constants.VERSION_NAME
 import extensions.application
 import extensions.catalog
 import extensions.implementation
@@ -12,15 +17,6 @@ class ApplicationPlugin: Plugin<Project> {
 
     companion object {
         private const val APPLICATION_ID = "com.useai.logit"
-        private const val TARGET_SDK = 36
-        private const val MIN_SDK = 28
-        private const val JAVA_VERSION = 17
-
-        private const val MAJOR_VERSION = 1
-        private const val MINOR_VERSION = 0
-        private const val PATCH_VERSION = 0
-        private const val VERSION_CODE = (MAJOR_VERSION * 10000) + (MINOR_VERSION * 100) + PATCH_VERSION
-        private const val VERSION_NAME = "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
     }
 
     override fun apply(target: Project) {
