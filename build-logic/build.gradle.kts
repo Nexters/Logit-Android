@@ -26,5 +26,9 @@ gradlePlugin {
             id = "com.useai.plugin.kotlin.library.common"
             implementationClass = "plugins.KotlinLibraryCommonPlugin"
         }
+        register("androidLibraryCommonPlugin") {
+            id = "com.useai.plugin.android.library"
+            implementationClass = "plugins.AndroidLibraryCommonPlugin"
+        }
     }
 }

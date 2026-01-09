@@ -73,6 +73,7 @@ logit-application = { id = "com.useai.plugin.application", version = "unspecifie
 logit-compose-common = { id = "com.useai.plugin.android.compose.common", version = "unspeicifed" }
 logit-hilt = { id = "com.useai.plugin.hilt", version = "unspecified" }
 logit-kotlin-library-common = { id = "com.useai.plugin.kotlin.library.common", version = "unspecified" }
+logit-android-library-common = { id = "com.useai.plugin.android.library", version = "unspecified" }
 
 [bundles]
 bundle-compose = ["androidx-compose-ui", "androidx-activity-compose", "androidx-compose-material3",
