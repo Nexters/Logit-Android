@@ -22,5 +22,9 @@ gradlePlugin {
             id = "com.useai.plugin.hilt"
             implementationClass = "plugins.HiltPlugin"
         }
+        register("kotlinLibraryCommonPlugin") {
+            id = "com.useai.plugin.kotlin.library.common"
+            implementationClass = "plugins.KotlinLibraryCommonPlugin"
+        }
     }
 }
