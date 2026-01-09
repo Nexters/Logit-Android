@@ -8,7 +8,7 @@ import constants.VERSION_NAME
 import extensions.application
 import extensions.catalog
 import extensions.implementation
-import extensions.kotlin
+import extensions.kotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
@@ -28,7 +28,7 @@ class ApplicationPlugin: Plugin<Project> {
                 apply("com.google.devtools.ksp")
             }
 
-            kotlin {
+            kotlinAndroid {
                 jvmToolchain(JAVA_VERSION)
             }
 

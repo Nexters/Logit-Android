@@ -8,12 +8,17 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 internal val Project.catalog: VersionCatalog
     get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-internal fun Project.kotlin(configure: KotlinAndroidProjectExtension.() -> Unit) {
+internal fun Project.kotlinAndroid(configure: KotlinAndroidProjectExtension.() -> Unit) {
     extensions.configure<KotlinAndroidProjectExtension>(configure)
+}
+
+internal fun Project.kotlin(configure: KotlinProjectExtension.() -> Unit) {
+    extensions.configure<KotlinProjectExtension>(configure)
 }
 
 internal fun Project.android(configure: LibraryExtension.() -> Unit) {
