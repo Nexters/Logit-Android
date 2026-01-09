@@ -61,9 +61,11 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 # region build-logic plugins
 logit-application = { id = "com.useai.plugin.application", version = "unspecified"}
+logit-compose-common = { id = "com.useai.plugin.android.compose.common", version = "unspeicifed" }
 
 [bundles]
 bundle-compose = ["androidx-compose-ui", "androidx-activity-compose", "androidx-compose-material3",
     "androidx-compose-runtime", "androidx-compose-foundation", "androidx-compose-animation",
     "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview"]
 bundle-android-test = ["androidx-compose-ui-test-junit4", "androidx-junit", "androidx-espresso-core"]
+bundle-android-navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui"]
