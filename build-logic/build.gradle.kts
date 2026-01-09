@@ -7,3 +7,12 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
 }
+
+gradlePlugin {
+    plugins {
+        register("applicationPlugin") {
+            id = "com.useai.plugin.application"
+            implementationClass = "plugins.ApplicationPlugin"
+        }
+    }
+}
