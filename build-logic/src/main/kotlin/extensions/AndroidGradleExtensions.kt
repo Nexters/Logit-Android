@@ -1,5 +1,6 @@
 package extensions
 
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
@@ -17,4 +18,8 @@ internal fun Project.kotlin(configure: KotlinAndroidProjectExtension.() -> Unit)
 
 internal fun Project.android(configure: LibraryExtension.() -> Unit) {
     extensions.configure<LibraryExtension>(configure)
+}
+
+internal fun Project.application(configure: ApplicationExtension.() -> Unit) {
+    extensions.configure<ApplicationExtension>(configure)
 }
