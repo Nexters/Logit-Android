@@ -2,6 +2,7 @@ package plugins
 
 import constants.JAVA_VERSION
 import constants.MIN_SDK
+import constants.SDK_MINOR_API_LEVEL
 import constants.TARGET_SDK
 import constants.VERSION_CODE
 import constants.VERSION_NAME
@@ -46,7 +47,7 @@ class ApplicationPlugin: Plugin<Project> {
             namespace = APPLICATION_ID
             compileSdk {
                 version = release(TARGET_SDK) {
-                    minorApiLevel = 1
+                    minorApiLevel = SDK_MINOR_API_LEVEL
                 }
             }
 
