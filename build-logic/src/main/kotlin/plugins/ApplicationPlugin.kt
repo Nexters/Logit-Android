@@ -16,8 +16,11 @@ class ApplicationPlugin: Plugin<Project> {
         private const val MIN_SDK = 28
         private const val JAVA_VERSION = 17
 
-        private const val VERSION_CODE = 1
-        private const val VERSION_NAME = "1.0.0"
+        private const val MAJOR_VERSION = 1
+        private const val MINOR_VERSION = 0
+        private const val PATCH_VERSION = 0
+        private const val VERSION_CODE = (MAJOR_VERSION * 10000) + (MINOR_VERSION * 100) + PATCH_VERSION
+        private const val VERSION_NAME = "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
     }
 
     override fun apply(target: Project) {
