@@ -66,3 +66,4 @@ logit-application = { id = "com.useai.plugin.application", version = "unspecifie
 bundle-compose = ["androidx-compose-ui", "androidx-activity-compose", "androidx-compose-material3",
     "androidx-compose-runtime", "androidx-compose-foundation", "androidx-compose-animation",
     "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview"]
+bundle-android-test = ["androidx-compose-ui-test-junit4", "androidx-junit", "androidx-espresso-core"]
