@@ -12,6 +12,8 @@ jetbrainsKotlinJvm = "2.0.21"
 ksp = "2.2.21-2.0.4"
 kotlinxSerializationJson = "1.9.0"
 navigation3 = "1.0.0"
+hilt = "2.57.2"
+hiltCompose = "1.3.0"
 
 [libraries]
 # region Android KTX
@@ -50,6 +52,11 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
+# region Hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCompose" }
+
 [plugins]
 # region Top-level plugins
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -58,10 +65,12 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 # region build-logic plugins
 logit-application = { id = "com.useai.plugin.application", version = "unspecified"}
 logit-compose-common = { id = "com.useai.plugin.android.compose.common", version = "unspeicifed" }
+logit-hilt = { id = "com.useai.plugin.hilt", version = "unspecified" }
 
 [bundles]
 bundle-compose = ["androidx-compose-ui", "androidx-activity-compose", "androidx-compose-material3",

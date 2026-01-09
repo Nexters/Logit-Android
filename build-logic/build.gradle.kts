@@ -18,5 +18,9 @@ gradlePlugin {
             id = "com.useai.plugin.android.compose.common"
             implementationClass = "plugins.AndroidComposeCommonPlugin"
         }
+        register("hiltPlugin") {
+            id = "com.useai.plugin.hilt"
+            implementationClass = "plugins.HiltPlugin"
+        }
     }
 }
