@@ -14,5 +14,9 @@ gradlePlugin {
             id = "com.useai.plugin.application"
             implementationClass = "plugins.ApplicationPlugin"
         }
+        register("androidComposeCommonPlugin") {
+            id = "com.useai.plugin.android.compose.common"
+            implementationClass = "plugins.AndroidComposeCommonPlugin"
+        }
     }
 }
