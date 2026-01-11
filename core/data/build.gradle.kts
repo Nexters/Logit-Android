@@ -3,5 +3,5 @@ plugins {
 }
 
 android {
-    namespace = "com.useai.data"
+    namespace = "com.useai.core.data"
 }
