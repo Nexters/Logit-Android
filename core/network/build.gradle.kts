@@ -10,4 +10,7 @@ android {
 dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlin.serialization)
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp.sse)
 }
