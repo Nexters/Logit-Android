@@ -8,6 +8,9 @@ android {
 }
 
 dependencies {
+    api(projects.core.modelError)
+    api(projects.core.common)
+
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(platform(libs.okhttp.bom))
