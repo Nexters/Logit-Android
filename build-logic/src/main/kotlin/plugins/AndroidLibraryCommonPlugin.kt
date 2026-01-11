@@ -51,6 +51,10 @@ class AndroidLibraryCommonPlugin: Plugin<Project> {
                     )
                 }
             }
+
+            buildFeatures {
+                buildConfig = true
+            }
         }
     }
 }
