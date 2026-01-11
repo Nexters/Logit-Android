@@ -12,7 +12,7 @@ dependencies {
     implementation(libs.retrofit.kotlin.serialization)
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp.logging.interceptor)
-    implementation(libs.okhttp.sse)
+    implementation(libs.okhttp.event.source)
 
     implementation(libs.kotlinx.serialization.json)
 }
