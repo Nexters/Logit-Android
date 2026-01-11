@@ -6,3 +6,7 @@ plugins {
 android {
     namespace = "com.useai.core.data"
 }
+
+dependencies {
+    implementation(projects.core.network)
+}
