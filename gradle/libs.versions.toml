@@ -19,6 +19,8 @@ okhttpBom = "5.3.0"
 okhttpEventSource = "4.1.1"
 coroutine = "1.10.2"
 javaxInject = "1"
+appcompat = "1.7.1"
+material = "1.13.0"
 
 [libraries]
 # region Android KTX
@@ -72,6 +74,8 @@ retrofit-kotlin-serialization = { group = "com.squareup.retrofit2", name = "conv
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttpBom" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
 okhttp-event-source = { group = "com.launchdarkly", name = "okhttp-eventsource", version.ref = "okhttpEventSource" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 # region Top-level plugins
