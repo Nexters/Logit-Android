@@ -3,3 +3,7 @@ plugins {
     alias(libs.plugins.logit.compose.common)
     alias(libs.plugins.logit.hilt)
 }
+
+dependencies {
+    implementation(projects.core.designsystem)
+}

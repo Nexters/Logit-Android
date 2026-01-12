@@ -1,4 +1,4 @@
-package com.useai.logit.ui.theme
+package com.useai.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
