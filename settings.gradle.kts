@@ -28,6 +28,7 @@ plugins {
 
 rootProject.name = "Logit"
 include(":app")
+include(":feature")
 include(":core")
 include(":core:model")
 include(":core:common")
@@ -37,3 +38,4 @@ include(":core:datastore")
 include(":core:model-error")
 include(":core:designsystem")
 include(":core:ui")
+include(":feature:chat")
