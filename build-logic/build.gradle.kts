@@ -34,5 +34,9 @@ gradlePlugin {
             id = "com.useai.plugin.circuit"
             implementationClass = "plugins.CircuitPlugin"
         }
+        register("androidFeatureCommonDependenciesPlugin") {
+            id = "com.useai.plugin.android.feature.common.dependencies"
+            implementationClass = "plugins.AndroidFeatureCommonDependenciesPlugin"
+        }
     }
 }
