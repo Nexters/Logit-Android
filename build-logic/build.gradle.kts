@@ -30,5 +30,9 @@ gradlePlugin {
             id = "com.useai.plugin.android.library"
             implementationClass = "plugins.AndroidLibraryCommonPlugin"
         }
+        register("circuitPlugin") {
+            id = "com.useai.plugin.circuit"
+            implementationClass = "plugins.CircuitPlugin"
+        }
     }
 }
