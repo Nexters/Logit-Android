@@ -79,7 +79,11 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 # region Circuit
-circuit = { group = "com.slack.circuit", name = "circuit-foundation", version.ref = "circuit" }
+circuit-foundation = { group = "com.slack.circuit", name = "circuit-foundation", version.ref = "circuit" }
+circuit-overlay = { group = "com.slack.circuit", name = "circuit-overlay", version.ref = "circuit" }
+circuit-retained = { group = "com.slack.circuit", name = "circuit-retained", version.ref = "circuit" }
+circuit-codegen-annotations = { group = "com.slack.circuit", name = "circuit-codegen-annotations", version.ref = "circuit" }
+circuit-codegen = { group = "com.slack.circuit", name = "circuit-codegen", version.ref = "circuit" }
 
 [plugins]
 # region Top-level plugins
@@ -107,3 +111,4 @@ bundle-compose = ["androidx-compose-ui", "androidx-activity-compose", "androidx-
     "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview"]
 bundle-android-test = ["androidx-compose-ui-test-junit4", "androidx-junit", "androidx-espresso-core"]
 bundle-android-navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui"]
+bundle-circuit = ["circuit-foundation", "circuit-overlay", "circuit-retained"]
