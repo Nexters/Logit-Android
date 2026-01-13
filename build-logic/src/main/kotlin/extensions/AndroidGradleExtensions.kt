@@ -2,6 +2,7 @@ package extensions
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
+import com.google.devtools.ksp.gradle.KspExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -27,4 +28,8 @@ internal fun Project.android(configure: LibraryExtension.() -> Unit) {
 
 internal fun Project.application(configure: ApplicationExtension.() -> Unit) {
     extensions.configure<ApplicationExtension>(configure)
+}
+
+internal fun Project.ksp(configure: KspExtension.() -> Unit) {
+    extensions.configure<KspExtension>(configure)
 }
