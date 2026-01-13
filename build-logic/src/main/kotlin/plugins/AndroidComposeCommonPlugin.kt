@@ -18,7 +18,6 @@ class AndroidComposeCommonPlugin: Plugin<Project> {
             dependencies {
                 implementation(platform(catalog.findLibrary("androidx-compose-bom").get()))
                 implementation(catalog.findBundle("bundle-compose").get())
-                implementation(catalog.findBundle("bundle-android-navigation3").get())
                 implementation(catalog.findLibrary("hilt-compose").get())
             }
         }
