@@ -4,44 +4,43 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.CompositionLocalProvider
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.CircuitCompositionLocals
+import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.navigation.LocalScreenProvider
+import com.useai.core.navigation.ScreenProvider
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    private lateinit var circuit: Circuit
+
+    private val screenProvider: ScreenProvider = ScreenProviderImpl()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             LogitTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                CompositionLocalProvider(LocalScreenProvider provides screenProvider) {
+                    CircuitCompositionLocals(circuit) {
+
+                        val backStack = rememberSaveableBackStack(root = TODO("첫 스크린"))
+                        val navigator = rememberCircuitNavigator(backStack)
+
+                        NavigableCircuitContent(
+                            navigator = navigator,
+                            backStack = backStack,
+                            // decoration = GestureNavigationDecoration(onBackInvoked = navigator::pop)
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LogitTheme {
-        Greeting("Android")
     }
 }
