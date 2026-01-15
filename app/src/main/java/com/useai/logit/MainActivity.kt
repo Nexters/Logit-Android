@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    private lateinit var circuit: Circuit
+    lateinit var circuit: Circuit
 
     private val screenProvider: ScreenProvider = ScreenProviderImpl()
 
