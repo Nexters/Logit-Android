@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -19,6 +20,22 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention").version("0.9.0")
+}
+
 rootProject.name = "Logit"
 include(":app")
- 
+include(":feature")
+include(":core")
+include(":core:model")
+include(":core:common")
+include(":core:data")
+include(":core:network")
+include(":core:datastore")
+include(":core:model-error")
+include(":core:designsystem")
+include(":core:ui")
+include(":feature:chat")
