@@ -21,6 +21,7 @@ javaxInject = "1"
 appcompat = "1.7.1"
 material = "1.13.0"
 circuit = "0.31.0"
+composeMarkdown = "0.5.8"
 
 [libraries]
 # region Android KTX
@@ -37,6 +38,9 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+# region Compose Markdown
+compose-markdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "composeMarkdown"}
 
 # region Coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }

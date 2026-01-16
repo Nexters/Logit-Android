@@ -7,3 +7,7 @@ plugins {
 android {
     namespace = "com.useai.core.designsystem"
 }
+
+dependencies {
+    implementation(libs.compose.markdown)
+}
