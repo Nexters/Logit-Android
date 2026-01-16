@@ -6,6 +6,13 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.feature.chat)
     implementation(projects.core.designsystem)
     implementation(projects.core.navigation)
+    implementation(projects.core.data)
+    implementation(projects.core.common)
+    implementation(projects.core.model)
+    implementation(projects.core.modelError)
+    implementation(projects.core.datastore)
+    implementation(projects.core.network)
 }

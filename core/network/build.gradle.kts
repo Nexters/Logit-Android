@@ -10,6 +10,7 @@ android {
 dependencies {
     api(projects.core.modelError)
     api(projects.core.common)
+    api(projects.core.model)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlin.serialization)

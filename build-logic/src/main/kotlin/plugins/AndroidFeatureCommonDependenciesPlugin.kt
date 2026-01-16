@@ -19,6 +19,7 @@ class AndroidFeatureCommonDependenciesPlugin: Plugin<Project> {
                 api(project(":core:model"))
                 api(project(":core:model-error"))
                 api(project(":core:common"))
+                api(project(":core:navigation"))
             }
         }
     }
