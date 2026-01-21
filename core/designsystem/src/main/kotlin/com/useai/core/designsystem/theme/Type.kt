@@ -33,10 +33,6 @@ data class LogitTypography(
     val label2: TextStyle
 )
 
-object LogitTheme {
-    val typography @Composable get() = LocalLogitTypography.current
-}
-
 internal val Typography = LogitTypography(
     headline1 = TextStyle(
         fontFamily = Pretendard,

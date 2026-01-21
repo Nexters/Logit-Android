@@ -9,29 +9,19 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
+private val DarkColorScheme = darkColorScheme()
+private val LightColorScheme = lightColorScheme()
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
+/**
+ * Logit 디자인 시스템의 테마 속성에 접근하기 위한 싱글톤 객체
+ */
+object LogitTheme {
+    val typography @Composable get() = LocalLogitTypography.current
+    val colors @Composable get() = LocalLogitColor.current
+}
 
 @Composable
 fun LogitTheme(
@@ -50,7 +40,10 @@ fun LogitTheme(
         else -> LightColorScheme
     }
 
-    CompositionLocalProvider(LocalLogitTypography provides Typography) {
+    CompositionLocalProvider(
+        LocalLogitTypography provides Typography,
+        LocalLogitColor provides LogitLightColor
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = androidx.compose.material3.Typography(),
