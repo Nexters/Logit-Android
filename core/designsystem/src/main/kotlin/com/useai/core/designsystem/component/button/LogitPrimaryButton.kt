@@ -85,3 +85,9 @@ fun LogitPrimaryButton(
 private fun LogitPrimaryButtonPreview(){
     LogitPrimaryButton(text = "Primary", onClick = {})
 }
+
+@Preview
+@Composable
+private fun LogitDisabledButtonPreview(){
+    LogitPrimaryButton(text = "Primary", onClick = {}, enabled = false)
+}

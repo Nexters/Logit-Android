@@ -85,3 +85,10 @@ fun LogitSecondaryButton(
 private fun LogitSecondaryButtonPreview(){
     LogitSecondaryButton(text = "Secondary", onClick = {})
 }
+
+@Preview
+@Composable
+private fun LogitDisabledButtonPreview(){
+    LogitSecondaryButton(text = "Secondary", onClick = {}, enabled = false)
+}
+

@@ -85,3 +85,9 @@ fun LogitTertiaryButton(
 private fun LogitTertiaryButtonPreview(){
     LogitTertiaryButton(text = "Tertiary", onClick = {})
 }
+
+@Preview
+@Composable
+private fun LogitDisabledButtonPreview(){
+    LogitTertiaryButton(text = "Tertiary", onClick = {}, enabled = false)
+}
