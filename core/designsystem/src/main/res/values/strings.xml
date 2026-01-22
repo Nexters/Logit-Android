@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- region UI -->
+    <string name="update_letter">자기소개서 업데이트</string>
+    <string name="placeholder_message_input">텍스트를 입력해주세요</string>
+
+    <!-- region Content Descriptions  -->
+    <string name="content_description_send">전송</string>
+</resources>
