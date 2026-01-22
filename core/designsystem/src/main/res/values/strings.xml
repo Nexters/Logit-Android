@@ -7,4 +7,5 @@
 
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
+    <string name="content_description_external">업로드</string>
 </resources>
