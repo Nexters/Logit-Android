@@ -18,37 +18,6 @@ import com.useai.core.designsystem.theme.LogitTheme
 
 @Composable
 fun LogitSecondaryButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    shape: Shape = LogitButtonDefaults.Shape,
-    colors: ButtonColors = LogitButtonDefaults.buttonColors(
-        containerColor = LogitTheme.colors.primary20,
-        contentColor = LogitTheme.colors.primary200
-    ),
-    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
-    border: BorderStroke? = null,
-    contentPadding: PaddingValues = LogitButtonDefaults.ContentPadding,
-    interactionSource: MutableInteractionSource? = null,
-    content: @Composable (RowScope.() -> Unit)
-) {
-
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        shape = shape,
-        colors = colors,
-        elevation = elevation,
-        border = border,
-        contentPadding = contentPadding,
-        interactionSource = interactionSource,
-        content = content
-    )
-}
-
-@Composable
-fun LogitSecondaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -78,6 +47,37 @@ fun LogitSecondaryButton(
     ) {
         Text(text = text, style = textStyle)
     }
+}
+
+@Composable
+fun LogitSecondaryButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = LogitButtonDefaults.Shape,
+    colors: ButtonColors = LogitButtonDefaults.buttonColors(
+        containerColor = LogitTheme.colors.primary20,
+        contentColor = LogitTheme.colors.primary200
+    ),
+    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
+    border: BorderStroke? = null,
+    contentPadding: PaddingValues = LogitButtonDefaults.ContentPadding,
+    interactionSource: MutableInteractionSource? = null,
+    content: @Composable (RowScope.() -> Unit)
+) {
+
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        shape = shape,
+        colors = colors,
+        elevation = elevation,
+        border = border,
+        contentPadding = contentPadding,
+        interactionSource = interactionSource,
+        content = content
+    )
 }
 
 @Preview
