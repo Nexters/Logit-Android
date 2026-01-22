@@ -22,12 +22,14 @@ import com.useai.core.model.chat.Question
 
 @Composable
 internal fun QuestionTabRow(
-    selectedTabIndex: Int,
+    selectedQuestion: Question,
     questions: List<Question>,
     onTabSelect: (Question) -> Unit,
     onQuestionAdd: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val selectedTabIndex = questions.indexOf(selectedQuestion)
+
     PrimaryScrollableTabRow(
         modifier = modifier,
         selectedTabIndex = selectedTabIndex,
@@ -79,13 +81,13 @@ internal fun QuestionTabRow(
 @Composable
 private fun QuestionTabRowPreview(){
     QuestionTabRow(
-        selectedTabIndex = 0,
+        selectedQuestion = Question(id = "", title = "", maxLength = 3),
         onTabSelect = {},
         onQuestionAdd = {},
         questions = buildList {
             repeat(3){
-                add(Question(title = "", maxLength = 3))
+                add(Question(id = "", title = "", maxLength = 3))
             }
-        }
+        },
     )
 }
