@@ -38,6 +38,9 @@ internal fun ChatInputTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
+        textStyle = LogitTheme.typography.body6_1.copy(
+            color = LogitTheme.colors.black
+        ),
         singleLine = true
     ) { field ->
 
@@ -50,7 +53,7 @@ internal fun ChatInputTextField(
             if (value.isEmpty()) {
                 Text(
                     text = stringResource(R.string.placeholder_message_input),
-                    style = LogitTheme.typography.body5_4,
+                    style = LogitTheme.typography.body6_1,
                     color = LogitTheme.colors.gray100
                 )
             }
