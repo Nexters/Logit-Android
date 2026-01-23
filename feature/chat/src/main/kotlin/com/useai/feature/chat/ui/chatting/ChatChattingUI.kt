@@ -11,7 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.useai.core.model.chat.Chatting
+import com.useai.core.model.chat.ChattingContent
+import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.chat.ChattingStreamingStatus
@@ -23,8 +24,7 @@ internal fun ChatChattingUI(
     state: ChatScreen.State.Chatting,
     modifier: Modifier = Modifier
 ) {
-
-    TODO("Empty 채팅 뷰")
+    // TODO("Empty 채팅 뷰")
     Column(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -46,14 +46,14 @@ internal fun ChatChattingUI(
                 }
             )
 
-            items(items = state.chattingHistory) { chat ->
+            items(items = state.chattingHistory.chattings) { chat ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 35.dp, top = 20.dp)
                 ) {
                     when (chat) {
-                        is Chatting.AI -> {
+                        is ChattingContent.AI -> {
                             AIChattingItem(
                                 chatting = chat,
                                 onUpdateLetterClick = {
@@ -63,7 +63,7 @@ internal fun ChatChattingUI(
                             )
                         }
 
-                        is Chatting.User -> {
+                        is ChattingContent.User -> {
                             UserChattingItem(
                                 chatting = chat,
                                 modifier = Modifier.align(Alignment.CenterEnd)
@@ -76,10 +76,13 @@ internal fun ChatChattingUI(
             item {
                 if (state.streamingStatus is ChattingStreamingStatus.Streaming) {
                     AIChattingItem(
-                        chatting = state.streamingStatus.chatting,
-                        onUpdateLetterClick = { letterContent ->
-                            state.eventSink(ChatScreen.Event.Chatting.UpdateLetter(letterContent))
-                        },
+                        chatting = ChattingContent.AI(
+                            id = "",
+                            message = state.streamingStatus.data,
+                            createdAt = "",
+                            isLetter = false
+                        ),
+                        onUpdateLetterClick = { /* Do nothing */ },
                     )
                 }
             }
@@ -105,16 +108,30 @@ internal fun ChatChattingUI(
 private fun ChatChattingUIPreview() {
     ChatChattingUI(
         state = ChatScreen.State.Chatting(
-            chattingHistory = listOf(
-                Chatting.AI.Done(message = "안녕하세요 자소서 대신 써드립니다", isLetter = false),
-                Chatting.User("으아아아아아ㅏ아아아아아"),
-                Chatting.AI.Done(message = "그러면 도와드릴 수 없습니다.", isLetter = false),
-                Chatting.User("써줘"),
-                Chatting.AI.Done(
-                    message = "저는 코딩을 잘하구여 책임감이 뛰어나구요 성실합니다. " +
-                            "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 ", isLetter = true
+            chattingHistory = ChattingHistory(listOf(
+                ChattingContent.AI(
+                    message = "안녕하세요 자소서 대신 써드립니다",
+                    isLetter = false,
+                    id = "",
+                    createdAt = ""
                 ),
-            ), userInput = "제대로 써",
+                ChattingContent.User(message = "으아아아아아ㅏ아아아아아", id = "", createdAt = ""),
+                ChattingContent.AI(
+                    message = "그러면 도와드릴 수 없습니다.",
+                    isLetter = false,
+                    id = "",
+                    createdAt = ""
+                ),
+                ChattingContent.User(message = "써줘", id = "", createdAt = ""),
+                ChattingContent.AI(
+                    message = "저는 코딩을 잘하구여 책임감이 뛰어나구요 성실합니다. " +
+                            "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 ",
+                    isLetter = true,
+                    id = "",
+                    createdAt = ""
+                ),
+            )),
+            userInput = "제대로 써",
             streamingStatus = ChattingStreamingStatus.Idle,
             questions = listOf(Question("","",1000), Question("","",1000)),
             currentQuestion = Question("","",1000),

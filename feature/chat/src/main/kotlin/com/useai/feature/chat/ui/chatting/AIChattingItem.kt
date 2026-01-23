@@ -23,11 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.text.LogitMarkdownText
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.core.model.chat.Chatting
+import com.useai.core.model.chat.ChattingContent
 
 @Composable
 internal fun AIChattingItem(
-    chatting: Chatting.AI,
+    chatting: ChattingContent.AI,
     onUpdateLetterClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -45,7 +45,7 @@ internal fun AIChattingItem(
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        if (chatting is Chatting.AI.Done && chatting.isLetter) {
+        if (chatting.isLetter) {
             Row(
                 modifier = Modifier
                     .padding(top = 8.dp)
@@ -75,15 +75,17 @@ internal fun AIChattingItem(
 @Composable
 private fun AIChattingItemPreview(){
     AIChattingItem(
-        chatting = Chatting.AI.Done(
+        chatting = ChattingContent.AI(
             message = "나랏말싸미 듕귁에 달아 문자와로 " +
-                "서르 사맛디 아니할쎄 이런 전차로 어린" +
-                " 백셩이 니르고져 홀 배 이셔도 마참내 제 뜨들" +
-                " 시러 펴디 몯핧 노미 하니라 내 이랄 위핧야 " +
-                "어엿비 너겨 새로 스믈여딻 자랄 맹가노니" +
-                " 사람마다 히여 수비 니겨 날로 쓰메 편안킈" +
-                " 하고져 핧 따라미니라",
-            isLetter = true
+                    "서르 사맛디 아니할쎄 이런 전차로 어린" +
+                    " 백셩이 니르고져 홀 배 이셔도 마참내 제 뜨들" +
+                    " 시러 펴디 몯핧 노미 하니라 내 이랄 위핧야 " +
+                    "어엿비 너겨 새로 스믈여딻 자랄 맹가노니" +
+                    " 사람마다 히여 수비 니겨 날로 쓰메 편안킈" +
+                    " 하고져 핧 따라미니라",
+            isLetter = true,
+            id = "",
+            createdAt = ""
         ),
         onUpdateLetterClick = {},
         modifier = Modifier

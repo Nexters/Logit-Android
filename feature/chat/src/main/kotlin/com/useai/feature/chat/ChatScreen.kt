@@ -6,7 +6,7 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.designsystem.R
-import com.useai.core.model.chat.Chatting
+import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
 import kotlinx.parcelize.Parcelize
 
@@ -17,7 +17,7 @@ data class ChatScreen(val projectId: Int): Screen {
         data class Chatting(
             val questions: List<Question>,
             val currentQuestion: Question,
-            val chattingHistory: List<com.useai.core.model.chat.Chatting>,
+            val chattingHistory: ChattingHistory,
             val streamingStatus: ChattingStreamingStatus,
             val userInput: String,
             val eventSink: (Event) -> Unit
@@ -54,7 +54,7 @@ data class ChatScreen(val projectId: Int): Screen {
 
 sealed interface ChattingStreamingStatus {
     data object Idle: ChattingStreamingStatus
-    data class Streaming(val chatting: Chatting.AI.Streaming): ChattingStreamingStatus
+    data class Streaming(val data: String): ChattingStreamingStatus
     data object Error: ChattingStreamingStatus
 }
 
