@@ -2,6 +2,8 @@ package com.useai.core.data.di
 
 import com.useai.core.data.repository.ChattingRepository
 import com.useai.core.data.repository.ChattingRepositoryImpl
+import com.useai.core.data.repository.ExperienceRepository
+import com.useai.core.data.repository.ExperienceRepositoryImpl
 import com.useai.core.data.repository.QuestionRepository
 import com.useai.core.data.repository.QuestionRepositoryImpl
 import dagger.Binds
@@ -25,4 +27,10 @@ internal interface RepositoryModule {
     fun providesQuestionRepository(
         impl: QuestionRepositoryImpl
     ) : QuestionRepository
+
+    @Binds
+    @ActivityScoped
+    fun providesExperienceRepository(
+        impl: ExperienceRepositoryImpl
+    ) : ExperienceRepository
 }
