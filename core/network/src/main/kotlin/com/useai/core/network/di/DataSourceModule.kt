@@ -2,6 +2,8 @@ package com.useai.core.network.di
 
 import com.useai.core.network.source.ChattingRemoteDataSource
 import com.useai.core.network.source.ChattingRemoteDataSourceImpl
+import com.useai.core.network.source.QuestionRemoteDataSource
+import com.useai.core.network.source.QuestionRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,10 @@ internal interface DataSourceModule {
     fun bindsChattingRemoteDataSource(
         chattingRemoteDataSourceImpl: ChattingRemoteDataSourceImpl
     ): ChattingRemoteDataSource
+
+    @Binds
+    @ActivityRetainedScoped
+    fun bindsQuestionRemoteDataSource(
+        questionRemoteDataSourceImpl: QuestionRemoteDataSourceImpl
+    ): QuestionRemoteDataSource
 }
