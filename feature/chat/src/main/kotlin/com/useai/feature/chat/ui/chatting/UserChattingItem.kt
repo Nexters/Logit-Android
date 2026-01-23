@@ -28,7 +28,7 @@ internal fun UserChattingItem(
     modifier: Modifier = Modifier
 ) {
 
-    val backgroundBubbleColor = LogitTheme.colors.gray50    // TODO 색상 최신화
+    val backgroundBubbleColor = LogitTheme.colors.primary20
 
     Column(
         modifier = modifier
