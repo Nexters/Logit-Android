@@ -22,6 +22,7 @@ internal fun ChatChattingUI(
     modifier: Modifier = Modifier
 ) {
 
+    TODO("Empty 채팅 뷰")
     Column(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
