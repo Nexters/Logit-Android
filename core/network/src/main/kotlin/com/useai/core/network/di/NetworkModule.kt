@@ -3,16 +3,20 @@ package com.useai.core.network.di
 import com.useai.core.common.qualifiers.AuthClient
 import com.useai.core.common.qualifiers.BaseClient
 import com.useai.core.network.BuildConfig
+import com.useai.core.network.error.RemoteErrorCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
@@ -20,21 +24,35 @@ internal object NetworkModule {
 
     @Provides
     @ActivityRetainedScoped
+    fun providesJson() = Json { ignoreUnknownKeys = true }
+
+    @Provides
+    @ActivityRetainedScoped
     @BaseClient
-    fun providesBaseRetrofit(@BaseClient client: OkHttpClient) : Retrofit {
+    fun providesBaseRetrofit(
+        @BaseClient client: OkHttpClient,
+        json: Json
+    ) : Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addCallAdapterFactory(RemoteErrorCallAdapterFactory(json))
             .build()
     }
 
     @Provides
     @ActivityRetainedScoped
     @AuthClient
-    fun providesAuthRetrofit(@AuthClient client: OkHttpClient) : Retrofit {
+    fun providesAuthRetrofit(
+        @AuthClient client: OkHttpClient,
+        json: Json
+    ) : Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addCallAdapterFactory(RemoteErrorCallAdapterFactory(json))
             .build()
     }
 
