@@ -2,6 +2,8 @@ package com.useai.core.data.di
 
 import com.useai.core.data.repository.ChattingRepository
 import com.useai.core.data.repository.ChattingRepositoryImpl
+import com.useai.core.data.repository.QuestionRepository
+import com.useai.core.data.repository.QuestionRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,10 @@ internal interface RepositoryModule {
     fun providesChattingRepository(
         impl: ChattingRepositoryImpl
     ) : ChattingRepository
+
+    @Binds
+    @ActivityScoped
+    fun providesQuestionRepository(
+        impl: QuestionRepositoryImpl
+    ) : QuestionRepository
 }
