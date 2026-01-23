@@ -28,7 +28,7 @@ import com.useai.core.model.chat.Chatting
 @Composable
 internal fun AIChattingItem(
     chatting: Chatting.AI,
-    onUpdateLetterClick: () -> Unit,
+    onUpdateLetterClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -50,7 +50,7 @@ internal fun AIChattingItem(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .clickable { onUpdateLetterClick() }
+                    .clickable { onUpdateLetterClick(chatting.message) }
                     .padding(vertical = 12.dp, horizontal = 3.dp)
                     .semantics(mergeDescendants = true) {},
                 verticalAlignment = Alignment.CenterVertically

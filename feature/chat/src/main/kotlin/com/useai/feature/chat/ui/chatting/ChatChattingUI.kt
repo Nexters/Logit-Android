@@ -77,7 +77,9 @@ internal fun ChatChattingUI(
                 if (state.streamingStatus is ChattingStreamingStatus.Streaming) {
                     AIChattingItem(
                         chatting = state.streamingStatus.chatting,
-                        onUpdateLetterClick = {},
+                        onUpdateLetterClick = { letterContent ->
+                            state.eventSink(ChatScreen.Event.Chatting.UpdateLetter(letterContent))
+                        },
                     )
                 }
             }
