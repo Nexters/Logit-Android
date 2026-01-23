@@ -2,6 +2,7 @@ package com.useai.core.network.di
 
 import com.useai.core.common.qualifiers.AuthClient
 import com.useai.core.network.api.ChattingApi
+import com.useai.core.network.api.QuestionApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,5 +21,13 @@ internal object ApiModule {
         @AuthClient retrofit: Retrofit
     ) : ChattingApi {
         return retrofit.create<ChattingApi>()
+    }
+
+    @Provides
+    @ActivityScoped
+    fun providesQuestionApi(
+        @AuthClient retrofit: Retrofit
+    ) : QuestionApi {
+        return retrofit.create<QuestionApi>()
     }
 }
