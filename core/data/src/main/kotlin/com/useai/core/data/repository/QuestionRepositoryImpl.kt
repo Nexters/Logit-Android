@@ -20,7 +20,7 @@ internal class QuestionRepositoryImpl @Inject constructor(
                     title = question.title,
                     maxLength = question.maxLength
                 )
-            ).questionId
+            ).id
         }
     }
 

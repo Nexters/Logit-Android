@@ -3,7 +3,6 @@ package com.useai.core.network.source
 import com.useai.core.network.api.QuestionApi
 import com.useai.core.network.request.CreateQuestionRequest
 import com.useai.core.network.request.UpdateQuestionRequest
-import com.useai.core.network.response.CreateQuestionResponse
 import com.useai.core.network.response.QuestionResponse
 import javax.inject.Inject
 
@@ -11,7 +10,7 @@ internal class QuestionRemoteDataSourceImpl @Inject constructor(
     private val questionApi: QuestionApi
 ) : QuestionRemoteDataSource {
 
-    override suspend fun createQuestion(projectId: String, request: CreateQuestionRequest): CreateQuestionResponse {
+    override suspend fun createQuestion(projectId: String, request: CreateQuestionRequest): QuestionResponse {
         return questionApi.createQuestion(projectId, request)
     }
 

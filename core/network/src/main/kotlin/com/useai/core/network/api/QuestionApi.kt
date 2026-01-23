@@ -2,7 +2,6 @@ package com.useai.core.network.api
 
 import com.useai.core.network.request.CreateQuestionRequest
 import com.useai.core.network.request.UpdateQuestionRequest
-import com.useai.core.network.response.CreateQuestionResponse
 import com.useai.core.network.response.QuestionResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,7 +16,7 @@ interface QuestionApi {
     suspend fun createQuestion(
         @Path("project_id") projectId: String,
         @Body request: CreateQuestionRequest
-    ) : CreateQuestionResponse
+    ) : QuestionResponse
 
     @GET("api/v1/projects/{project_id}/questions")
     suspend fun getQuestions(
