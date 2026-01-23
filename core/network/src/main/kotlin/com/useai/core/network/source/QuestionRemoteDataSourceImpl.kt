@@ -1,6 +1,8 @@
 package com.useai.core.network.source
 
 import com.useai.core.network.api.QuestionApi
+import com.useai.core.network.request.CreateQuestionRequest
+import com.useai.core.network.request.UpdateQuestionRequest
 import com.useai.core.network.response.CreateQuestionResponse
 import com.useai.core.network.response.QuestionResponse
 import javax.inject.Inject
@@ -9,8 +11,8 @@ internal class QuestionRemoteDataSourceImpl @Inject constructor(
     private val questionApi: QuestionApi
 ) : QuestionRemoteDataSource {
 
-    override suspend fun createQuestion(projectId: String): CreateQuestionResponse {
-        return questionApi.createQuestion(projectId)
+    override suspend fun createQuestion(projectId: String, request: CreateQuestionRequest): CreateQuestionResponse {
+        return questionApi.createQuestion(projectId, request)
     }
 
     override suspend fun getQuestions(projectId: String): List<QuestionResponse> {
@@ -26,9 +28,10 @@ internal class QuestionRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun updateQuestion(
         projectId: String,
-        questionId: String
+        questionId: String,
+        request: UpdateQuestionRequest
     ): QuestionResponse {
-        return questionApi.updateQuestion(projectId, questionId)
+        return questionApi.updateQuestion(projectId, questionId, request)
     }
 
     override suspend fun deleteQuestion(projectId: String, questionId: String) {

@@ -1,7 +1,10 @@
 package com.useai.core.network.api
 
+import com.useai.core.network.request.CreateQuestionRequest
+import com.useai.core.network.request.UpdateQuestionRequest
 import com.useai.core.network.response.CreateQuestionResponse
 import com.useai.core.network.response.QuestionResponse
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -12,7 +15,8 @@ interface QuestionApi {
 
     @POST("api/v1/projects/{project_id}/questions")
     suspend fun createQuestion(
-        @Path("project_id") projectId: String
+        @Path("project_id") projectId: String,
+        @Body request: CreateQuestionRequest
     ) : CreateQuestionResponse
 
     @GET("api/v1/projects/{project_id}/questions")
@@ -29,7 +33,8 @@ interface QuestionApi {
     @PATCH("api/v1/projects/{project_id}/questions/{questions_id}")
     suspend fun updateQuestion(
         @Path("project_id") projectId: String,
-        @Path("questions_id") questionId: String
+        @Path("questions_id") questionId: String,
+        @Body request: UpdateQuestionRequest
     ) : QuestionResponse
 
     @DELETE("api/v1/projects/{project_id}/questions/{questions_id}")
