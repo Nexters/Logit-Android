@@ -1,4 +1,4 @@
-package com.useai.feature.chat.chat.ui
+package com.useai.feature.chat.ui.chatting
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -23,11 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.text.LogitMarkdownText
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.core.model.chat.Chat
+import com.useai.core.model.chat.Chatting
 
 @Composable
-internal fun AIChatItem(
-    chat: Chat.AI,
+internal fun AIChattingItem(
+    chatting: Chatting.AI,
     onUpdateLetterClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,11 +41,11 @@ internal fun AIChatItem(
             modifier = Modifier.size(22.dp)
         )
         LogitMarkdownText(
-            markdown = chat.message,
+            markdown = chatting.message,
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        if (chat is Chat.AI.Done && chat.isLetter) {
+        if (chatting is Chatting.AI.Done && chatting.isLetter) {
             Row(
                 modifier = Modifier
                     .padding(top = 8.dp)
@@ -73,9 +73,9 @@ internal fun AIChatItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun AIChatItemPreview(){
-    AIChatItem(
-        chat = Chat.AI.Done(
+private fun AIChattingItemPreview(){
+    AIChattingItem(
+        chatting = Chatting.AI.Done(
             message = "나랏말싸미 듕귁에 달아 문자와로 " +
                 "서르 사맛디 아니할쎄 이런 전차로 어린" +
                 " 백셩이 니르고져 홀 배 이셔도 마참내 제 뜨들" +

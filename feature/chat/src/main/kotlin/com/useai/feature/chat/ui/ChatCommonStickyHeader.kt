@@ -1,4 +1,4 @@
-package com.useai.feature.chat.chat.ui
+package com.useai.feature.chat.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.useai.core.model.chat.Question
-import com.useai.feature.chat.chat.ChatScreenCategory
+import com.useai.feature.chat.ChatScreenCategory
 
 internal fun LazyListScope.chatCommonStickyHeader(
     questions: List<Question>,

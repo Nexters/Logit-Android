@@ -1,4 +1,4 @@
-package com.useai.feature.chat.chat.ui
+package com.useai.feature.chat.ui.chatting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,10 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.useai.core.model.chat.Chat
+import com.useai.core.model.chat.Chatting
 import com.useai.core.model.chat.Question
-import com.useai.feature.chat.chat.ChatScreen
-import com.useai.feature.chat.chat.ChattingStreamingStatus
+import com.useai.feature.chat.ChatScreen
+import com.useai.feature.chat.ChattingStreamingStatus
+import com.useai.feature.chat.ui.ChatInputRow
+import com.useai.feature.chat.ui.chatCommonStickyHeader
 
 @Composable
 internal fun ChatChattingUI(
@@ -44,16 +46,16 @@ internal fun ChatChattingUI(
                 }
             )
 
-            items(items = state.chatHistory) { chat ->
+            items(items = state.chattingHistory) { chat ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 35.dp, top = 20.dp)
                 ) {
                     when (chat) {
-                        is Chat.AI -> {
-                            AIChatItem(
-                                chat = chat,
+                        is Chatting.AI -> {
+                            AIChattingItem(
+                                chatting = chat,
                                 onUpdateLetterClick = {
                                     state.eventSink(ChatScreen.Event.Chatting.UpdateLetter(chat.message))
                                 },
@@ -61,9 +63,9 @@ internal fun ChatChattingUI(
                             )
                         }
 
-                        is Chat.User -> {
-                            UserChatItem(
-                                chat = chat,
+                        is Chatting.User -> {
+                            UserChattingItem(
+                                chatting = chat,
                                 modifier = Modifier.align(Alignment.CenterEnd)
                             )
                         }
@@ -73,8 +75,8 @@ internal fun ChatChattingUI(
 
             item {
                 if (state.streamingStatus is ChattingStreamingStatus.Streaming) {
-                    AIChatItem(
-                        chat = state.streamingStatus.chat,
+                    AIChattingItem(
+                        chatting = state.streamingStatus.chatting,
                         onUpdateLetterClick = {},
                     )
                 }
@@ -101,12 +103,12 @@ internal fun ChatChattingUI(
 private fun ChatChattingUIPreview() {
     ChatChattingUI(
         state = ChatScreen.State.Chatting(
-            chatHistory = listOf(
-                Chat.AI.Done(message = "안녕하세요 자소서 대신 써드립니다", isLetter = false),
-                Chat.User("으아아아아아ㅏ아아아아아"),
-                Chat.AI.Done(message = "그러면 도와드릴 수 없습니다.", isLetter = false),
-                Chat.User("써줘"),
-                Chat.AI.Done(
+            chattingHistory = listOf(
+                Chatting.AI.Done(message = "안녕하세요 자소서 대신 써드립니다", isLetter = false),
+                Chatting.User("으아아아아아ㅏ아아아아아"),
+                Chatting.AI.Done(message = "그러면 도와드릴 수 없습니다.", isLetter = false),
+                Chatting.User("써줘"),
+                Chatting.AI.Done(
                     message = "저는 코딩을 잘하구여 책임감이 뛰어나구요 성실합니다. " +
                             "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 ", isLetter = true
                 ),

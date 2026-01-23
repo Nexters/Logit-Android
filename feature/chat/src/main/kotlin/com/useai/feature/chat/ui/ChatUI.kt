@@ -1,11 +1,12 @@
-package com.useai.feature.chat.chat.ui
+package com.useai.feature.chat.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.useai.feature.chat.chat.ChatScreen
+import com.useai.feature.chat.ChatScreen
+import com.useai.feature.chat.ui.chatting.ChatChattingUI
 import dagger.hilt.android.components.ActivityRetainedComponent
 
 @CircuitInject(ChatScreen::class, ActivityRetainedComponent::class)

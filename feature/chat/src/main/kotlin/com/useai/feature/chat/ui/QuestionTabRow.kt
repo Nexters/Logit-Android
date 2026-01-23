@@ -1,4 +1,4 @@
-package com.useai.feature.chat.chat.ui
+package com.useai.feature.chat.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size

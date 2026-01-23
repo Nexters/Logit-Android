@@ -1,4 +1,4 @@
-package com.useai.feature.chat.chat.ui
+package com.useai.feature.chat.ui.chatting
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.component.text.LogitMarkdownText
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.core.model.chat.Chat
+import com.useai.core.model.chat.Chatting
 
 private val shape by lazy {
     RoundedCornerShape(
@@ -23,8 +23,8 @@ private val shape by lazy {
 }
 
 @Composable
-internal fun UserChatItem(
-    chat: Chat,
+internal fun UserChattingItem(
+    chatting: Chatting,
     modifier: Modifier = Modifier
 ) {
 
@@ -34,7 +34,7 @@ internal fun UserChatItem(
         modifier = modifier
     ) {
         LogitMarkdownText(
-            markdown = chat.message,
+            markdown = chatting.message,
             modifier = Modifier.drawWithCache {
                 val outline = shape.createOutline(size, layoutDirection, this)
 
@@ -51,9 +51,9 @@ internal fun UserChatItem(
 
 @Preview
 @Composable
-private fun UserChatItemPreview(){
-    UserChatItem(
-        chat = Chat.User(
+private fun UserChattingItemPreview(){
+    UserChattingItem(
+        chatting = Chatting.User(
             message = "디자인 시스템은 아니지만, 동아리에서 공통 로고 \n" +
                 "가이드를 만든 적은 있는데 이것도 괜찮을까?",
         ),

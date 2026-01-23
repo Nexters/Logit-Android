@@ -1,4 +1,4 @@
-package com.useai.feature.chat.chat.ui
+package com.useai.feature.chat.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
