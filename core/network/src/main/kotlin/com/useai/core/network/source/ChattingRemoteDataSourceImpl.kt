@@ -1,12 +1,60 @@
 package com.useai.core.network.source
 
+import com.launchdarkly.eventsource.MessageEvent
+import com.launchdarkly.eventsource.background.BackgroundEventHandler
+import com.useai.core.network.ChattingEventSourceFactory
 import com.useai.core.network.api.ChattingApi
+import com.useai.core.network.request.StartChattingStreamRequest
 import com.useai.core.network.response.ChattingHistoryResponse
+import com.useai.core.network.response.ChattingStreamingResponse
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 internal class ChattingRemoteDataSourceImpl @Inject constructor(
-    private val chattingApi: ChattingApi
+    private val chattingApi: ChattingApi,
+    private val chattingEventSourceFactory: ChattingEventSourceFactory
 ) : ChattingRemoteDataSource {
+
+    override fun startChattingStream(request: StartChattingStreamRequest): Flow<ChattingStreamingResponse> {
+        return callbackFlow {
+            class ChatEventHandler : BackgroundEventHandler {
+                override fun onOpen() {
+                }
+
+                override fun onClosed() {
+                    close()
+                }
+
+                override fun onMessage(
+                    event: String?,
+                    messageEvent: MessageEvent?
+                ) {
+                    messageEvent?.data?.let { jsonString ->
+                        val response = Json.decodeFromString<ChattingStreamingResponse>(jsonString)
+                        trySend(response)
+                    }
+                }
+
+                override fun onComment(comment: String?) {
+
+                }
+
+                override fun onError(t: Throwable?) {
+                    close()
+                }
+            }
+
+            val eventSource = chattingEventSourceFactory.create(ChatEventHandler(), request)
+            eventSource.start()
+
+            awaitClose {
+                eventSource.close()
+            }
+        }
+    }
 
     override suspend fun getChatHistory(projectId: Int, questionId: Int): ChattingHistoryResponse {
         return chattingApi.getChattingHistory(projectId)

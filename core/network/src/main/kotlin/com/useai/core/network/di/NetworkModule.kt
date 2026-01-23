@@ -1,8 +1,12 @@
 package com.useai.core.network.di
 
+import com.launchdarkly.eventsource.ConnectStrategy
+import com.launchdarkly.eventsource.EventSource
+import com.launchdarkly.eventsource.background.BackgroundEventSource
 import com.useai.core.common.qualifiers.AuthClient
 import com.useai.core.common.qualifiers.BaseClient
 import com.useai.core.network.BuildConfig
+import com.useai.core.network.ChattingEventSourceFactory
 import com.useai.core.network.error.RemoteErrorCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -14,13 +18,36 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.net.URI
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 internal object NetworkModule {
+
+    private val mediaType = "application/json; charset=utf-8".toMediaType()
+
+    @Provides
+    @ActivityRetainedScoped
+    fun providesChattingEventSourceFactory(
+        @AuthClient client: OkHttpClient
+    ) : ChattingEventSourceFactory {
+        return ChattingEventSourceFactory { handler, request ->
+            val requestJsonString = Json.encodeToString(request)
+            BackgroundEventSource.Builder(
+                handler,
+                EventSource.Builder(
+                    ConnectStrategy
+                        .http(URI.create(BuildConfig.BASE_URL))
+                        .methodAndBody("POST", requestJsonString.toRequestBody(mediaType))
+                        .httpClient(client)
+                )
+            ).build()
+        }
+    }
 
     @Provides
     @ActivityRetainedScoped
