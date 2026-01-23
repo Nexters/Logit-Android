@@ -6,9 +6,9 @@ import javax.inject.Inject
 
 internal class ChattingRemoteDataSourceImpl @Inject constructor(
     private val chattingApi: ChattingApi
-) {
+) : ChattingRemoteDataSource {
 
-    suspend fun getChatHistory(projectId: Int): ChattingHistoryResponse {
+    override suspend fun getChatHistory(projectId: Int, questionId: Int): ChattingHistoryResponse {
         return chattingApi.getChattingHistory(projectId)
     }
 }
