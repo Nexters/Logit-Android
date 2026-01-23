@@ -80,7 +80,7 @@ internal fun QuestionTabRow(
 @Preview
 @Composable
 private fun QuestionTabRowPreview(){
-    val q = Question(id = "", title = "", maxLength = 1000)
+    val q = Question(id = "", title = "", maxLength = 1000, letter = "")
     QuestionTabRow(
         selectedQuestion = q,
         onTabSelect = {},
