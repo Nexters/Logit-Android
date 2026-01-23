@@ -17,11 +17,11 @@ internal class QuestionRemoteDataSourceImpl @Inject constructor(
         return questionApi.getQuestions(projectId)
     }
 
-    override suspend fun getQuestionDetail(
+    override suspend fun getQuestion(
         projectId: String,
         questionId: String
     ): QuestionResponse {
-        return questionApi.getQuestionDetail(projectId, questionId)
+        return questionApi.getQuestion(projectId, questionId)
     }
 
     override suspend fun updateQuestion(

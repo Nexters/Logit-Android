@@ -21,7 +21,7 @@ interface QuestionApi {
     ) : List<QuestionResponse>
 
     @GET("api/v1/projects/{project_id}/questions/{questions_id}")
-    suspend fun getQuestionDetail(
+    suspend fun getQuestion(
         @Path("project_id") projectId: String,
         @Path("questions_id") questionId: String
     ) : QuestionResponse
