@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class StartChattingStreamRequest(
     @SerialName("content") val sendingMessage: String,
     @SerialName("experience_ids") val experienceIds: List<Int>,
-    @SerialName("question_id") val questionId: Int
+    @SerialName("question_id") val questionId: String
 )
