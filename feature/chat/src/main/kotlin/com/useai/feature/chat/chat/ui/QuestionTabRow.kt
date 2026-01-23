@@ -43,7 +43,7 @@ internal fun QuestionTabRow(
         },
         containerColor = LogitTheme.colors.white,
         contentColor = LogitTheme.colors.black,
-        edgePadding = 20.dp,
+        edgePadding = 0.dp,
         minTabWidth = 0.dp
     ) {
         questions.fastForEachIndexed { i, question ->
@@ -80,13 +80,14 @@ internal fun QuestionTabRow(
 @Preview
 @Composable
 private fun QuestionTabRowPreview(){
+    val q = Question(id = "", title = "", maxLength = 1000)
     QuestionTabRow(
-        selectedQuestion = Question(id = "", title = "", maxLength = 3),
+        selectedQuestion = q,
         onTabSelect = {},
         onQuestionAdd = {},
         questions = buildList {
             repeat(3){
-                add(Question(id = "", title = "", maxLength = 3))
+                add(q)
             }
         },
     )
