@@ -1,7 +1,7 @@
 package com.useai.core.network.di
 
 import com.useai.core.common.qualifiers.AuthClient
-import com.useai.core.network.api.ChatApi
+import com.useai.core.network.api.ChattingApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,9 +16,9 @@ internal object ApiModule {
 
     @Provides
     @ActivityScoped
-    fun providesChatApi(
+    fun providesChattingApi(
         @AuthClient retrofit: Retrofit
-    ) : ChatApi {
-        return retrofit.create<ChatApi>()
+    ) : ChattingApi {
+        return retrofit.create<ChattingApi>()
     }
 }
