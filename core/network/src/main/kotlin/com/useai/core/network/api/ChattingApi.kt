@@ -11,7 +11,7 @@ interface ChattingApi {
 
     @GET("api/v1/projects/chats/{question_id}")
     suspend fun getChattingHistory(
-        @Path("question_id") questionId: Int
+        @Path("question_id") questionId: String
     ): ChattingHistoryResponse
 
     @PATCH("api/v1/projects/chats/{chat_id}/answer")

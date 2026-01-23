@@ -9,6 +9,6 @@ import kotlinx.coroutines.flow.Flow
 interface ChattingRemoteDataSource {
 
     fun startChattingStream(request: StartChattingStreamRequest): Flow<ChattingStreamingResponse>
-    suspend fun getChatHistory(projectId: Int, questionId: Int): ChattingHistoryResponse
+    suspend fun getChatHistory(questionId: String): ChattingHistoryResponse
     suspend fun updateLetter(chattingId: String, request: UpdateLetterRequest)
 }

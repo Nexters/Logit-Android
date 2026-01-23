@@ -57,8 +57,8 @@ internal class ChattingRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getChatHistory(projectId: Int, questionId: Int): ChattingHistoryResponse {
-        return chattingApi.getChattingHistory(projectId)
+    override suspend fun getChatHistory(questionId: String): ChattingHistoryResponse {
+        return chattingApi.getChattingHistory(questionId)
     }
 
     override suspend fun updateLetter(chattingId: String, request: UpdateLetterRequest) {
