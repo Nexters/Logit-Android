@@ -5,6 +5,7 @@ import com.launchdarkly.eventsource.background.BackgroundEventHandler
 import com.useai.core.network.ChattingEventSourceFactory
 import com.useai.core.network.api.ChattingApi
 import com.useai.core.network.request.StartChattingStreamRequest
+import com.useai.core.network.request.UpdateLetterRequest
 import com.useai.core.network.response.ChattingHistoryResponse
 import com.useai.core.network.response.ChattingStreamingResponse
 import kotlinx.coroutines.channels.awaitClose
@@ -58,5 +59,9 @@ internal class ChattingRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getChatHistory(projectId: Int, questionId: Int): ChattingHistoryResponse {
         return chattingApi.getChattingHistory(projectId)
+    }
+
+    override suspend fun updateLetter(chattingId: String, request: UpdateLetterRequest) {
+        chattingApi.updateLetter(chattingId, request)
     }
 }
