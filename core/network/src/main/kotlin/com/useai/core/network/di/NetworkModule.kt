@@ -51,7 +51,10 @@ internal object NetworkModule {
 
     @Provides
     @ActivityRetainedScoped
-    fun providesJson() = Json { ignoreUnknownKeys = true }
+    fun providesJson() = Json {
+        ignoreUnknownKeys = true
+        explicitNulls = false
+    }
 
     @Provides
     @ActivityRetainedScoped
