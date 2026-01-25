@@ -11,7 +11,7 @@ import com.useai.core.model.chat.Question
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ChatScreen(val projectId: Int): Screen {
+data class ChatScreen(val projectId: String): Screen {
     sealed interface State : CircuitUiState {
 
         data class Chatting(
