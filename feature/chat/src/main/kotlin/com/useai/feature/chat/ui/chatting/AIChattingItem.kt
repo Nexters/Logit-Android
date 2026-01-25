@@ -24,6 +24,7 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.text.LogitMarkdownText
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingContent
+import java.time.LocalDateTime
 
 @Composable
 internal fun AIChattingItem(
@@ -85,7 +86,7 @@ private fun AIChattingItemPreview(){
                     " 하고져 핧 따라미니라",
             isLetter = true,
             id = "",
-            createdAt = ""
+            createdAt = LocalDateTime.MIN
         ),
         onUpdateLetterClick = {},
         modifier = Modifier

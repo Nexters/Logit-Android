@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.component.text.LogitMarkdownText
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingContent
+import java.time.LocalDateTime
 
 private val shape by lazy {
     RoundedCornerShape(
@@ -57,7 +58,7 @@ private fun UserChattingItemPreview(){
             message = "디자인 시스템은 아니지만, 동아리에서 공통 로고 \n" +
                     "가이드를 만든 적은 있는데 이것도 괜찮을까?",
             id = "",
-            createdAt = "",
+            createdAt = LocalDateTime.MIN,
         ),
         modifier = Modifier
     )
