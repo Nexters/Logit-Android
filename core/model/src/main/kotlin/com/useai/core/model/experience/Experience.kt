@@ -1,5 +1,7 @@
 package com.useai.core.model.experience
 
+import java.time.LocalDate
+
 data class Experience(
     val id: String,
     val tags: List<String>,
@@ -8,7 +10,7 @@ data class Experience(
     val action: String,
     val result: String,
     val category: ExperienceCategory,
-    val date: String,
+    val date: LocalDate,
     val experienceType: String,
     val title: String
 )

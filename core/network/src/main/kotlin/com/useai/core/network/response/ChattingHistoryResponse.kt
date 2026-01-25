@@ -1,9 +1,12 @@
 package com.useai.core.network.response
 
+import com.useai.core.common.extensions.toLocalDate
+import com.useai.core.common.extensions.toLocalDateTime
 import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 @Serializable
 data class ChattingHistoryResponse(
@@ -34,14 +37,14 @@ fun ChattingContentResponse.toChattingContent() : ChattingContent {
             ChattingContent.User(
                 id = id,
                 message = content,
-                createdAt = createdAt
+                createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN
             )
         }
         "ai" -> {
             ChattingContent.AI(
                 id = id,
                 message = content,
-                createdAt = createdAt,
+                createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN,
                 isLetter = isDraft
             )
         }

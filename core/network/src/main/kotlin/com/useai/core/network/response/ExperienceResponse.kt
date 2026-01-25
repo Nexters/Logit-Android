@@ -1,9 +1,11 @@
 package com.useai.core.network.response
 
+import com.useai.core.common.extensions.toLocalDate
 import com.useai.core.model.experience.Experience
 import com.useai.core.model.experience.ExperienceCategory
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 data class ExperienceResponse(
@@ -40,7 +42,7 @@ fun ExperienceResponse.toExperience() = Experience(
         "고객 가치 지향" -> ExperienceCategory.CUSTOMER_VALUE_ORIENTATION
         else -> throw IllegalArgumentException("Invalid category: $category")
     },
-    date = date,
+    date = date.toLocalDate() ?: LocalDate.MIN,
     experienceType = experienceType,
     title = title
 )

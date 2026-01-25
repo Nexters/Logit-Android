@@ -1,5 +1,6 @@
 package com.useai.core.data.repository
 
+import com.useai.core.common.extensions.toFormattedString
 import com.useai.core.model.experience.Experience
 import com.useai.core.model.experience.ExperienceParam
 import com.useai.core.model.experience.MatchingExperience
@@ -20,7 +21,7 @@ internal class ExperienceRepositoryImpl @Inject constructor(
             experienceRemoteDataSource.createExperience(
                 CreateExperienceRequest(
                     category = experience.category,
-                    date = experience.date,
+                    date = experience.date.toFormattedString().orEmpty(),
                     experienceType = experience.experienceType,
                     situation = experience.situation,
                     task = experience.task,
