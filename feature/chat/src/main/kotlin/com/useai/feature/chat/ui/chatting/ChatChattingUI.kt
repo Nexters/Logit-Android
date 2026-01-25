@@ -46,7 +46,10 @@ internal fun ChatChattingUI(
                 }
             )
 
-            items(items = state.chattingHistory.chattings) { chat ->
+            items(
+                items = state.chattingHistory.chattings,
+                key = { chat -> chat.id }
+            ) { chat ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
