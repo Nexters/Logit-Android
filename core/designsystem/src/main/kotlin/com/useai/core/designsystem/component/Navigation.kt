@@ -16,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.icon.LogitIcons
-import com.useai.core.designsystem.theme.LogitLightColor
 import com.useai.core.designsystem.theme.LogitTheme
 
 @Composable
@@ -27,7 +26,8 @@ fun LogitNavigationBar(
     NavigationBar(
         modifier = modifier
             .fillMaxWidth()
-            .height((63 + 35).dp)
+            .height((63 + 35).dp),
+        containerColor = LogitTheme.colors.white
     ) {
         content()
     }
@@ -58,10 +58,10 @@ fun RowScope.LogitNavigationBarItem(
         },
         alwaysShowLabel = alwaysShowLabel,
         colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = LogitLightColor.secondary100,
-            selectedTextColor = LogitLightColor.black,
-            unselectedIconColor = LogitLightColor.gray300,
-            unselectedTextColor = LogitLightColor.primary400,
+            selectedIconColor = LogitTheme.colors.secondary100,
+            selectedTextColor = LogitTheme.colors.black,
+            unselectedIconColor = LogitTheme.colors.gray300,
+            unselectedTextColor = LogitTheme.colors.primary400,
             indicatorColor = Color.Transparent,
         ),
     )
