@@ -12,18 +12,18 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 
 @Composable
 @CircuitInject(HomeScreen::class, ActivityRetainedComponent::class)
-fun HomeScreen(
+fun Home(
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        Text(text = "Home")
+        Text(text = "Home screen")
     }
 }
 
 @Preview
 @Composable
-private fun HomeScreenPreview() {
-    HomeScreen()
+private fun HomePreview() {
+    Home()
 }
