@@ -1,0 +1,115 @@
+package com.useai.core.designsystem.component
+
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.useai.core.designsystem.icon.LogitIcons
+import com.useai.core.designsystem.theme.LogitLightColor
+import com.useai.core.designsystem.theme.LogitTheme
+
+@Composable
+fun LogitNavigationBar(
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
+) {
+    NavigationBar(
+        modifier = modifier
+            .fillMaxWidth()
+            .height((63 + 35).dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun RowScope.LogitNavigationBarItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    alwaysShowLabel: Boolean = true,
+    icon: @Composable () -> Unit,
+    selectedIcon: @Composable () -> Unit = icon,
+    labelText: String = "",
+) {
+    NavigationBarItem(
+        selected = selected,
+        onClick = onClick,
+        icon = if (selected) selectedIcon else icon,
+        modifier = modifier,
+        enabled = enabled,
+        label = {
+            Text(
+                text = labelText,
+                style = LogitTheme.typography.label1
+            )
+        },
+        alwaysShowLabel = alwaysShowLabel,
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = LogitLightColor.secondary100,
+            selectedTextColor = LogitLightColor.black,
+            unselectedIconColor = LogitLightColor.gray300,
+            unselectedTextColor = LogitLightColor.primary400,
+            indicatorColor = Color.Transparent,
+        ),
+    )
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark theme")
+@Composable
+fun LogitNavigationBarPreview() {
+    val items = listOf("홈", "자소서", "프로젝트", "경험", "리포트")
+    val icons = listOf(
+        LogitIcons.HomeDefault,
+        LogitIcons.PaperDefault,
+        LogitIcons.AddDefault,
+        LogitIcons.ExperienceDefault,
+        LogitIcons.ReportDefault,
+    )
+    val selectedIcons = listOf(
+        LogitIcons.HomeSelected,
+        LogitIcons.PaperSelected,
+        LogitIcons.AddSelected,
+        LogitIcons.ExperienceSelected,
+        LogitIcons.ReportSelected,
+    )
+
+    LogitTheme {
+        LogitNavigationBar(
+            modifier = Modifier
+        ) {
+            items.forEachIndexed { index, item ->
+                LogitNavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(icons[index]),
+                            contentDescription = item,
+                        )
+                    },
+                    selectedIcon = {
+                        Icon(
+                            painter = painterResource(selectedIcons[index]),
+                            contentDescription = item,
+                        )
+                    },
+                    labelText = item,
+                    selected = index == 0,
+                    onClick = { },
+                )
+            }
+        }
+    }
+}
