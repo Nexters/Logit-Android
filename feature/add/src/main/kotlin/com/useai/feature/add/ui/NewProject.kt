@@ -12,18 +12,18 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 
 @Composable
 @CircuitInject(AddScreen::class, ActivityRetainedComponent::class)
-fun AddScreen(
+fun NewProject(
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        Text(text = "Add")
+        Text(text = "NewProject screen")
     }
 }
 
 @Preview
 @Composable
-private fun AddScreenPreview() {
-    AddScreen()
+private fun NewProjectPreview() {
+    NewProject()
 }
