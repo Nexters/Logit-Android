@@ -6,7 +6,10 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.feature.home)
     implementation(projects.feature.chat)
+    implementation(projects.feature.add)
+    implementation(projects.feature.experience)
     implementation(projects.core.designsystem)
     implementation(projects.core.navigation)
     implementation(projects.core.data)
