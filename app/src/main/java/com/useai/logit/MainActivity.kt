@@ -13,8 +13,10 @@ import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.navigation.ScreenProvider
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
