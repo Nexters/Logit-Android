@@ -31,8 +31,7 @@ class MainActivity : ComponentActivity() {
             LogitTheme {
                 CompositionLocalProvider(LocalScreenProvider provides screenProvider) {
                     CircuitCompositionLocals(circuit) {
-
-                        val backStack = rememberSaveableBackStack(root = TODO("첫 스크린"))
+                        val backStack = rememberSaveableBackStack(root = RootScreen)
                         val navigator = rememberCircuitNavigator(backStack)
 
                         NavigableCircuitContent(
