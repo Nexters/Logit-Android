@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -53,6 +54,9 @@ fun RowScope.LogitNavigationBarItem(
         label = {
             Text(
                 text = labelText,
+                // AS-IS: (icon 영역 기본 padding 4dp) + (icon과 label 사이의 기본 간격 4dp) = 8dp
+                // TO-BE: 4dp
+                modifier = Modifier.offset(y = (-4).dp),
                 style = LogitTheme.typography.label1
             )
         },
