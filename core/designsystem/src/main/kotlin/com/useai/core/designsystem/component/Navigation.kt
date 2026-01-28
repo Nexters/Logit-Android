@@ -74,7 +74,7 @@ fun RowScope.LogitNavigationBarItem(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark theme")
 @Composable
-fun LogitNavigationBarPreview() {
+private fun LogitNavigationBarPreview() {
     val items = listOf("홈", "자소서", "프로젝트", "경험", "리포트")
     val icons = listOf(
         LogitIcons.HomeDefault,
