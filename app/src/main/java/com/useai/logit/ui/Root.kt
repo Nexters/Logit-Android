@@ -68,13 +68,13 @@ fun Root(
                         LogitNavigationBarItem(
                             icon = {
                                 Icon(
-                                    painter = painterResource(navItem.unselectedIcon),
+                                    painter = painterResource(navItem.unselectedIconId),
                                     contentDescription = stringResource(navItem.titleTextId),
                                 )
                             },
                             selectedIcon = {
                                 Icon(
-                                    painter = painterResource(navItem.selectedIcon),
+                                    painter = painterResource(navItem.selectedIconId),
                                     contentDescription = stringResource(navItem.titleTextId),
                                 )
                             },
