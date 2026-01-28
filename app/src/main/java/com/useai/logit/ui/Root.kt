@@ -25,16 +25,14 @@ import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
 import com.useai.feature.report.ReportScreen
-import com.useai.logit.RootEvent
 import com.useai.logit.RootScreen
-import com.useai.logit.RootUiState
 import com.useai.logit.navigation.TopLevelNavItem
 import dagger.hilt.android.components.ActivityRetainedComponent
 
 @Composable
 @CircuitInject(RootScreen::class, ActivityRetainedComponent::class)
 fun Root(
-    rootUiState: RootUiState,
+    rootUiState: RootScreen.RootUiState,
     modifier: Modifier = Modifier,
 ) {
     val screens = remember {
@@ -82,7 +80,7 @@ fun Root(
                             selected = screen == rootUiState.displayedScreen,
                             alwaysShowLabel = true,
                             onClick = {
-                                rootUiState.eventSink(RootEvent.ChangeScreen(screen))
+                                rootUiState.eventSink(RootScreen.RootEvent.ChangeScreen(screen))
                             },
                         )
                     }
@@ -96,7 +94,7 @@ fun Root(
                 .fillMaxSize()
                 .padding(paddingValues),
             onNavEvent = { navEvent ->
-                rootUiState.eventSink(RootEvent.NestedNavEvent(navEvent))
+                rootUiState.eventSink(RootScreen.RootEvent.NestedNavEvent(navEvent))
             }
         )
     }
