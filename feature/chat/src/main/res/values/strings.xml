@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- TODO: 자소서 모듈 별도 생성 시 수정 필요 -->
-    <string name="feature_chat_title">자소서</string>
-</resources>
