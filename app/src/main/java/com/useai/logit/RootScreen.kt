@@ -3,11 +3,11 @@ package com.useai.logit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.foundation.onNavEvent
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -39,7 +39,7 @@ class RootPresenter @AssistedInject constructor(
 ) : Presenter<RootScreen.RootUiState> {
     @Composable
     override fun present(): RootScreen.RootUiState {
-        var displayedScreen by remember { mutableStateOf<Screen>(HomeScreen) }
+        var displayedScreen by rememberRetained { mutableStateOf<Screen>(HomeScreen) }
 
         return RootScreen.RootUiState(displayedScreen = displayedScreen) { event ->
             when (event) {
