@@ -10,26 +10,26 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 internal interface RepositoryModule {
 
     @Binds
-    @ActivityScoped
+    @ActivityRetainedScoped
     fun providesChattingRepository(
         impl: ChattingRepositoryImpl
     ) : ChattingRepository
 
     @Binds
-    @ActivityScoped
+    @ActivityRetainedScoped
     fun providesQuestionRepository(
         impl: QuestionRepositoryImpl
     ) : QuestionRepository
 
     @Binds
-    @ActivityScoped
+    @ActivityRetainedScoped
     fun providesExperienceRepository(
         impl: ExperienceRepositoryImpl
     ) : ExperienceRepository

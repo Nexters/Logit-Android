@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import retrofit2.Retrofit
 import retrofit2.create
 
@@ -17,7 +17,7 @@ import retrofit2.create
 internal object ApiModule {
 
     @Provides
-    @ActivityScoped
+    @ActivityRetainedScoped
     fun providesChattingApi(
         @AuthClient retrofit: Retrofit
     ) : ChattingApi {
@@ -25,7 +25,7 @@ internal object ApiModule {
     }
 
     @Provides
-    @ActivityScoped
+    @ActivityRetainedScoped
     fun providesQuestionApi(
         @AuthClient retrofit: Retrofit
     ) : QuestionApi {
@@ -33,7 +33,7 @@ internal object ApiModule {
     }
 
     @Provides
-    @ActivityScoped
+    @ActivityRetainedScoped
     fun providesExperienceApi(
         @AuthClient retrofit: Retrofit
     ) : ExperienceApi {
