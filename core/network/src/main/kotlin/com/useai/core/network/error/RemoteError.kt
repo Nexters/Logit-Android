@@ -6,7 +6,7 @@ import retrofit2.Response
 /**
  * 400, 500번대 에러 발생 시 던져지는 에러
  */
-internal data class RemoteError(
+data class RemoteError(
     val response: Response<*>,
     val errorCode: Int,
     override val message: String,

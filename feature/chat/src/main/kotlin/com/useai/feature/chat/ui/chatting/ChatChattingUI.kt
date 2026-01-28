@@ -137,8 +137,8 @@ private fun ChatChattingUIPreview() {
             )),
             userInput = "제대로 써",
             streamingStatus = ChattingStreamingStatus.Idle,
-            questions = listOf(Question("","",1000), Question("","",1000)),
-            currentQuestion = Question("","",1000),
+            questions = listOf(Question("","",1000, ""), Question("","",1000, "")),
+            currentQuestion = Question("","",1000, ""),
             eventSink = {},
         ),
     )

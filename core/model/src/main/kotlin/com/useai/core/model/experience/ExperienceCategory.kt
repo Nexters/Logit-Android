@@ -1,0 +1,22 @@
+package com.useai.core.model.experience
+
+/**
+ * @property PROACTIVE_EXECUTION 주도적 실행력
+ * @property TECHNICAL_EXPERTISE 기술적 전문성
+ * @property LOGICAL_ANALYSIS 논리적 분석력
+ * @property CREATIVE_PROBLEM_SOLVING 창의적 문제해결
+ * @property COLLABORATIVE_COMMUNICATION 협업적 소통
+ * @property TENACIOUS_RESPONSIBILITY 끈기 있는 책임감
+ * @property FLEXIBLE_ADAPTABILITY 유연한 적응력
+ * @property CUSTOMER_VALUE_ORIENTATION 고객 가치 지향
+ */
+enum class ExperienceCategory {
+    PROACTIVE_EXECUTION,
+    TECHNICAL_EXPERTISE,
+    LOGICAL_ANALYSIS,
+    CREATIVE_PROBLEM_SOLVING,
+    COLLABORATIVE_COMMUNICATION,
+    TENACIOUS_RESPONSIBILITY,
+    FLEXIBLE_ADAPTABILITY,
+    CUSTOMER_VALUE_ORIENTATION
+}

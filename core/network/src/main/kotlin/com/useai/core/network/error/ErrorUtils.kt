@@ -3,7 +3,7 @@ package com.useai.core.network.error
 import com.useai.core.model.error.RootError
 import kotlin.coroutines.cancellation.CancellationException
 
-fun <T: RootError, R> runCatchingWith(
+inline fun <T: RootError, R> runCatchingWith(
     errorType: T,
     block: () -> R
 ): Result<R> {
@@ -20,7 +20,7 @@ fun <T: RootError, R> runCatchingWith(
     }
 }
 
-fun <R> runCatchingWith(
+inline fun <R> runCatchingWith(
     block: () -> R
 ): Result<R> {
     return try {
