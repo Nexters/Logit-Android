@@ -1,4 +1,4 @@
-package com.useai.feature.add.ui
+package com.useai.feature.newproject.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.useai.feature.add.AddScreen
+import com.useai.feature.newproject.NewProjectScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
 @Composable
-@CircuitInject(AddScreen::class, ActivityRetainedComponent::class)
+@CircuitInject(NewProjectScreen::class, ActivityRetainedComponent::class)
 fun NewProject(
     modifier: Modifier = Modifier
 ) {

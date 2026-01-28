@@ -20,10 +20,10 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.useai.core.designsystem.component.LogitNavigationBar
 import com.useai.core.designsystem.component.LogitNavigationBarItem
-import com.useai.feature.add.AddScreen
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
+import com.useai.feature.newproject.NewProjectScreen
 import com.useai.feature.report.ReportScreen
 import com.useai.logit.RootScreen
 import com.useai.logit.navigation.TopLevelNavItem
@@ -39,7 +39,7 @@ fun Root(
         listOf(
             HomeScreen,
             ChatScreen(0), // TODO: 자소서 screen으로 변경
-            AddScreen,
+            NewProjectScreen,
             ExperienceScreen,
             ReportScreen,
         )

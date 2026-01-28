@@ -1,4 +1,4 @@
-package com.useai.feature.add
+package com.useai.feature.newproject
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

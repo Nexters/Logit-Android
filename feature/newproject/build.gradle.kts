@@ -7,5 +7,5 @@ plugins {
 }
 
 android {
-    namespace = "com.useai.feature.add"
+    namespace = "com.useai.feature.newproject"
 }

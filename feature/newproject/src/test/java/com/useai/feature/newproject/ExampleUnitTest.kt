@@ -1,4 +1,4 @@
-package com.useai.feature.add
+package com.useai.feature.newproject
 
 import org.junit.Test
 

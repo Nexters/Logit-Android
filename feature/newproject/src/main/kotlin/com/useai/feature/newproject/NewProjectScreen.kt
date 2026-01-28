@@ -1,4 +1,4 @@
-package com.useai.feature.add
+package com.useai.feature.newproject
 
 import androidx.compose.runtime.Composable
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -13,23 +13,23 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object AddScreen : Screen {
+data object NewProjectScreen : Screen {
     data object State : CircuitUiState
 }
 
-class AddPresenter @AssistedInject constructor(
+class NewProjectPresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
-) : Presenter<AddScreen.State> {
+) : Presenter<NewProjectScreen.State> {
     @Composable
-    override fun present(): AddScreen.State {
-        return AddScreen.State
+    override fun present(): NewProjectScreen.State {
+        return NewProjectScreen.State
     }
 
     @AssistedFactory
-    @CircuitInject(AddScreen::class, ActivityRetainedComponent::class)
+    @CircuitInject(NewProjectScreen::class, ActivityRetainedComponent::class)
     fun interface Factory {
         fun create(
             navigator: Navigator,
-        ): AddPresenter
+        ): NewProjectPresenter
     }
 }
