@@ -1,9 +1,11 @@
 package com.useai.core.designsystem.component
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -27,7 +29,9 @@ fun LogitNavigationBar(
     NavigationBar(
         modifier = modifier
             .fillMaxWidth()
-            .height((63 + 35).dp),
+            .background(LogitTheme.colors.white)
+            .navigationBarsPadding()
+            .height(63.dp),
         containerColor = LogitTheme.colors.white
     ) {
         content()
