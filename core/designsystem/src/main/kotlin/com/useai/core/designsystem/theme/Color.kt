@@ -14,6 +14,7 @@ internal val LogitLightColor = LogitColor(
     primary400 = Color(0xFF6B7684),
     primary500 = Color(0xFF374151),
     primary600 = Color(0xFF333D4B),
+    secondary100 = Color(0xFF4BC0FA),
 
     white = Color(0xFFFFFFFF),
     gray20 = Color(0xFFF7F9FC),
@@ -51,6 +52,7 @@ data class LogitColor(
     val primary400: Color,
     val primary500: Color,
     val primary600: Color,
+    val secondary100: Color,
 
     val white: Color,
     val gray20: Color,
