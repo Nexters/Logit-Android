@@ -62,7 +62,7 @@ fun Root(
                     modifier = Modifier
                 ) {
                     screens.forEach { screen ->
-                        val navItem = TopLevelNavItem.fromScreen(screen) ?: return@forEach
+                        val navItem = TopLevelNavItem.fromScreen(screen)
                         LogitNavigationBarItem(
                             icon = {
                                 Icon(

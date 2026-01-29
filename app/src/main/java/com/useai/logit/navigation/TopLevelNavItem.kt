@@ -18,14 +18,14 @@ data class TopLevelNavItem(
     @get:StringRes val titleTextId: Int,
 ) {
     companion object {
-        fun fromScreen(screen: Screen): TopLevelNavItem? {
+        fun fromScreen(screen: Screen): TopLevelNavItem {
             return when (screen) {
                 is HomeScreen -> HOME
                 is ChatScreen -> COVER_LETTER
                 is NewProjectScreen -> NEW_PROJECT
                 is ExperienceScreen -> EXPERIENCE
                 is ReportScreen -> REPORT
-                else -> null
+                else -> error("Unknown screen: $screen")
             }
         }
     }
