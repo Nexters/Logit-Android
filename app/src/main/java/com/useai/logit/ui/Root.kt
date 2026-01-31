@@ -1,5 +1,6 @@
 package com.useai.logit.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.foundation.NavEvent
 import com.useai.core.designsystem.component.LogitNavigationBar
 import com.useai.core.designsystem.component.LogitNavigationBarItem
 import com.useai.feature.chat.ChatScreen
@@ -44,10 +46,15 @@ fun Root(
             ReportScreen,
         )
     }
-    val shouldShowBottomBar by remember {
+    val shouldShowBottomBar by remember(rootUiState.displayedScreen) {
         derivedStateOf {
-            screens.any { it == rootUiState.displayedScreen }
+            rootUiState.displayedScreen != NewProjectScreen && 
+                    screens.any { it == rootUiState.displayedScreen }
         }
+    }
+
+    BackHandler(enabled = rootUiState.canPop) {
+        rootUiState.eventSink(RootScreen.RootEvent.NestedNavEvent(NavEvent.Pop()))
     }
 
     Scaffold(
@@ -58,9 +65,7 @@ fun Root(
                 enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                 exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
             ) {
-                LogitNavigationBar(
-                    modifier = Modifier
-                ) {
+                LogitNavigationBar {
                     screens.forEach { screen ->
                         val navItem = TopLevelNavItem.fromScreen(screen)
                         LogitNavigationBarItem(
@@ -90,7 +95,7 @@ fun Root(
     ) { paddingValues ->
         CircuitContent(
             screen = rootUiState.displayedScreen,
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
             onNavEvent = { navEvent ->
