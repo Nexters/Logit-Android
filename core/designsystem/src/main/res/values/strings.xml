@@ -2,7 +2,7 @@
 <resources>
     <string name="home_title">홈</string>
     <string name="cover_letter_title">자소서</string>
-    <string name="new_project_title">프로젝트</string>
+    <string name="new_project_title">작성</string>
     <string name="experience_title">경험</string>
     <string name="report_title">리포트</string>
 
