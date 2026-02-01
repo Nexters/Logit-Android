@@ -15,4 +15,5 @@ object LogitIcons {
     val ReportSelected = R.drawable.ic_report_selected
 
     val NavigateLeft = R.drawable.ic_navigate_left
+    val Add = R.drawable.ic_add
 }
