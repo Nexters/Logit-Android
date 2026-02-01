@@ -8,7 +8,7 @@ import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
-import com.useai.feature.newproject.NewProjectScreen
+import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import com.useai.feature.report.ReportScreen
 
 data class TopLevelNavItem(
@@ -22,7 +22,7 @@ data class TopLevelNavItem(
             return when (screen) {
                 is HomeScreen -> HOME
                 is ChatScreen -> COVER_LETTER
-                is NewProjectScreen -> NEW_PROJECT
+                is NewProjectBasicInfoScreen -> NEW_PROJECT
                 is ExperienceScreen -> EXPERIENCE
                 is ReportScreen -> REPORT
                 else -> error("Unknown screen: $screen")

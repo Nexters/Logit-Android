@@ -28,7 +28,7 @@ import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
-import com.useai.feature.newproject.NewProjectScreen
+import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import com.useai.feature.report.ReportScreen
 import com.useai.logit.RootScreen
 import com.useai.logit.navigation.TopLevelNavItem
@@ -44,14 +44,14 @@ fun Root(
         listOf(
             HomeScreen,
             ChatScreen(0), // TODO: 자소서 screen으로 변경
-            NewProjectScreen,
+            NewProjectBasicInfoScreen,
             ExperienceScreen,
             ReportScreen,
         )
     }
     val shouldShowBottomBar by remember(rootUiState.displayedScreen) {
         derivedStateOf {
-            rootUiState.displayedScreen != NewProjectScreen && 
+            rootUiState.displayedScreen != NewProjectBasicInfoScreen &&
                     screens.any { it == rootUiState.displayedScreen }
         }
     }

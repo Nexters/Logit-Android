@@ -14,7 +14,10 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object NewProjectScreen : Screen {
+data class NewProjectQuestionScreen(
+    val companyName: String,
+    val jobName: String,
+) : Screen {
     data class State(
         val eventSink: (Event) -> Unit,
     ) : CircuitUiState
@@ -24,23 +27,28 @@ data object NewProjectScreen : Screen {
     }
 }
 
-class NewProjectPresenter @AssistedInject constructor(
+class NewProjectQuestionPresenter @AssistedInject constructor(
+    @Assisted private val screen: NewProjectQuestionScreen,
     @Assisted private val navigator: Navigator,
-) : Presenter<NewProjectScreen.State> {
+) : Presenter<NewProjectQuestionScreen.State> {
     @Composable
-    override fun present(): NewProjectScreen.State {
-        return NewProjectScreen.State { event ->
-            when (event) {
-                NewProjectScreen.Event.Back -> navigator.pop()
+    override fun present(): NewProjectQuestionScreen.State {
+        val companyName = screen.companyName
+        val jobName = screen.jobName
+
+        return NewProjectQuestionScreen.State {
+            when (it) {
+                NewProjectQuestionScreen.Event.Back -> navigator.pop()
             }
         }
     }
 
     @AssistedFactory
-    @CircuitInject(NewProjectScreen::class, ActivityRetainedComponent::class)
+    @CircuitInject(NewProjectQuestionScreen::class, ActivityRetainedComponent::class)
     fun interface Factory {
         fun create(
+            screen: NewProjectQuestionScreen,
             navigator: Navigator,
-        ): NewProjectPresenter
+        ): NewProjectQuestionPresenter
     }
 }

@@ -32,14 +32,14 @@ import com.useai.core.designsystem.component.appbar.PopUpTitle
 import com.useai.core.designsystem.component.button.LogitCtaButton
 import com.useai.core.designsystem.component.stepper.LogitStepper
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.feature.newproject.NewProjectScreen
+import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@CircuitInject(NewProjectScreen::class, ActivityRetainedComponent::class)
-fun NewProject(
-    state: NewProjectScreen.State,
+@CircuitInject(NewProjectBasicInfoScreen::class, ActivityRetainedComponent::class)
+fun NewProjectBasicInfo(
+    state: NewProjectBasicInfoScreen.State,
     modifier: Modifier = Modifier
 ) {
     var companyName by rememberRetained { mutableStateOf("") }
@@ -55,7 +55,7 @@ fun NewProject(
         topBar = {
             PopUpTitle(
                 onClick = {
-                    state.eventSink(NewProjectScreen.Event.Back)
+                    state.eventSink(NewProjectBasicInfoScreen.Event.Back)
                 }
             )
         },
@@ -147,7 +147,14 @@ fun NewProject(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 10.dp),
                     text = "다음으로",
-                    onClick = { /* TODO */ },
+                    onClick = {
+                        state.eventSink(
+                            NewProjectBasicInfoScreen.Event.Next(
+                                companyName,
+                                jobName
+                            )
+                        )
+                    },
                     enabled = isButtonEnabled
                 )
             }
@@ -157,10 +164,10 @@ fun NewProject(
 
 @Preview
 @Composable
-private fun NewProjectPreview() {
+private fun NewProjectBasicInfoPreview() {
     LogitTheme {
-        NewProject(
-            state = NewProjectScreen.State { }
+        NewProjectBasicInfo(
+            state = NewProjectBasicInfoScreen.State { }
         )
     }
 }
