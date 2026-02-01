@@ -24,7 +24,7 @@ import kotlinx.parcelize.Parcelize
 data object RootScreen : Screen {
     data class RootUiState(
         val displayedScreen: Screen,
-        val canPop: Boolean, // 백스택이 존재하여 뒤로 갈 수 있는지 여부
+        val canPop: Boolean,
         val eventSink: (RootEvent) -> Unit,
     ) : CircuitUiState
 
