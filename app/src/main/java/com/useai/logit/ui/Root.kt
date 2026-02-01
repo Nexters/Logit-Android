@@ -6,8 +6,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
 import com.useai.core.designsystem.component.LogitNavigationBar
 import com.useai.core.designsystem.component.LogitNavigationBarItem
+import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
@@ -59,6 +62,9 @@ fun Root(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = LogitTheme.colors.white,
+        // app bar 영역은 제외하고 status bar 영역만 padding에 포함
+        contentWindowInsets = WindowInsets.statusBars,
         bottomBar = {
             AnimatedVisibility(
                 visible = shouldShowBottomBar,

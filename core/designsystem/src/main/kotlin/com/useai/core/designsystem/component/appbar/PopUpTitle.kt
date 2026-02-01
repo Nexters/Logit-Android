@@ -1,4 +1,4 @@
-package com.useai.core.designsystem.component
+package com.useai.core.designsystem.component.appbar
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height

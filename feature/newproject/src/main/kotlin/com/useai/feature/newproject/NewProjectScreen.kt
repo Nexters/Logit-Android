@@ -2,6 +2,7 @@ package com.useai.feature.newproject
 
 import androidx.compose.runtime.Composable
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -14,7 +15,13 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data object NewProjectScreen : Screen {
-    data object State : CircuitUiState
+    data class State(
+        val eventSink: (Event) -> Unit,
+    ) : CircuitUiState
+
+    sealed interface Event : CircuitUiEvent {
+        data object Back : Event
+    }
 }
 
 class NewProjectPresenter @AssistedInject constructor(
@@ -22,7 +29,11 @@ class NewProjectPresenter @AssistedInject constructor(
 ) : Presenter<NewProjectScreen.State> {
     @Composable
     override fun present(): NewProjectScreen.State {
-        return NewProjectScreen.State
+        return NewProjectScreen.State { event ->
+            when (event) {
+                NewProjectScreen.Event.Back -> navigator.pop()
+            }
+        }
     }
 
     @AssistedFactory
