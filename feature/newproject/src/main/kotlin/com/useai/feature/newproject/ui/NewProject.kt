@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -62,9 +64,11 @@ fun NewProject(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .imePadding()
         ) {
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(horizontal = 20.dp, vertical = 12.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
@@ -128,11 +132,14 @@ fun NewProject(
                     placeHolder = "기업의 인재상이나 핵심가치를 입력하세요",
                     maxLines = 4,
                 )
+                Spacer(modifier = Modifier.height(100.dp))
             }
+
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .navigationBarsPadding(),
                 color = LogitTheme.colors.white,
             ) {
                 LogitCtaButton(
