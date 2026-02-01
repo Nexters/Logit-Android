@@ -39,9 +39,9 @@ fun LogitInputField(
                 text = label,
                 isRequired = isRequired,
             )
-            NumberOfLetters(
-                currentNumber = input.length.toString(),
-                maxNumber = maxLength,
+            LetterCounter(
+                currentCount = input.length.toString(),
+                maxCount = maxLength,
             )
         }
         Spacer(
@@ -85,21 +85,21 @@ private fun InputFieldLabel(
 }
 
 @Composable
-private fun NumberOfLetters(
+private fun LetterCounter(
     modifier: Modifier = Modifier,
-    currentNumber: String,
-    maxNumber: String,
+    currentCount: String,
+    maxCount: String,
 ) {
     Row(
         modifier = modifier,
     ) {
         Text(
-            text = currentNumber,
+            text = currentCount,
             color = LogitTheme.colors.black,
             style = LogitTheme.typography.body6_1,
         )
         Text(
-            text = " / $maxNumber",
+            text = " / $maxCount",
             color = LogitTheme.colors.gray200,
             style = LogitTheme.typography.body6_1,
         )
