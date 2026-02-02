@@ -1,16 +1,22 @@
 package com.useai.feature.newproject.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
@@ -25,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -36,6 +43,7 @@ import com.useai.core.designsystem.component.button.LogitCtaButton
 import com.useai.core.designsystem.component.container.LogitOutlinedContainer
 import com.useai.core.designsystem.component.stepper.LogitStepper
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
+import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.feature.newproject.NewProjectQuestionScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
@@ -46,7 +54,7 @@ fun NewProjectQuestion(
     modifier: Modifier = Modifier,
     state: NewProjectQuestionScreen.State,
 ) {
-    var questions by rememberRetained { mutableStateOf(listOf<String>())}
+    var questions by rememberRetained { mutableStateOf(listOf(""))}
     val isButtonEnabled = questions.isNotEmpty()
 
     Scaffold(
@@ -86,11 +94,24 @@ fun NewProjectQuestion(
                 Spacer(
                     modifier = Modifier.height(75.dp)
                 )
-                NewQuestion(
-                    placeHolder = "1번 문항"
+                questions.forEachIndexed { i, question ->
+                    val placeHolder = if (question.isEmpty()) "${i + 1}번째 문항" else ""
+                    NewQuestion(
+                        onValueChange = {
+                            val newQuestions = questions.toMutableList()
+                            newQuestions[i] = it
+                            questions = newQuestions
+                        },
+                        placeHolder = placeHolder,
+                        isAdditionalQuestion = i > 0,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
+                LogitAddButton(
+                    onClick = {
+                        questions = questions + ""
+                    }
                 )
-                Spacer(Modifier.height(8.dp))
-                LogitAddButton {  }
             }
 
             Surface(
@@ -121,21 +142,35 @@ private fun NewQuestion(
     isAdditionalQuestion: Boolean = false,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(44.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         LogitOutlinedTextField(
             value = "",
             onValueChange = onValueChange,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)
+                .align(Alignment.CenterVertically),
             placeholder = placeHolder,
+            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
         )
         Spacer(Modifier.width(12.dp))
         LetterCountField(
             modifier = Modifier
+                .fillMaxHeight()
                 .width(86.dp),
         )
         if (isAdditionalQuestion) {
-
+            Spacer(Modifier.width(12.dp))
+            DeleteButton(
+                modifier = Modifier.fillMaxHeight(),
+                onClick = {
+                    onValueChange("") // TODO: 삭제
+                },
+            )
         }
     }
 }
@@ -150,7 +185,6 @@ private fun LetterCountField(
         modifier = modifier,
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 10.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -184,10 +218,48 @@ private fun LetterCountField(
     }
 }
 
+@Composable
+private fun DeleteButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    LogitOutlinedContainer(
+        modifier = modifier
+            .clickable(onClick = onClick)
+    ) {
+        Box(
+            modifier = Modifier.size(44.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = LogitIcons.Trash),
+                contentDescription = "삭제",
+                modifier = Modifier.size(20.dp),
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun NewProjectQuestionPreview() {
     NewProjectQuestion(
         state = NewProjectQuestionScreen.State { }
     )
+}
+
+@Preview
+@Composable
+private fun AdditionalQuestionPreview() {
+    LogitTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(LogitTheme.colors.white)
+        ) {
+            NewQuestion(
+                isAdditionalQuestion = true,
+            )
+        }
+    }
 }

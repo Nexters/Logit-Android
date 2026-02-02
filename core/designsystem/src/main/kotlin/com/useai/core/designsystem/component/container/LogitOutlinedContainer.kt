@@ -28,8 +28,7 @@ fun LogitOutlinedContainer(
     content: @Composable () -> Unit
 ) {
     Surface(
-        modifier = modifier
-            .padding(horizontal = 6.dp, vertical = 10.dp),
+        modifier = modifier,
         shape = shape,
         color = containerColor,
         border = border
