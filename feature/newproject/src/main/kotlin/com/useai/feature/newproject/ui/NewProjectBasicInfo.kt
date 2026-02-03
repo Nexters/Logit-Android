@@ -87,11 +87,10 @@ fun NewProjectBasicInfo(
                 LogitInputField(
                     label = "기업명",
                     isRequired = true,
-                    maxLength = "100",
+                    maxLength = 100,
                     input = state.companyName,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnCompanyNameChange(it)) },
                     placeHolder = "예) 로짓 컴퍼니",
-                    maxLines = 1,
                 )
                 Spacer(
                     modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
@@ -99,11 +98,10 @@ fun NewProjectBasicInfo(
                 LogitInputField(
                     label = "직무명",
                     isRequired = true,
-                    maxLength = "100",
+                    maxLength = 100,
                     input = state.jobName,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobNameChange(it)) },
                     placeHolder = "예) 프로덕트 디자이너",
-                    maxLines = 1,
                 )
                 Spacer(
                     modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
@@ -111,12 +109,10 @@ fun NewProjectBasicInfo(
                 LogitInputField(
                     label = "채용 공고",
                     isRequired = true,
-                    maxLength = "3000",
+                    maxLength = 3000,
                     input = state.jobDesc,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobDescChange(it)) },
                     placeHolder = "주요 업무, 자격 요건, 우대 사항 등을 입력하세요",
-                    maxLines = 4,
-                    minLines = 4,
                 )
                 Spacer(
                     modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
@@ -124,11 +120,10 @@ fun NewProjectBasicInfo(
                 LogitInputField(
                     label = "기업 인재상",
                     isRequired = false,
-                    maxLength = "1000",
+                    maxLength = 1000,
                     input = state.talent,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnTalentChange(it)) },
                     placeHolder = "기업의 인재상이나 핵심가치를 입력하세요",
-                    maxLines = 4,
                 )
             }
 

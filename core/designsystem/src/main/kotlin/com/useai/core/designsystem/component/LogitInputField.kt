@@ -21,7 +21,7 @@ fun LogitInputField(
     modifier: Modifier = Modifier,
     label: String,
     isRequired: Boolean,
-    maxLength: String,
+    maxLength: Int,
     input: String = "",
     onInputChange: (String) -> Unit = {},
     placeHolder: String,
@@ -41,7 +41,7 @@ fun LogitInputField(
             )
             LetterCounter(
                 currentCount = input.length.toString(),
-                maxCount = maxLength,
+                maxCount = maxLength.toString(),
             )
         }
         Spacer(
@@ -52,6 +52,7 @@ fun LogitInputField(
             onValueChange = onInputChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = placeHolder,
+            maxLength = maxLength,
             maxLines = maxLines,
             minLines = minLines,
         )
@@ -115,7 +116,7 @@ private fun LogitInputFieldPreview() {
             LogitInputField(
                 label = "기업명",
                 isRequired = true,
-                maxLength = "100",
+                maxLength = 100,
                 placeHolder = "기업명",
             )
         }
