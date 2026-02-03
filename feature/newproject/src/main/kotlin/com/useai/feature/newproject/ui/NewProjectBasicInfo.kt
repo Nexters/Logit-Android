@@ -133,13 +133,16 @@ fun NewProjectBasicInfo(
             }
 
             Surface(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = dimensionResource(R.dimen.spacing_cta_button_area_vertical)
+                    ),
                 color = LogitTheme.colors.white,
             ) {
                 LogitCtaButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     text = "다음으로",
                     onClick = {
                         state.eventSink(NewProjectBasicInfoScreen.Event.Next)
