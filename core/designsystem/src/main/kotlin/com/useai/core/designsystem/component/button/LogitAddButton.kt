@@ -2,7 +2,6 @@ package com.useai.core.designsystem.component.button
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -37,25 +36,23 @@ fun LogitAddButton(
             disabledContentColor = LogitTheme.colors.gray300
         )
     ) {
-        Row {
-            Image(
-                modifier = Modifier
-                    .size(18.dp)
-                    .align(Alignment.CenterVertically),
-                painter = painterResource(LogitIcons.Add),
-                contentDescription = "추가하기",
-            )
-            Spacer(
-                modifier = Modifier.width(8.dp)
-            )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .weight(1f),
-                text = "추가하기",
-                style = LogitTheme.typography.body6_2,
-            )
-        }
+        Image(
+            modifier = Modifier
+                .size(18.dp)
+                .align(Alignment.CenterVertically),
+            painter = painterResource(LogitIcons.Add),
+            contentDescription = "추가하기",
+        )
+        Spacer(
+            modifier = Modifier.width(8.dp)
+        )
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1f),
+            text = "추가하기",
+            style = LogitTheme.typography.body6_2,
+        )
     }
 }
 
