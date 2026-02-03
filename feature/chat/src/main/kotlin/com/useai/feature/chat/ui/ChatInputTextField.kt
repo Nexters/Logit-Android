@@ -3,8 +3,7 @@ package com.useai.feature.chat.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -44,11 +43,11 @@ internal fun ChatInputTextField(
         singleLine = true
     ) { field ->
 
-        Row(
+        Box(
             modifier = Modifier
                 .padding(vertical = 5.dp)
                 .padding(start = 14.dp, end = 5.dp),
-            verticalAlignment = Alignment.CenterVertically
+            contentAlignment = Alignment.CenterStart
         ) {
             if (value.isEmpty()) {
                 Text(
@@ -59,7 +58,6 @@ internal fun ChatInputTextField(
             }
             field()
 
-            Spacer(modifier = Modifier.weight(1f))
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_send),
                 contentDescription = stringResource(R.string.content_description_send),
@@ -77,6 +75,7 @@ internal fun ChatInputTextField(
                         color = if (value.isEmpty()) LogitTheme.colors.gray50 else LogitTheme.colors.primary100
                     )
                     .padding(7.dp)
+                    .align(Alignment.CenterEnd)
             )
         }
     }
