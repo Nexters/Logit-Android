@@ -11,11 +11,14 @@ import java.time.LocalDateTime
 @Serializable
 data class ChattingHistoryResponse(
     @SerialName("chats") val chats: List<ChattingContentResponse>,
-    @SerialName("created_at") val createdAt: String,
-    @SerialName("experience_ids") val experienceIds: List<Int>,
+    @SerialName("project_created_at") val projectCreatedAt: String,
+    @SerialName("experience_ids") val experienceIds: List<String>,
     @SerialName("project_name") val projectName: String,
     @SerialName("question") val questionTitle: String,
-    @SerialName("question_id") val questionId: Int,
+    @SerialName("question_id") val questionId: String,
+    @SerialName("next_cursor") val nextCursor: String?,
+    @SerialName("has_more") val hasMore: Boolean,
+    @SerialName("remaining_chats") val remainingChats: Int
 )
 
 @Serializable
@@ -28,7 +31,15 @@ data class ChattingContentResponse(
 )
 
 fun ChattingHistoryResponse.toChattingHistory() = ChattingHistory(
-    chattings = chats.map { it.toChattingContent() }
+    chattings = chats.map { it.toChattingContent() },
+    projectCreatedAt = projectCreatedAt.toLocalDateTime() ?: LocalDateTime.MIN,
+    experienceIds = experienceIds,
+    questionId = questionId,
+    projectName = projectName,
+    questionTitle = questionTitle,
+    nextCursor = nextCursor,
+    hasMore = hasMore,
+    remainingChats = remainingChats
 )
 
 fun ChattingContentResponse.toChattingContent() : ChattingContent {
@@ -40,7 +51,7 @@ fun ChattingContentResponse.toChattingContent() : ChattingContent {
                 createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN
             )
         }
-        "ai" -> {
+        "assistant" -> {
             ChattingContent.AI(
                 id = id,
                 message = content,

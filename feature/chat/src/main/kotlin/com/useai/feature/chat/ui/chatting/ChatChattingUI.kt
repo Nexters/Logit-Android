@@ -111,35 +111,51 @@ internal fun ChatChattingUI(
 @Preview(showBackground = true)
 private fun ChatChattingUIPreview() {
     ChatChattingUI(
-        state = ChatScreen.State.Chatting(
-            chattingHistory = ChattingHistory(listOf(
-                ChattingContent.AI(
-                    message = "안녕하세요 자소서 대신 써드립니다",
-                    isLetter = false,
-                    id = "",
-                    createdAt = LocalDateTime.MIN
+        state = ChatScreen.State.Success(
+            chattingHistory = ChattingHistory(
+                chattings = listOf(
+                    ChattingContent.AI(
+                        message = "안녕하세요 자소서 대신 써드립니다",
+                        isLetter = false,
+                        id = "",
+                        createdAt = LocalDateTime.MIN
+                    ),
+                    ChattingContent.User(
+                        message = "으아아아아아ㅏ아아아아아",
+                        id = "",
+                        createdAt = LocalDateTime.MIN
+                    ),
+                    ChattingContent.AI(
+                        message = "그러면 도와드릴 수 없습니다.",
+                        isLetter = false,
+                        id = "",
+createdAt = LocalDateTime.MIN
+                    ),
+                    ChattingContent.User(message = "써줘", id = "", createdAt = LocalDateTime.MIN),
+                    ChattingContent.AI(
+                        message = "저는 코딩을 잘하구여 책임감이 뛰어나구요 성실합니다. " +
+                                "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 ",
+                        isLetter = true,
+                        id = "",
+                        createdAt = LocalDateTime.MIN
+                    ),
                 ),
-                ChattingContent.User(message = "으아아아아아ㅏ아아아아아", id = "", createdAt = LocalDateTime.MIN),
-                ChattingContent.AI(
-                    message = "그러면 도와드릴 수 없습니다.",
-                    isLetter = false,
-                    id = "",
-                    createdAt = LocalDateTime.MIN
-                ),
-                ChattingContent.User(message = "써줘", id = "", createdAt = LocalDateTime.MIN),
-                ChattingContent.AI(
-                    message = "저는 코딩을 잘하구여 책임감이 뛰어나구요 성실합니다. " +
-                            "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 ",
-                    isLetter = true,
-                    id = "",
-                    createdAt = LocalDateTime.MIN
-                ),
-            )),
+                projectCreatedAt = LocalDateTime.now(),
+                experienceIds = emptyList(),
+                questionId = "",
+                projectName = "Test Project",
+                questionTitle = "Test Question",
+                nextCursor = null,
+                hasMore = false,
+                remainingChats = 0
+            ),
             userInput = "제대로 써",
             streamingStatus = ChattingStreamingStatus.Idle,
-            questions = listOf(Question("","",1000, ""), Question("","",1000, "")),
-            currentQuestion = Question("","",1000, ""),
+            questions = listOf(Question("", "", 1000, ""), Question("", "", 1000, "")),
+            currentQuestion = Question("", "", 1000, ""),
             eventSink = {},
+            currentCategory = ChatScreenCategory.CHATTING,
+            letter = "",
         ),
     )
 }
