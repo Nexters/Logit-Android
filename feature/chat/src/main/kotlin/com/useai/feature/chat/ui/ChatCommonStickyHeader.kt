@@ -1,5 +1,6 @@
 package com.useai.feature.chat.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.Question
 import com.useai.feature.chat.ChatScreenCategory
 
@@ -38,6 +40,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
     stickyHeader {
         Row(
             modifier = Modifier
+                .background(color = LogitTheme.colors.white)
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
