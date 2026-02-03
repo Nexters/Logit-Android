@@ -52,6 +52,8 @@ class ChatPresenter @AssistedInject constructor(
         var currentQuestion by rememberRetained { mutableStateOf(Question.EMPTY) }
         var selectedCategory by rememberRetained { mutableStateOf(ChatScreenCategory.CHATTING) }
         var userMessageInput by rememberRetained { mutableStateOf("") }
+        var isHeaderUIExpanded by rememberRetained { mutableStateOf(false) }
+        var streamingStatus by rememberRetained { mutableStateOf<ChattingStreamingStatus>(ChattingStreamingStatus.Idle) }
 
         val chattingHistories = rememberRetained {
             mutableStateMapOf<Question, ChattingHistory>()
@@ -78,6 +80,7 @@ class ChatPresenter @AssistedInject constructor(
                         userInput = "",
                         currentCategory = ChatScreenCategory.CHATTING,
                         letter = currentQuestion.letter,
+                        isHeaderUIExpanded = isHeaderUIExpanded
                     ) { event ->
                         when(event) {
                             is ChatScreen.Event.AddQuestion -> TODO()
@@ -107,42 +110,29 @@ class ChatPresenter @AssistedInject constructor(
                                             )
                                         )
                                     }.catch {
-                                        state.runOn<ChatScreen.State.Success> {
-                                            state = this.copy(streamingStatus = ChattingStreamingStatus.Error)
-                                        }
+                                        streamingStatus = ChattingStreamingStatus.Error
                                     }.collect { streaming ->
                                         when (streaming) {
                                             is ChattingStreaming.Streaming -> {
-                                                state.runOn<ChatScreen.State.Success> {
-                                                    state = this.copy(
-                                                        streamingStatus =
-                                                            ChattingStreamingStatus.Streaming(
-                                                                streamingChatStringBuilder.append(
-                                                                    streaming.data
-                                                                ).toString()
-                                                            )
-                                                    )
-                                                }
+                                                streamingStatus = ChattingStreamingStatus.Streaming(
+                                                    streamingChatStringBuilder.append(streaming.data).toString()
+                                                )
                                             }
 
                                             is ChattingStreaming.Done -> {
                                                 streamingChatStringBuilder.clear()
-                                                state.runOn<ChatScreen.State.Success> {
-                                                    state = this.copy(
-                                                        streamingStatus = ChattingStreamingStatus.Idle,
-                                                        chattingHistory = chattingHistory.copy(
-                                                            chattings = buildList {
-                                                                addAll(chattingHistory.chattings)
-                                                                add(ChattingContent.AI(
-                                                                    id = streaming.chatId,
-                                                                    message = streamingChatStringBuilder.toString(),
-                                                                    createdAt = LocalDateTime.now(),
-                                                                    isLetter = streaming.isDraft
-                                                                ))
-                                                            }
-                                                        )
-                                                    )
-                                                }
+                                                streamingStatus = ChattingStreamingStatus.Idle
+                                                chattingHistories[currentQuestion] = chattingHistories[currentQuestion]!!.copy(
+                                                    chattings = buildList {
+                                                        addAll(chattingHistories[currentQuestion]!!.chattings)
+                                                        add(ChattingContent.AI(
+                                                            id = streaming.chatId,
+                                                            message = streamingChatStringBuilder.toString(),
+                                                            createdAt = LocalDateTime.now(),
+                                                            isLetter = streaming.isDraft
+                                                        ))
+                                                    }
+                                                )
                                             }
                                         }
                                     }
@@ -156,7 +146,6 @@ class ChatPresenter @AssistedInject constructor(
                                     ).onSuccess { question ->
                                         if (currentQuestion.id == question.id) {
                                             currentQuestion = question
-
                                         }
                                     }
                                 }
@@ -166,6 +155,9 @@ class ChatPresenter @AssistedInject constructor(
                             }
                             is ChatScreen.Event.UploadExperience -> {
                                 // MVP X
+                            }
+                            is ChatScreen.Event.ExpandOrShrinkHeader -> {
+                                isHeaderUIExpanded = !isHeaderUIExpanded
                             }
                         }
                     }
@@ -177,11 +169,14 @@ class ChatPresenter @AssistedInject constructor(
 
         state.runOn<ChatScreen.State.Success> {
             state = this.copy(
+                questions = questions,
                 currentQuestion = currentQuestion,
                 chattingHistory = chattingHistories[currentQuestion]!!,
                 userInput = userMessageInput,
                 currentCategory = selectedCategory,
-                letter = currentQuestion.letter
+                letter = currentQuestion.letter,
+                streamingStatus = streamingStatus,
+                isHeaderUIExpanded = isHeaderUIExpanded
             )
         }
 

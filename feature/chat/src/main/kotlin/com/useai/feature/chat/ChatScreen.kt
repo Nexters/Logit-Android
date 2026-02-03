@@ -22,6 +22,7 @@ data class ChatScreen(val projectId: String): Screen {
             val streamingStatus: ChattingStreamingStatus,
             val userInput: String,
             val letter: String,
+            val isHeaderUIExpanded: Boolean,
             val eventSink: (Event) -> Unit
         ) : State
         data object Loading : State
@@ -37,6 +38,7 @@ data class ChatScreen(val projectId: String): Screen {
         data class SendMessage(val message: String) : Event
         data class CopyMessage(val message: String) : Event
         data class UpdateLetter(val letter: String) : Event
+        data object ExpandOrShrinkHeader : Event
     }
 
 }

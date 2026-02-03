@@ -49,6 +49,7 @@ internal fun ChatChattingUI(
             chatCommonStickyHeader(
                 questions = state.questions,
                 currentQuestion = state.currentQuestion,
+                isHeaderUIExpanded = state.isHeaderUIExpanded,
                 onQuestionTabChange = { question ->
                     state.eventSink(ChatScreen.Event.ChangeQuestion(question))
                 },
@@ -57,6 +58,9 @@ internal fun ChatChattingUI(
                 },
                 onCategoryChange = { category ->
                     state.eventSink(ChatScreen.Event.ChangeCategory(category))
+                },
+                onQuestionTitleExpand = {
+                    state.eventSink(ChatScreen.Event.ExpandOrShrinkHeader)
                 }
             )
 
@@ -173,6 +177,7 @@ createdAt = LocalDateTime.MIN
             eventSink = {},
             currentCategory = ChatScreenCategory.CHATTING,
             letter = "",
+            isHeaderUIExpanded = false
         ),
     )
 }
