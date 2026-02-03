@@ -93,7 +93,9 @@ internal object NetworkModule {
         return OkHttpClient.Builder()
             .apply {
                 if (BuildConfig.DEBUG)
-                    addInterceptor(HttpLoggingInterceptor())
+                    addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
             }
             .build()
     }
