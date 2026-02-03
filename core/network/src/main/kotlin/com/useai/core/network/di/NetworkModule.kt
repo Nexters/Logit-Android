@@ -41,7 +41,7 @@ internal object NetworkModule {
                 handler,
                 EventSource.Builder(
                     ConnectStrategy
-                        .http(URI.create(BuildConfig.BASE_URL))
+                        .http(URI.create(BuildConfig.BASE_URL + "api/v1/projects/chats"))
                         .methodAndBody("POST", requestJsonString.toRequestBody(mediaType))
                         .httpClient(client)
                 )
