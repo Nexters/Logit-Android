@@ -15,16 +15,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.retained.rememberRetained
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.LogitFormTitle
 import com.useai.core.designsystem.component.LogitInputField
@@ -42,12 +38,9 @@ fun NewProjectBasicInfo(
     state: NewProjectBasicInfoScreen.State,
     modifier: Modifier = Modifier
 ) {
-    var companyName by rememberRetained { mutableStateOf("") }
-    var jobName by rememberRetained { mutableStateOf("") }
-    var jobDesc by rememberRetained { mutableStateOf("") }
-    var talent by rememberRetained { mutableStateOf("") }
-
-    val isButtonEnabled = companyName.isNotBlank() && jobName.isNotBlank() && jobDesc.isNotBlank()
+    val isButtonEnabled = state.companyName.isNotBlank() && 
+            state.jobName.isNotBlank() && 
+            state.jobDesc.isNotBlank()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -90,8 +83,8 @@ fun NewProjectBasicInfo(
                     label = "기업명",
                     isRequired = true,
                     maxLength = "100",
-                    input = companyName,
-                    onInputChange = { companyName = it },
+                    input = state.companyName,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnCompanyNameChange(it)) },
                     placeHolder = "예) 로짓 컴퍼니",
                     maxLines = 1,
                 )
@@ -102,8 +95,8 @@ fun NewProjectBasicInfo(
                     label = "직무명",
                     isRequired = true,
                     maxLength = "100",
-                    input = jobName,
-                    onInputChange = { jobName = it },
+                    input = state.jobName,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobNameChange(it)) },
                     placeHolder = "예) 프로덕트 디자이너",
                     maxLines = 1,
                 )
@@ -114,8 +107,8 @@ fun NewProjectBasicInfo(
                     label = "채용 공고",
                     isRequired = true,
                     maxLength = "3000",
-                    input = jobDesc,
-                    onInputChange = { jobDesc = it },
+                    input = state.jobDesc,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobDescChange(it)) },
                     placeHolder = "주요 업무, 자격 요건, 우대 사항 등을 입력하세요",
                     maxLines = 4,
                     minLines = 4,
@@ -127,8 +120,8 @@ fun NewProjectBasicInfo(
                     label = "기업 인재상",
                     isRequired = false,
                     maxLength = "1000",
-                    input = talent,
-                    onInputChange = { talent = it },
+                    input = state.talent,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnTalentChange(it)) },
                     placeHolder = "기업의 인재상이나 핵심가치를 입력하세요",
                     maxLines = 4,
                 )
@@ -148,12 +141,7 @@ fun NewProjectBasicInfo(
                         .padding(horizontal = 20.dp, vertical = 10.dp),
                     text = "다음으로",
                     onClick = {
-                        state.eventSink(
-                            NewProjectBasicInfoScreen.Event.Next(
-                                companyName,
-                                jobName
-                            )
-                        )
+                        state.eventSink(NewProjectBasicInfoScreen.Event.Next)
                     },
                     enabled = isButtonEnabled
                 )
@@ -167,7 +155,13 @@ fun NewProjectBasicInfo(
 private fun NewProjectBasicInfoPreview() {
     LogitTheme {
         NewProjectBasicInfo(
-            state = NewProjectBasicInfoScreen.State { }
+            state = NewProjectBasicInfoScreen.State(
+                companyName = "",
+                jobName = "",
+                jobDesc = "",
+                talent = "",
+                eventSink = {}
+            )
         )
     }
 }
