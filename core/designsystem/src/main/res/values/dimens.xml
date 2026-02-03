@@ -4,5 +4,5 @@
     <dimen name="spacing_form_vertical">12dp</dimen>
     <dimen name="spacing_title_to_desc">3dp</dimen>
     <dimen name="spacing_label_to_input">10dp</dimen>
-    <dimen name="space_between_fields">20dp</dimen>
+    <dimen name="spacing_between_fields">20dp</dimen>
 </resources>

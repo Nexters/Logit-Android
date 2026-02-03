@@ -94,7 +94,7 @@ fun NewProjectBasicInfo(
                     maxLines = 1,
                 )
                 Spacer(
-                    modifier = Modifier.height(dimensionResource(R.dimen.space_between_fields))
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
                 )
                 LogitInputField(
                     label = "직무명",
@@ -106,7 +106,7 @@ fun NewProjectBasicInfo(
                     maxLines = 1,
                 )
                 Spacer(
-                    modifier = Modifier.height(dimensionResource(R.dimen.space_between_fields))
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
                 )
                 LogitInputField(
                     label = "채용 공고",
@@ -119,7 +119,7 @@ fun NewProjectBasicInfo(
                     minLines = 4,
                 )
                 Spacer(
-                    modifier = Modifier.height(dimensionResource(R.dimen.space_between_fields))
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
                 )
                 LogitInputField(
                     label = "기업 인재상",
