@@ -41,7 +41,7 @@ fun LogitAddButton(
                 .size(18.dp)
                 .align(Alignment.CenterVertically),
             painter = painterResource(LogitIcons.Add),
-            contentDescription = "추가하기",
+            contentDescription = null,
         )
         Spacer(
             modifier = Modifier.width(8.dp)
