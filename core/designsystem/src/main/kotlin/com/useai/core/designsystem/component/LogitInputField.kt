@@ -49,9 +49,7 @@ fun LogitInputField(
         )
         LogitOutlinedTextField(
             value = input,
-            onValueChange = {
-                onInputChange(it)
-            },
+            onValueChange = onInputChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = placeHolder,
             maxLines = maxLines,
