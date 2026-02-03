@@ -2,11 +2,15 @@ package com.useai.feature.chat.ui.chatting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,6 +19,7 @@ import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
 import com.useai.feature.chat.ChatScreen
+import com.useai.feature.chat.ChatScreenCategory
 import com.useai.feature.chat.ChattingStreamingStatus
 import com.useai.feature.chat.ui.ChatInputRow
 import com.useai.feature.chat.ui.chatCommonStickyHeader
@@ -22,16 +27,24 @@ import java.time.LocalDateTime
 
 @Composable
 internal fun ChatChattingUI(
-    state: ChatScreen.State.Chatting,
-    modifier: Modifier = Modifier
+    state: ChatScreen.State.Success,
+    modifier: Modifier = Modifier,
 ) {
-    // TODO("Empty 채팅 뷰")
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(state.chattingHistory.chattings.size, state.streamingStatus) {
+        if (state.chattingHistory.chattings.isNotEmpty()) {
+            lazyListState.animateScrollToItem(state.chattingHistory.chattings.lastIndex, Int.MAX_VALUE)
+        }
+    }
+
     Column(modifier = modifier) {
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .weight(1f)
+                .weight(1f),
         ) {
             chatCommonStickyHeader(
                 questions = state.questions,
@@ -61,7 +74,7 @@ internal fun ChatChattingUI(
                             AIChattingItem(
                                 chatting = chat,
                                 onUpdateLetterClick = {
-                                    state.eventSink(ChatScreen.Event.Chatting.UpdateLetter(chat.message))
+                                    state.eventSink(ChatScreen.Event.UpdateLetter(chat.message))
                                 },
                                 modifier = Modifier.align(Alignment.CenterStart)
                             )
@@ -90,6 +103,10 @@ internal fun ChatChattingUI(
                     )
                 }
             }
+
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
         }
 
         ChatInputRow(
@@ -98,7 +115,7 @@ internal fun ChatChattingUI(
                 state.eventSink(ChatScreen.Event.InputMessage(it))
             },
             onSendClick = {
-                state.eventSink(ChatScreen.Event.Chatting.SendMessage(state.userInput))
+                state.eventSink(ChatScreen.Event.SendMessage(state.userInput))
             },
             modifier = Modifier
                 .fillMaxWidth()
