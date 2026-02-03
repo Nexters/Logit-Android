@@ -1,21 +1,21 @@
 package com.useai.feature.newproject.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,13 +38,15 @@ fun NewProjectBasicInfo(
     state: NewProjectBasicInfoScreen.State,
     modifier: Modifier = Modifier
 ) {
-    val isButtonEnabled = state.companyName.isNotBlank() && 
-            state.jobName.isNotBlank() && 
-            state.jobDesc.isNotBlank()
+    val isButtonEnabled = state.companyName.isNotBlank() &&
+        state.jobName.isNotBlank() &&
+        state.jobDesc.isNotBlank()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = LogitTheme.colors.white,
+        // 내비바와 키보드 padding이 중복 계산되어 여백이 생기는 문제 방지
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.union(WindowInsets.ime),
         topBar = {
             PopUpTitle(
                 onClick = {
@@ -53,17 +55,20 @@ fun NewProjectBasicInfo(
             )
         },
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .imePadding()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        horizontal = dimensionResource(R.dimen.spacing_form_horizontal),
+                        vertical = dimensionResource(R.dimen.spacing_form_vertical)
+                    ),
             ) {
                 LogitStepper(
                     currentStep = "1",
@@ -125,14 +130,10 @@ fun NewProjectBasicInfo(
                     placeHolder = "기업의 인재상이나 핵심가치를 입력하세요",
                     maxLines = 4,
                 )
-                Spacer(modifier = Modifier.height(100.dp))
             }
 
             Surface(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .navigationBarsPadding(),
+                modifier = Modifier.fillMaxWidth(),
                 color = LogitTheme.colors.white,
             ) {
                 LogitCtaButton(
