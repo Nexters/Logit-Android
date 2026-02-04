@@ -225,10 +225,11 @@ private fun DeleteButton(
 ) {
     LogitOutlinedContainer(
         modifier = modifier
-            .clickable(onClick = onClick)
     ) {
         Box(
-            modifier = Modifier.size(44.dp),
+            modifier = Modifier
+                .size(44.dp)
+                .clickable(onClick = onClick),
             contentAlignment = Alignment.Center
         ) {
             Image(
