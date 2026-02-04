@@ -3,6 +3,7 @@ package com.useai.core.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,6 +56,10 @@ fun LogitInputField(
             modifier = Modifier.fillMaxWidth(),
             placeholder = placeHolder,
             maxLength = maxLength,
+            contentPadding = PaddingValues(
+                horizontal = dimensionResource(R.dimen.spacing_input_field_horizontal),
+                vertical = dimensionResource(R.dimen.spacing_input_field_vertical)
+            ),
             maxLines = maxLines,
             minLines = minLines,
         )
@@ -119,7 +124,7 @@ private fun LogitInputFieldPreview() {
                 label = "기업명",
                 isRequired = true,
                 maxLength = 100,
-                placeHolder = "기업명",
+                placeHolder = "예) 로짓 컴퍼니",
             )
         }
     }
@@ -135,8 +140,8 @@ private fun LogitInputFieldWithNoMaxLengthPreview() {
         ) {
             LogitInputField(
                 label = "기업명",
-                isRequired = true,
-                placeHolder = "기업명",
+                isRequired = false,
+                placeHolder = "예) 로짓 컴퍼니",
             )
         }
     }
