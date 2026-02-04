@@ -14,6 +14,7 @@ import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.chat.ChatScreenCategory
 import com.useai.feature.chat.ui.chatting.ChatChattingUI
+import com.useai.feature.chat.ui.letter.ChatLetterUI
 import dagger.hilt.android.components.ActivityRetainedComponent
 
 @CircuitInject(ChatScreen::class, ActivityRetainedComponent::class)
@@ -33,7 +34,7 @@ fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
                 if (state.currentCategory == ChatScreenCategory.CHATTING)
                     ChatChattingUI(state, Modifier.fillMaxSize().background(color = LogitTheme.colors.white), chattingListState)
                 else if (state.currentCategory == ChatScreenCategory.LETTER)
-                    TODO("ChatLetterUI(state, Modifier.fillMaxSize())")
+                    ChatLetterUI(state, Modifier.fillMaxSize().background(color = LogitTheme.colors.white))
             }
 
             is ChatScreen.State.Loading -> {
