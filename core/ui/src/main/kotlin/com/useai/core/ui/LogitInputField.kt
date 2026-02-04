@@ -21,7 +21,7 @@ fun LogitInputField(
     modifier: Modifier = Modifier,
     label: String,
     isRequired: Boolean,
-    maxLength: Int,
+    maxLength: Int = 0,
     input: String = "",
     onInputChange: (String) -> Unit = {},
     placeHolder: String,
@@ -39,10 +39,12 @@ fun LogitInputField(
                 text = label,
                 isRequired = isRequired,
             )
-            LetterCounter(
-                currentCount = input.length.toString(),
-                maxCount = maxLength.toString(),
-            )
+            if (maxLength > 0) {
+                LetterCounter(
+                    currentCount = input.length.toString(),
+                    maxCount = maxLength.toString(),
+                )
+            }
         }
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.spacing_label_to_input))
@@ -60,7 +62,7 @@ fun LogitInputField(
 }
 
 @Composable
-private fun InputFieldLabel(
+fun InputFieldLabel(
     modifier: Modifier = Modifier,
     text: String,
     isRequired: Boolean = true,
@@ -117,6 +119,23 @@ private fun LogitInputFieldPreview() {
                 label = "기업명",
                 isRequired = true,
                 maxLength = 100,
+                placeHolder = "기업명",
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun LogitInputFieldWithNoMaxLengthPreview() {
+    LogitTheme {
+        Box(
+            modifier = Modifier
+                .background(LogitTheme.colors.white)
+        ) {
+            LogitInputField(
+                label = "기업명",
+                isRequired = true,
                 placeHolder = "기업명",
             )
         }

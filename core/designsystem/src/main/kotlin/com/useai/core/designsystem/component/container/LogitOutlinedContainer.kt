@@ -13,8 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.theme.LogitTheme
@@ -22,16 +20,13 @@ import com.useai.core.designsystem.theme.LogitTheme
 @Composable
 fun LogitOutlinedContainer(
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(8.dp),
-    containerColor: Color = LogitTheme.colors.white,
-    border: BorderStroke = BorderStroke(1.dp, LogitTheme.colors.gray100),
     content: @Composable () -> Unit
 ) {
     Surface(
         modifier = modifier,
-        shape = shape,
-        color = containerColor,
-        border = border
+        shape = RoundedCornerShape(8.dp),
+        color = LogitTheme.colors.white,
+        border = BorderStroke(1.dp, LogitTheme.colors.gray100)
     ) {
         content()
     }

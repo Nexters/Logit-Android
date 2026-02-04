@@ -3,7 +3,6 @@ package com.useai.feature.newproject.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +29,7 @@ import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFormContainer
+import com.useai.core.ui.LetterCountInput
 import com.useai.core.ui.LogitAddButton
 import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.LogitStepper
@@ -100,6 +98,9 @@ private fun NewQuestion(
     placeHolder: String = "",
     isAdditionalQuestion: Boolean = false,
 ) {
+    var question by remember { mutableStateOf("") }
+    var letterCount by remember { mutableStateOf("") }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -107,8 +108,8 @@ private fun NewQuestion(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LogitOutlinedTextField(
-            value = "",
-            onValueChange = onValueChange,
+            value = question,
+            onValueChange = { question = it },
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
@@ -117,10 +118,13 @@ private fun NewQuestion(
             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
         )
         Spacer(Modifier.width(12.dp))
-        LetterCountField(
+        LetterCountInput(
             modifier = Modifier
                 .fillMaxHeight()
-                .width(86.dp),
+                .width(82.dp),
+            horizontalPadding = 14,
+            letterCount = letterCount,
+            onValueChange = { letterCount = it }
         )
         if (isAdditionalQuestion) {
             Spacer(Modifier.width(12.dp))
@@ -129,49 +133,6 @@ private fun NewQuestion(
                 onClick = {
                     onValueChange("") // TODO: 삭제
                 },
-            )
-        }
-    }
-}
-
-@Composable
-private fun LetterCountField(
-    modifier: Modifier = Modifier,
-) {
-    var text by remember { mutableStateOf("") }
-
-    LogitOutlinedContainer(
-        modifier = modifier,
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            BasicTextField(
-                modifier = Modifier
-                    .width(39.dp),
-                value = text,
-                onValueChange = { text = it },
-                textStyle = LogitTheme.typography.body6_1,
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box {
-                        if (text.isEmpty()) {
-                            Text(
-                                text = "글자수",
-                                style = LogitTheme.typography.body6_1,
-                                color = LogitTheme.colors.gray200,
-                            )
-                        }
-                        innerTextField()
-                    }
-                },
-            )
-            Spacer(Modifier.width(2.dp))
-            Text(
-                text = "자",
-                style = LogitTheme.typography.body6_1,
-                color = LogitTheme.colors.primary500,
             )
         }
     }
