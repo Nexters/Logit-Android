@@ -38,6 +38,7 @@ fun LogitOutlinedTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     placeholder: String? = null,
+    maxLength: Int = Int.MAX_VALUE,
     contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
     border: BorderStroke = BorderStroke(1.dp, LogitTheme.colors.gray100),
     shape: Shape = RoundedCornerShape(8.dp),
@@ -57,7 +58,11 @@ fun LogitOutlinedTextField(
 
     BasicTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { newValue ->
+            if (newValue.length <= maxLength) {
+                onValueChange(newValue)
+            }
+        },
         modifier = Modifier
             .clip(shape)
             .background(color = LogitTheme.colors.white, shape = shape)

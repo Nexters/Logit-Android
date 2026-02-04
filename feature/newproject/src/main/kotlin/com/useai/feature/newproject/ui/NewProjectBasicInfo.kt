@@ -1,21 +1,21 @@
 package com.useai.feature.newproject.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,13 +38,15 @@ fun NewProjectBasicInfo(
     state: NewProjectBasicInfoScreen.State,
     modifier: Modifier = Modifier
 ) {
-    val isButtonEnabled = state.companyName.isNotBlank() && 
-            state.jobName.isNotBlank() && 
-            state.jobDesc.isNotBlank()
+    val isButtonEnabled = state.companyName.isNotBlank() &&
+        state.jobName.isNotBlank() &&
+        state.jobDesc.isNotBlank()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = LogitTheme.colors.white,
+        // 내비바와 키보드 padding이 중복 계산되어 여백이 생기는 문제 방지
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.union(WindowInsets.ime),
         topBar = {
             PopUpTitle(
                 onClick = {
@@ -53,17 +55,20 @@ fun NewProjectBasicInfo(
             )
         },
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .imePadding()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        horizontal = dimensionResource(R.dimen.spacing_form_horizontal),
+                        vertical = dimensionResource(R.dimen.spacing_form_vertical)
+                    ),
             ) {
                 LogitStepper(
                     currentStep = "1",
@@ -82,63 +87,57 @@ fun NewProjectBasicInfo(
                 LogitInputField(
                     label = "기업명",
                     isRequired = true,
-                    maxLength = "100",
+                    maxLength = 100,
                     input = state.companyName,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnCompanyNameChange(it)) },
                     placeHolder = "예) 로짓 컴퍼니",
-                    maxLines = 1,
                 )
                 Spacer(
-                    modifier = Modifier.height(dimensionResource(R.dimen.space_between_fields))
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
                 )
                 LogitInputField(
                     label = "직무명",
                     isRequired = true,
-                    maxLength = "100",
+                    maxLength = 100,
                     input = state.jobName,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobNameChange(it)) },
                     placeHolder = "예) 프로덕트 디자이너",
-                    maxLines = 1,
                 )
                 Spacer(
-                    modifier = Modifier.height(dimensionResource(R.dimen.space_between_fields))
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
                 )
                 LogitInputField(
                     label = "채용 공고",
                     isRequired = true,
-                    maxLength = "3000",
+                    maxLength = 3000,
                     input = state.jobDesc,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobDescChange(it)) },
                     placeHolder = "주요 업무, 자격 요건, 우대 사항 등을 입력하세요",
-                    maxLines = 4,
-                    minLines = 4,
                 )
                 Spacer(
-                    modifier = Modifier.height(dimensionResource(R.dimen.space_between_fields))
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
                 )
                 LogitInputField(
                     label = "기업 인재상",
                     isRequired = false,
-                    maxLength = "1000",
+                    maxLength = 1000,
                     input = state.talent,
                     onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnTalentChange(it)) },
                     placeHolder = "기업의 인재상이나 핵심가치를 입력하세요",
-                    maxLines = 4,
                 )
-                Spacer(modifier = Modifier.height(100.dp))
             }
 
             Surface(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .navigationBarsPadding(),
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = dimensionResource(R.dimen.spacing_cta_button_area_vertical)
+                    ),
                 color = LogitTheme.colors.white,
             ) {
                 LogitCtaButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     text = "다음으로",
                     onClick = {
                         state.eventSink(NewProjectBasicInfoScreen.Event.Next)
