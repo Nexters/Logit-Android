@@ -21,7 +21,6 @@ data class ChatScreen(val projectId: String): Screen {
             val chattingHistory: ChattingHistory,
             val streamingStatus: ChattingStreamingStatus,
             val userInput: String,
-            val letter: String,
             val isHeaderUIExpanded: Boolean,
             val eventSink: (Event) -> Unit
         ) : State

@@ -176,7 +176,6 @@ createdAt = LocalDateTime.MIN
             currentQuestion = Question("", "", 1000, ""),
             eventSink = {},
             currentCategory = ChatScreenCategory.CHATTING,
-            letter = "",
             isHeaderUIExpanded = false
         ),
     )

@@ -3,6 +3,7 @@ package com.useai.feature.chat
 import android.content.ClipData
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -48,6 +49,7 @@ class ChatPresenter @AssistedInject constructor(
         val scope = rememberStableCoroutineScope()
         val localClipboard = LocalClipboard.current
 
+        val questions = rememberRetained { mutableStateListOf<Question>() }
         var currentQuestion by rememberRetained { mutableStateOf(Question.EMPTY) }
         var selectedCategory by rememberRetained { mutableStateOf(ChatScreenCategory.CHATTING) }
         var userMessageInput by rememberRetained { mutableStateOf("") }
@@ -56,9 +58,9 @@ class ChatPresenter @AssistedInject constructor(
         val chattingHistories = rememberRetained { mutableStateMapOf<Question, ChattingHistory>() }
 
         val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
-            questionRepository.getQuestions(screen.projectId).onSuccess { questions ->
-                currentQuestion = questions.first()
-                questions.fastMap { question ->
+            questionRepository.getQuestions(screen.projectId).onSuccess { initialQuestions ->
+                currentQuestion = initialQuestions.first()
+                initialQuestions.fastMap { question ->
                     async {
                         chattingRepository.getChatHistory(question.id).onSuccess {
                             chattingHistories[question] = it
@@ -70,17 +72,18 @@ class ChatPresenter @AssistedInject constructor(
 
                 if (value !is ChatScreen.State.LoadFailed) {
                     value = ChatScreen.State.Success(
-                        questions = questions,
+                        questions = initialQuestions,
                         currentQuestion = currentQuestion,
                         chattingHistory = chattingHistories[currentQuestion]!!,
                         streamingStatus = ChattingStreamingStatus.Idle,
                         userInput = "",
                         currentCategory = ChatScreenCategory.CHATTING,
-                        letter = currentQuestion.letter,
                         isHeaderUIExpanded = isHeaderUIExpanded
                     ) { event ->
                         when(event) {
-                            is ChatScreen.Event.AddQuestion -> TODO()
+                            is ChatScreen.Event.AddQuestion -> {
+
+                            }
                             is ChatScreen.Event.ChangeCategory -> {
                                 selectedCategory = event.category
                             }
@@ -144,6 +147,9 @@ class ChatPresenter @AssistedInject constructor(
                                         if (currentQuestion.id == question.id) {
                                             currentQuestion = question
                                         }
+                                        initialQuestions.indexOfFirst { it.id == question.id }.let { index ->
+                                            questions[index] = question
+                                        }
                                     }
                                 }
                             }
@@ -171,7 +177,6 @@ class ChatPresenter @AssistedInject constructor(
                 chattingHistory = chattingHistories[currentQuestion]!!,
                 userInput = userMessageInput,
                 currentCategory = selectedCategory,
-                letter = currentQuestion.letter,
                 streamingStatus = streamingStatus,
                 isHeaderUIExpanded = isHeaderUIExpanded
             )
