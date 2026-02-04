@@ -12,6 +12,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.navigation.LocalScreenProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -54,6 +55,7 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
     @Composable
     override fun present(): NewProjectBasicInfoScreen.State {
         val viewModel: NewProjectBasicInfoViewModel = hiltViewModel()
+        val screenProvider = LocalScreenProvider.current
 
         return NewProjectBasicInfoScreen.State(
             companyName = viewModel.companyName,
@@ -67,14 +69,15 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
                 is NewProjectBasicInfoScreen.Event.OnJobNameChange -> viewModel.jobName = event.job
                 is NewProjectBasicInfoScreen.Event.OnJobDescChange -> viewModel.jobDesc = event.desc
                 is NewProjectBasicInfoScreen.Event.OnTalentChange -> viewModel.talent = event.talent
-                is NewProjectBasicInfoScreen.Event.Next -> navigator.goTo(
-                    NewProjectQuestionScreen(
+                is NewProjectBasicInfoScreen.Event.Next -> {
+                    val newProjectQuestionScreen = screenProvider.newProjectQuestionScreen(
                         companyName = viewModel.companyName,
                         jobName = viewModel.jobName,
                         jobDesc = viewModel.jobDesc,
-                        talent = viewModel.talent
+                        talent = viewModel.talent,
                     )
-                )
+                    navigator.goTo(newProjectQuestionScreen)
+                }
             }
         }
     }
