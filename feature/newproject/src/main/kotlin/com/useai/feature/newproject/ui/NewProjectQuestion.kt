@@ -24,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.retained.rememberRetained
 import com.useai.core.designsystem.component.container.LogitOutlinedContainer
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
@@ -43,8 +42,7 @@ fun NewProjectQuestion(
     modifier: Modifier = Modifier,
     state: NewProjectQuestionScreen.State,
 ) {
-    var questions by rememberRetained { mutableStateOf(listOf(""))}
-    val isButtonEnabled = questions.isNotEmpty()
+    val isButtonEnabled = state.questions.any { it.isNotBlank() }
 
     InputFormContainer(
         modifier = modifier,
@@ -68,22 +66,22 @@ fun NewProjectQuestion(
         )
         Spacer(Modifier.height(75.dp))
 
-        questions.forEachIndexed { i, questionText ->
+        state.questions.forEachIndexed { i, questionText ->
             key(i) {
-                val placeHolder = if (questionText.isEmpty()) "${i + 1}번째 문항" else ""
                 NewQuestion(
                     value = questionText,
                     onValueChange = { newValue ->
-                        val newQuestions = questions.toMutableList()
-                        newQuestions[i] = newValue
-                        questions = newQuestions
+                        state.eventSink(
+                            NewProjectQuestionScreen.Event.OnQuestionChange(
+                                i,
+                                newValue
+                            )
+                        )
                     },
                     onDelete = {
-                        val newQuestions = questions.toMutableList()
-                        newQuestions.removeAt(i)
-                        questions = newQuestions
+                        state.eventSink(NewProjectQuestionScreen.Event.DeleteQuestion(i))
                     },
-                    placeHolder = placeHolder,
+                    placeHolder = if (questionText.isEmpty()) "${i + 1}번째 문항" else "",
                     isAdditionalQuestion = i > 0,
                 )
                 Spacer(Modifier.height(8.dp))
@@ -92,7 +90,7 @@ fun NewProjectQuestion(
         
         LogitAddButton(
             onClick = {
-                questions = questions + ""
+                state.eventSink(NewProjectQuestionScreen.Event.AddQuestion)
             }
         )
     }
@@ -170,7 +168,10 @@ private fun DeleteButton(
 @Composable
 private fun NewProjectQuestionPreview() {
     NewProjectQuestion(
-        state = NewProjectQuestionScreen.State { }
+        state = NewProjectQuestionScreen.State(
+            questions = listOf(""),
+            eventSink = {},
+        )
     )
 }
 
