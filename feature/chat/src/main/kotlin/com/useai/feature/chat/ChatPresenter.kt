@@ -105,7 +105,7 @@ class ChatPresenter @AssistedInject constructor(
                                         userMessageInput = ""
                                         chattingHistories[currentQuestion] = chattingHistories[currentQuestion]!!.copy(
                                             chattings = chattingHistories[currentQuestion]!!.chattings + ChattingContent.User(
-                                                id = "",
+                                                id = LocalDateTime.now().toString(),
                                                 message = event.message,
                                                 createdAt = LocalDateTime.now()
                                             )
