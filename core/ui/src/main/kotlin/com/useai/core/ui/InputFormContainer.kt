@@ -1,4 +1,4 @@
-package com.useai.feature.newproject.ui
+package com.useai.core.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.appbar.PopUpTitle
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.core.ui.LogitCtaButton
 
 @Composable
 fun InputFormContainer(
