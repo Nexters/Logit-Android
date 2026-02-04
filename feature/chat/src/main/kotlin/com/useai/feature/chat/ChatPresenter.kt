@@ -2,7 +2,6 @@ package com.useai.feature.chat
 
 import android.content.ClipData
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +11,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.util.fastMap
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
@@ -48,17 +48,14 @@ class ChatPresenter @AssistedInject constructor(
         val scope = rememberStableCoroutineScope()
         val localClipboard = LocalClipboard.current
 
-        var state by rememberRetained { mutableStateOf<ChatScreen.State>(ChatScreen.State.Loading) }
         var currentQuestion by rememberRetained { mutableStateOf(Question.EMPTY) }
         var selectedCategory by rememberRetained { mutableStateOf(ChatScreenCategory.CHATTING) }
         var userMessageInput by rememberRetained { mutableStateOf("") }
         var isHeaderUIExpanded by rememberRetained { mutableStateOf(false) }
         var streamingStatus by rememberRetained { mutableStateOf<ChattingStreamingStatus>(ChattingStreamingStatus.Idle) }
+        val chattingHistories = rememberRetained { mutableStateMapOf<Question, ChattingHistory>() }
 
-        val chattingHistories = rememberRetained {
-            mutableStateMapOf<Question, ChattingHistory>()
-        }
-        LaunchedEffect(Unit) {
+        val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
             questionRepository.getQuestions(screen.projectId).onSuccess { questions ->
                 currentQuestion = questions.first()
                 questions.fastMap { question ->
@@ -66,13 +63,13 @@ class ChatPresenter @AssistedInject constructor(
                         chattingRepository.getChatHistory(question.id).onSuccess {
                             chattingHistories[question] = it
                         }.onFailure {
-                            state = ChatScreen.State.LoadFailed
+                            value = ChatScreen.State.LoadFailed
                         }
                     }
                 }.awaitAll()
 
-                if (state !is ChatScreen.State.LoadFailed) {
-                    state = ChatScreen.State.Success(
+                if (value !is ChatScreen.State.LoadFailed) {
+                    value = ChatScreen.State.Success(
                         questions = questions,
                         currentQuestion = currentQuestion,
                         chattingHistory = chattingHistories[currentQuestion]!!,
@@ -163,12 +160,12 @@ class ChatPresenter @AssistedInject constructor(
                     }
                 }
             }.onFailure {
-                state = ChatScreen.State.LoadFailed
+                value = ChatScreen.State.LoadFailed
             }
         }
 
         state.runOn<ChatScreen.State.Success> {
-            state = this.copy(
+            return this.copy(
                 questions = questions,
                 currentQuestion = currentQuestion,
                 chattingHistory = chattingHistories[currentQuestion]!!,
