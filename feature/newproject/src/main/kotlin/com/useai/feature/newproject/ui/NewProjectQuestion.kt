@@ -122,7 +122,7 @@ private fun NewQuestion(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(82.dp),
-            horizontalPadding = 14,
+            horizontalPadding = 14.dp,
             letterCount = letterCount,
             onValueChange = { letterCount = it }
         )

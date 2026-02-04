@@ -13,17 +13,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.container.LogitOutlinedContainer
 import com.useai.core.designsystem.theme.LogitTheme
 
 @Composable
 fun LetterCountInput(
     modifier: Modifier = Modifier,
-    horizontalPadding: Int = 18,
-    verticalPadding: Int = 10,
+    horizontalPadding: Dp = dimensionResource(R.dimen.spacing_input_field_horizontal),
+    verticalPadding: Dp = dimensionResource(R.dimen.spacing_input_field_vertical),
     letterCount: String = "",
     onValueChange: (String) -> Unit,
 ) {
@@ -32,8 +35,8 @@ fun LetterCountInput(
     ) {
         Row(
             modifier = Modifier.padding(
-                horizontal = horizontalPadding.dp,
-                vertical = verticalPadding.dp
+                horizontal = horizontalPadding,
+                vertical = verticalPadding,
             ),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
