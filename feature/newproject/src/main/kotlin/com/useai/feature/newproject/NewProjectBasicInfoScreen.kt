@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -15,7 +16,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.parcelize.Parcelize
+import javax.inject.Inject
 
 @Parcelize
 data object NewProjectBasicInfoScreen : Screen {
@@ -37,32 +40,37 @@ data object NewProjectBasicInfoScreen : Screen {
     }
 }
 
+@HiltViewModel
+class NewProjectBasicInfoViewModel @Inject constructor() : ViewModel() {
+    var companyName by mutableStateOf("")
+    var jobName by mutableStateOf("")
+    var jobDesc by mutableStateOf("")
+    var talent by mutableStateOf("")
+}
+
 class NewProjectBasicInfoPresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
 ) : Presenter<NewProjectBasicInfoScreen.State> {
     @Composable
     override fun present(): NewProjectBasicInfoScreen.State {
-        var companyName by rememberRetained { mutableStateOf("") }
-        var jobName by rememberRetained { mutableStateOf("") }
-        var jobDesc by rememberRetained { mutableStateOf("") }
-        var talent by rememberRetained { mutableStateOf("") }
+        val viewModel: NewProjectBasicInfoViewModel = hiltViewModel()
 
         return NewProjectBasicInfoScreen.State(
-            companyName = companyName,
-            jobName = jobName,
-            jobDesc = jobDesc,
-            talent = talent,
+            companyName = viewModel.companyName,
+            jobName = viewModel.jobName,
+            jobDesc = viewModel.jobDesc,
+            talent = viewModel.talent,
         ) { event ->
             when (event) {
                 is NewProjectBasicInfoScreen.Event.Back -> navigator.pop()
-                is NewProjectBasicInfoScreen.Event.OnCompanyNameChange -> companyName = event.name
-                is NewProjectBasicInfoScreen.Event.OnJobNameChange -> jobName = event.job
-                is NewProjectBasicInfoScreen.Event.OnJobDescChange -> jobDesc = event.desc
-                is NewProjectBasicInfoScreen.Event.OnTalentChange -> talent = event.talent
+                is NewProjectBasicInfoScreen.Event.OnCompanyNameChange -> viewModel.companyName = event.name
+                is NewProjectBasicInfoScreen.Event.OnJobNameChange -> viewModel.jobName = event.job
+                is NewProjectBasicInfoScreen.Event.OnJobDescChange -> viewModel.jobDesc = event.desc
+                is NewProjectBasicInfoScreen.Event.OnTalentChange -> viewModel.talent = event.talent
                 is NewProjectBasicInfoScreen.Event.Next -> navigator.goTo(
                     NewProjectQuestionScreen(
-                        companyName = companyName,
-                        jobName = jobName
+                        companyName = viewModel.companyName,
+                        jobName = viewModel.jobName,
                     )
                 )
             }
