@@ -59,6 +59,7 @@ class ChatPresenter @AssistedInject constructor(
 
         val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
             questionRepository.getQuestions(screen.projectId).onSuccess { initialQuestions ->
+                questions.addAll(initialQuestions)
                 currentQuestion = initialQuestions.first()
                 initialQuestions.fastMap { question ->
                     async {
