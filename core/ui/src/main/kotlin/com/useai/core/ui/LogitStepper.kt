@@ -1,4 +1,4 @@
-package com.useai.core.designsystem.component.stepper
+package com.useai.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

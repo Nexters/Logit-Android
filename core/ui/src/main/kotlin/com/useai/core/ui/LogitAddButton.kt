@@ -1,4 +1,4 @@
-package com.useai.core.designsystem.component.button
+package com.useai.core.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues

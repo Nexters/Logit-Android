@@ -36,12 +36,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.rememberRetained
-import com.useai.core.designsystem.component.LogitFormTitle
+import com.useai.core.ui.LogitFormTitle
 import com.useai.core.designsystem.component.appbar.PopUpTitle
-import com.useai.core.designsystem.component.button.LogitAddButton
-import com.useai.core.designsystem.component.button.LogitCtaButton
+import com.useai.core.ui.LogitAddButton
+import com.useai.core.ui.LogitCtaButton
 import com.useai.core.designsystem.component.container.LogitOutlinedContainer
-import com.useai.core.designsystem.component.stepper.LogitStepper
+import com.useai.core.ui.LogitStepper
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
