@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,7 +53,7 @@ fun NewProjectQuestion(
         },
         bottomButtonText = "프로젝트 생성",
         onClickBottomButton = {
-            // TODO: 다음 페이지로 이동
+            // TODO: 프로젝트 생성 후 자소서 화면으로 이동
         },
         bottomButtonEnabled = isButtonEnabled,
     ) {
@@ -60,29 +61,35 @@ fun NewProjectQuestion(
             currentStep = "2",
             totalStep = "2"
         )
-        Spacer(
-            modifier = Modifier.height(13.dp)
-        )
+        Spacer(Modifier.height(13.dp))
         LogitFormTitle(
             title = "자기소개서 문항 입력",
             desc = "자기소개서의 문항을 입력해주세요"
         )
-        Spacer(
-            modifier = Modifier.height(75.dp)
-        )
-        questions.forEachIndexed { i, question ->
-            val placeHolder = if (question.isEmpty()) "${i + 1}번째 문항" else ""
-            NewQuestion(
-                onValueChange = {
-                    val newQuestions = questions.toMutableList()
-                    newQuestions[i] = it
-                    questions = newQuestions
-                },
-                placeHolder = placeHolder,
-                isAdditionalQuestion = i > 0,
-            )
-            Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(75.dp))
+
+        questions.forEachIndexed { i, questionText ->
+            key(i) {
+                val placeHolder = if (questionText.isEmpty()) "${i + 1}번째 문항" else ""
+                NewQuestion(
+                    value = questionText,
+                    onValueChange = { newValue ->
+                        val newQuestions = questions.toMutableList()
+                        newQuestions[i] = newValue
+                        questions = newQuestions
+                    },
+                    onDelete = {
+                        val newQuestions = questions.toMutableList()
+                        newQuestions.removeAt(i)
+                        questions = newQuestions
+                    },
+                    placeHolder = placeHolder,
+                    isAdditionalQuestion = i > 0,
+                )
+                Spacer(Modifier.height(8.dp))
+            }
         }
+        
         LogitAddButton(
             onClick = {
                 questions = questions + ""
@@ -94,11 +101,12 @@ fun NewProjectQuestion(
 @Composable
 private fun NewQuestion(
     modifier: Modifier = Modifier,
+    value: String = "",
     onValueChange: (String) -> Unit = {},
+    onDelete: () -> Unit = {},
     placeHolder: String = "",
     isAdditionalQuestion: Boolean = false,
 ) {
-    var question by remember { mutableStateOf("") }
     var letterCount by remember { mutableStateOf("") }
 
     Row(
@@ -108,12 +116,11 @@ private fun NewQuestion(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LogitOutlinedTextField(
-            value = question,
-            onValueChange = { question = it },
+            value = value,
+            onValueChange = onValueChange,
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f)
-                .align(Alignment.CenterVertically),
+                .weight(1f),
             placeholder = placeHolder,
             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
         )
@@ -130,9 +137,7 @@ private fun NewQuestion(
             Spacer(Modifier.width(12.dp))
             DeleteButton(
                 modifier = Modifier.fillMaxHeight(),
-                onClick = {
-                    onValueChange("") // TODO: 삭제
-                },
+                onClick = onDelete,
             )
         }
     }
