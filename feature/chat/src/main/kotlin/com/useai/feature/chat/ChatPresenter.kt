@@ -121,7 +121,6 @@ class ChatPresenter @AssistedInject constructor(
                                             }
 
                                             is ChattingStreaming.Done -> {
-                                                streamingChatStringBuilder.clear()
                                                 streamingStatus = ChattingStreamingStatus.Idle
                                                 chattingHistories[currentQuestion] = chattingHistories[currentQuestion]!!.copy(
                                                     chattings = buildList {
@@ -134,6 +133,7 @@ class ChatPresenter @AssistedInject constructor(
                                                         ))
                                                     }
                                                 )
+                                                streamingChatStringBuilder.clear()
                                             }
                                         }
                                     }
@@ -146,6 +146,8 @@ class ChatPresenter @AssistedInject constructor(
                                         question = currentQuestion.copy(letter = event.letter)
                                     ).onSuccess { question ->
                                         if (currentQuestion.id == question.id) {
+                                            chattingHistories[question] = chattingHistories[currentQuestion]!!
+                                            chattingHistories.remove(currentQuestion)
                                             currentQuestion = question
                                         }
                                         initialQuestions.indexOfFirst { it.id == question.id }.let { index ->

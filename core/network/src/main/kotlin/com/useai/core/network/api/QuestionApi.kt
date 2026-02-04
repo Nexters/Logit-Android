@@ -29,7 +29,7 @@ interface QuestionApi {
         @Path("questions_id") questionId: String
     ) : QuestionResponse
 
-    @PATCH("api/v1/projects/{project_id}/questions/{questions_id}/")
+    @PATCH("api/v1/projects/{project_id}/questions/{questions_id}")
     suspend fun updateQuestion(
         @Path("project_id") projectId: String,
         @Path("questions_id") questionId: String,

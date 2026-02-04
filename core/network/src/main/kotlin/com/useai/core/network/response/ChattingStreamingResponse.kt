@@ -10,6 +10,7 @@ data class ChattingStreamingResponse(
     @SerialName("content") val data: String? = null,
     @SerialName("chat_id") val chatId: String? = null,
     @SerialName("is_draft") val isDraft: Boolean? = null,
+    @SerialName("remaining_chats") val remainingChats: Int? = null
 )
 
 fun ChattingStreamingResponse.toChattingStreaming() : ChattingStreaming {
