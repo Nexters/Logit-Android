@@ -69,9 +69,10 @@ internal fun QuestionTabRow(
             modifier = Modifier.padding(horizontal = 14.dp)
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_add),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_tab_add),
                 contentDescription = null,
-                modifier = Modifier.size(13.dp)
+                modifier = Modifier.size(13.dp),
+                tint = LogitTheme.colors.gray400
             )
         }
     }

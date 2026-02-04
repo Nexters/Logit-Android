@@ -30,6 +30,7 @@ import com.useai.feature.chat.ChatScreenCategory
 internal fun LazyListScope.chatCommonStickyHeader(
     questions: List<Question>,
     currentQuestion: Question,
+    currentCategory: ChatScreenCategory,
     isHeaderUIExpanded: Boolean,
     onQuestionTabChange: (Question) -> Unit,
     onQuestionAdd: () -> Unit,
@@ -56,7 +57,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
         ) {
             ChatScreenCategory.entries.fastForEach { category ->
                 LogitToggle(
-                    isSelected = category == ChatScreenCategory.CHATTING,
+                    isSelected = category == currentCategory,
                     icon = ImageVector.vectorResource(category.icon),
                     text = stringResource(category.title),
                     onSelect = { onCategoryChange(category) }
@@ -105,7 +106,8 @@ private fun ChatCommonStickyHeaderPreview() {
             onQuestionAdd = {},
             onCategoryChange = {},
             onQuestionTitleExpand = {},
-            isHeaderUIExpanded = false
+            isHeaderUIExpanded = false,
+            currentCategory = ChatScreenCategory.CHATTING
         )
     }
 }

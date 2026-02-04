@@ -49,6 +49,7 @@ internal fun ChatChattingUI(
             chatCommonStickyHeader(
                 questions = state.questions,
                 currentQuestion = state.currentQuestion,
+                currentCategory = ChatScreenCategory.CHATTING,
                 isHeaderUIExpanded = state.isHeaderUIExpanded,
                 onQuestionTabChange = { question ->
                     state.eventSink(ChatScreen.Event.ChangeQuestion(question))
