@@ -47,7 +47,7 @@ fun NewProjectQuestion(
     InputFormContainer(
         modifier = modifier,
         onClickBackButton = {
-            state.eventSink(NewProjectQuestionScreen.Event.Back) // TODO: 프로젝트 생성 취소 팝업
+            state.eventSink(NewProjectQuestionScreen.Event.Back) // TODO: 이전 페이지로 이동
         },
         bottomButtonText = "프로젝트 생성",
         onClickBottomButton = {

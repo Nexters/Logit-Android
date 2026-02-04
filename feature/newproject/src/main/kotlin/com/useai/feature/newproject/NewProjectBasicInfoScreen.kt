@@ -3,9 +3,9 @@ package com.useai.feature.newproject
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -42,10 +42,10 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
 ) : Presenter<NewProjectBasicInfoScreen.State> {
     @Composable
     override fun present(): NewProjectBasicInfoScreen.State {
-        var companyName by remember { mutableStateOf("") }
-        var jobName by remember { mutableStateOf("") }
-        var jobDesc by remember { mutableStateOf("") }
-        var talent by remember { mutableStateOf("") }
+        var companyName by rememberRetained { mutableStateOf("") }
+        var jobName by rememberRetained { mutableStateOf("") }
+        var jobDesc by rememberRetained { mutableStateOf("") }
+        var talent by rememberRetained { mutableStateOf("") }
 
         return NewProjectBasicInfoScreen.State(
             companyName = companyName,

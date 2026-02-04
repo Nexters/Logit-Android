@@ -3,9 +3,9 @@ package com.useai.feature.newproject
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -42,7 +42,7 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
 ) : Presenter<NewProjectQuestionScreen.State> {
     @Composable
     override fun present(): NewProjectQuestionScreen.State {
-        var questions by remember { mutableStateOf(listOf("")) }
+        var questions by rememberRetained { mutableStateOf(listOf("")) }
 
         return NewProjectQuestionScreen.State(
             questions = questions
