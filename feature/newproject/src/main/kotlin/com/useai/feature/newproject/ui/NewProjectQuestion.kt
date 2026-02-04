@@ -51,7 +51,7 @@ fun NewProjectQuestion(
         },
         bottomButtonText = "프로젝트 생성",
         onClickBottomButton = {
-            // TODO: 프로젝트 생성 후 자소서 화면으로 이동
+            state.eventSink(NewProjectQuestionScreen.Event.CreateProject)
         },
         bottomButtonEnabled = isButtonEnabled,
     ) {

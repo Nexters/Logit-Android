@@ -3,6 +3,7 @@ package com.useai.feature.newproject
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.rememberRetained
@@ -11,16 +12,20 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.navigation.LocalScreenProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NewProjectQuestionScreen(
     val companyName: String,
     val jobName: String,
+    val jobDesc: String,
+    val talent: String,
 ) : Screen {
     data class State(
         val questions: List<String>,
@@ -43,6 +48,8 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
     @Composable
     override fun present(): NewProjectQuestionScreen.State {
         var questions by rememberRetained { mutableStateOf(listOf("")) }
+        val scope = rememberCoroutineScope()
+        val screenProvider = LocalScreenProvider.current
 
         return NewProjectQuestionScreen.State(
             questions = questions
@@ -63,7 +70,15 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
                     questions = newList
                 }
                 NewProjectQuestionScreen.Event.CreateProject -> {
-                    // TODO: 프로젝트 생성 로직
+                    scope.launch {
+                        val basicInfo = screen
+                        val projectQuestions = questions
+
+                        // TODO: 서버에 프로젝트 생성 요청
+                        val projectId = 0
+                        val chatScreen = screenProvider.chatScreen(projectId)
+                        navigator.goTo(chatScreen)
+                    }
                 }
             }
         }

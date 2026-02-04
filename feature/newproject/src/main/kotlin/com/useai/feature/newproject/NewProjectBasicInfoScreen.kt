@@ -71,6 +71,8 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
                     NewProjectQuestionScreen(
                         companyName = viewModel.companyName,
                         jobName = viewModel.jobName,
+                        jobDesc = viewModel.jobDesc,
+                        talent = viewModel.talent
                     )
                 )
             }
