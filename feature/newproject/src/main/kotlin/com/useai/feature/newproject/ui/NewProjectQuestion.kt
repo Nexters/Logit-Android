@@ -5,24 +5,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,15 +27,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.rememberRetained
-import com.useai.core.ui.LogitFormTitle
-import com.useai.core.designsystem.component.appbar.PopUpTitle
-import com.useai.core.ui.LogitAddButton
-import com.useai.core.ui.LogitCtaButton
 import com.useai.core.designsystem.component.container.LogitOutlinedContainer
-import com.useai.core.ui.LogitStepper
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.LogitAddButton
+import com.useai.core.ui.LogitFormTitle
+import com.useai.core.ui.LogitStepper
 import com.useai.feature.newproject.NewProjectQuestionScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
@@ -57,80 +46,49 @@ fun NewProjectQuestion(
     var questions by rememberRetained { mutableStateOf(listOf(""))}
     val isButtonEnabled = questions.isNotEmpty()
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = LogitTheme.colors.white,
-        topBar = {
-            PopUpTitle(
-                onClick = {
-                    state.eventSink(NewProjectQuestionScreen.Event.Back) // TODO: 앞 페이지로 이동
-                }
-            )
+    InputFormContainer(
+        modifier = modifier,
+        onClickBackButton = {
+            state.eventSink(NewProjectQuestionScreen.Event.Back) // TODO: 프로젝트 생성 취소 팝업
         },
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .imePadding()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                LogitStepper(
-                    currentStep = "2",
-                    totalStep = "2"
-                )
-                Spacer(
-                    modifier = Modifier.height(13.dp)
-                )
-                LogitFormTitle(
-                    title = "자기소개서 문항 입력",
-                    desc = "자기소개서의 문항을 입력해주세요"
-                )
-                Spacer(
-                    modifier = Modifier.height(75.dp)
-                )
-                questions.forEachIndexed { i, question ->
-                    val placeHolder = if (question.isEmpty()) "${i + 1}번째 문항" else ""
-                    NewQuestion(
-                        onValueChange = {
-                            val newQuestions = questions.toMutableList()
-                            newQuestions[i] = it
-                            questions = newQuestions
-                        },
-                        placeHolder = placeHolder,
-                        isAdditionalQuestion = i > 0,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                }
-                LogitAddButton(
-                    onClick = {
-                        questions = questions + ""
-                    }
-                )
-            }
-
-            Surface(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .navigationBarsPadding(),
-                color = LogitTheme.colors.white,
-            ) {
-                LogitCtaButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
-                    text = "프로젝트 생성",
-                    onClick = { /* TODO */ },
-                    enabled = isButtonEnabled
-                )
-            }
+        bottomButtonText = "프로젝트 생성",
+        onClickBottomButton = {
+            // TODO: 다음 페이지로 이동
+        },
+        bottomButtonEnabled = isButtonEnabled,
+    ) {
+        LogitStepper(
+            currentStep = "2",
+            totalStep = "2"
+        )
+        Spacer(
+            modifier = Modifier.height(13.dp)
+        )
+        LogitFormTitle(
+            title = "자기소개서 문항 입력",
+            desc = "자기소개서의 문항을 입력해주세요"
+        )
+        Spacer(
+            modifier = Modifier.height(75.dp)
+        )
+        questions.forEachIndexed { i, question ->
+            val placeHolder = if (question.isEmpty()) "${i + 1}번째 문항" else ""
+            NewQuestion(
+                onValueChange = {
+                    val newQuestions = questions.toMutableList()
+                    newQuestions[i] = it
+                    questions = newQuestions
+                },
+                placeHolder = placeHolder,
+                isAdditionalQuestion = i > 0,
+            )
+            Spacer(Modifier.height(8.dp))
         }
+        LogitAddButton(
+            onClick = {
+                questions = questions + ""
+            }
+        )
     }
 }
 
