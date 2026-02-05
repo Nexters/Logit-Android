@@ -12,6 +12,7 @@
     <string name="question_number">Q%s</string>
     <string name="chatting">채팅</string>
     <string name="letter">자기소개서</string>
+    <string name="length_limit">%s/%s</string>
 
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>

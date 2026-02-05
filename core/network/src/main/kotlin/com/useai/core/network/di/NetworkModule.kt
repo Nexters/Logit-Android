@@ -41,7 +41,7 @@ internal object NetworkModule {
                 handler,
                 EventSource.Builder(
                     ConnectStrategy
-                        .http(URI.create(BuildConfig.BASE_URL))
+                        .http(URI.create(BuildConfig.BASE_URL + "api/v1/projects/chats"))
                         .methodAndBody("POST", requestJsonString.toRequestBody(mediaType))
                         .httpClient(client)
                 )
@@ -93,7 +93,9 @@ internal object NetworkModule {
         return OkHttpClient.Builder()
             .apply {
                 if (BuildConfig.DEBUG)
-                    addInterceptor(HttpLoggingInterceptor())
+                    addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
             }
             .build()
     }

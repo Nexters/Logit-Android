@@ -33,7 +33,8 @@ internal fun ChatInputRow(
     userInput: String,
     onUserInputChange: (String) -> Unit,
     onSendClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSendEnabled: Boolean = false
 ) {
     Row(
         modifier = modifier.height(IntrinsicSize.Min),
@@ -70,6 +71,7 @@ internal fun ChatInputRow(
             value = userInput,
             onValueChange = onUserInputChange,
             onSendClick = onSendClick,
+            isSendEnabled = isSendEnabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 6.dp)

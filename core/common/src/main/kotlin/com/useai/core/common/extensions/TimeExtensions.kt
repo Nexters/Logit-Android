@@ -1,28 +1,28 @@
 package com.useai.core.common.extensions
 
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-fun String?.toLocalDateTime(pattern: String = "yyyy-MM-dd'T'HH:mm:ss"): LocalDateTime? {
+fun String?.toLocalDateTime(): LocalDateTime? {
     if (this.isNullOrBlank()) return null
 
     return try {
-        val formatter = DateTimeFormatter.ofPattern(pattern)
-        LocalDateTime.parse(this, formatter)
+        Instant.parse(this).atZone(ZoneId.systemDefault()).toLocalDateTime()
     } catch (e: DateTimeParseException) {
         e.printStackTrace()
         null
     }
 }
 
-fun String?.toLocalDate(pattern: String = "yyyy-MM-dd"): LocalDate? {
+fun String?.toLocalDate(): LocalDate? {
     if (this.isNullOrBlank()) return null
 
     return try {
-        val formatter = DateTimeFormatter.ofPattern(pattern)
-        LocalDate.parse(this, formatter)
+        LocalDate.parse(this)
     } catch (e: DateTimeParseException) {
         e.printStackTrace()
         null

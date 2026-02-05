@@ -11,22 +11,17 @@ import com.useai.core.model.chat.Question
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ChatScreen(val projectId: Int): Screen {
+data class ChatScreen(val projectId: String): Screen {
     sealed interface State : CircuitUiState {
 
-        data class Chatting(
+        data class Success(
             val questions: List<Question>,
             val currentQuestion: Question,
+            val currentCategory: ChatScreenCategory,
             val chattingHistory: ChattingHistory,
             val streamingStatus: ChattingStreamingStatus,
             val userInput: String,
-            val eventSink: (Event) -> Unit
-        ) : State
-        data class Letter(
-            val questions: List<Question>,
-            val currentQuestion: Question,
-            val content: String,
-            val userInput: String,
+            val isHeaderUIExpanded: Boolean,
             val eventSink: (Event) -> Unit
         ) : State
         data object Loading : State
@@ -39,15 +34,10 @@ data class ChatScreen(val projectId: Int): Screen {
         data object AddQuestion : Event
         data object UploadExperience : Event
         data class InputMessage(val message: String) : Event
-
-        sealed interface Chatting : Event {
-            data class SendMessage(val message: String) : Chatting
-            data class CopyMessage(val message: String) : Chatting
-            data class UpdateLetter(val letter: String) : Chatting
-        }
-        sealed interface Letter : Event {
-            data class SendMessage(val message: String) : Letter
-        }
+        data class SendMessage(val message: String) : Event
+        data class CopyMessage(val message: String) : Event
+        data class UpdateLetter(val letter: String) : Event
+        data object ExpandOrShrinkHeader : Event
     }
 
 }

@@ -5,4 +5,9 @@ data class Question(
     val title: String,
     val maxLength: Int,
     val letter: String
-)
+) {
+
+    companion object {
+        val EMPTY = Question("", "", 0, "")
+    }
+}

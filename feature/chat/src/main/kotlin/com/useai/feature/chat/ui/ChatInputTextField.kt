@@ -3,8 +3,7 @@ package com.useai.feature.chat.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -25,13 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.noRippleClickable
 
 @Composable
 internal fun ChatInputTextField(
     value: String,
     onValueChange: (String) -> Unit,
     onSendClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSendEnabled: Boolean = false
 ) {
 
     BasicTextField(
@@ -44,11 +45,11 @@ internal fun ChatInputTextField(
         singleLine = true
     ) { field ->
 
-        Row(
+        Box(
             modifier = Modifier
                 .padding(vertical = 5.dp)
                 .padding(start = 14.dp, end = 5.dp),
-            verticalAlignment = Alignment.CenterVertically
+            contentAlignment = Alignment.CenterStart
         ) {
             if (value.isEmpty()) {
                 Text(
@@ -59,24 +60,25 @@ internal fun ChatInputTextField(
             }
             field()
 
-            Spacer(modifier = Modifier.weight(1f))
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_send),
                 contentDescription = stringResource(R.string.content_description_send),
-                tint = if (value.isEmpty()) LogitTheme.colors.gray100 else LogitTheme.colors.white,
+                tint = if (!isSendEnabled) LogitTheme.colors.gray100 else LogitTheme.colors.white,
                 modifier = Modifier
                     .semantics {
                         role = Role.Button
                     }
                     .clip(CircleShape)
-                    .clickable {
-                        onSendClick()
+                    .noRippleClickable {
+                        if(isSendEnabled)
+                            onSendClick()
                     }
                     .background(
                         shape = CircleShape,
-                        color = if (value.isEmpty()) LogitTheme.colors.gray50 else LogitTheme.colors.primary100
+                        color = if (!isSendEnabled) LogitTheme.colors.gray50 else LogitTheme.colors.primary100
                     )
                     .padding(7.dp)
+                    .align(Alignment.CenterEnd)
             )
         }
     }

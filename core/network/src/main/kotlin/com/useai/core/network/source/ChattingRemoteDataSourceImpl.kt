@@ -16,7 +16,8 @@ import javax.inject.Inject
 
 internal class ChattingRemoteDataSourceImpl @Inject constructor(
     private val chattingApi: ChattingApi,
-    private val chattingEventSourceFactory: ChattingEventSourceFactory
+    private val chattingEventSourceFactory: ChattingEventSourceFactory,
+    private val json: Json
 ) : ChattingRemoteDataSource {
 
     override fun startChattingStream(request: StartChattingStreamRequest): Flow<ChattingStreamingResponse> {
@@ -34,7 +35,7 @@ internal class ChattingRemoteDataSourceImpl @Inject constructor(
                     messageEvent: MessageEvent?
                 ) {
                     messageEvent?.data?.let { jsonString ->
-                        val response = Json.decodeFromString<ChattingStreamingResponse>(jsonString)
+                        val response = json.decodeFromString<ChattingStreamingResponse>(jsonString)
                         trySend(response)
                     }
                 }

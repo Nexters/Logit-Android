@@ -4,6 +4,14 @@ import java.time.LocalDateTime
 
 data class ChattingHistory(
     val chattings: List<ChattingContent>,
+    val projectCreatedAt: LocalDateTime,
+    val experienceIds: List<String>,
+    val questionId: String,
+    val projectName: String,
+    val questionTitle: String,
+    val nextCursor: String?,
+    val hasMore: Boolean,
+    val remainingChats: Int
 )
 
 sealed interface ChattingContent {
