@@ -7,4 +7,5 @@ import com.useai.core.network.response.ProjectResponse
 interface ProjectRemoteDataSource {
     suspend fun createProject(request: CreateProjectRequest): ProjectResponse
     suspend fun getProjects(): List<ProjectListItemResponse>
+    suspend fun getProject(projectId: String): ProjectResponse
 }

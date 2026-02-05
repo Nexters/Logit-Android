@@ -7,4 +7,5 @@ import com.useai.core.model.project.ProjectParam
 interface ProjectRepository {
     suspend fun createProject(projectParam: ProjectParam): Result<Project>
     suspend fun getProjects(): Result<List<ProjectListItem>>
+    suspend fun getProject(projectId: String): Result<Project>
 }

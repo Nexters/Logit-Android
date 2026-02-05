@@ -41,4 +41,10 @@ internal class ProjectRepositoryImpl @Inject constructor(
             projectRemoteDataSource.getProjects().map { it.toProjectListItem() }
         }
     }
+
+    override suspend fun getProject(projectId: String): Result<Project> {
+        return runCatchingWith {
+            projectRemoteDataSource.getProject(projectId).toProject()
+        }
+    }
 }

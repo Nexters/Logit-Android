@@ -17,4 +17,8 @@ internal class ProjectRemoteDataSourceImpl @Inject constructor(
     override suspend fun getProjects(): List<ProjectListItemResponse> {
         return projectApi.getProjects()
     }
+
+    override suspend fun getProject(projectId: String): ProjectResponse {
+        return projectApi.getProject(projectId)
+    }
 }
