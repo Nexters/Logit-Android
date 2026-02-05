@@ -33,6 +33,7 @@
 
     <string name="letter_count_placeholder">글자수</string>
     <string name="letter_count_unit">자</string>
+    <string name="add">추가하기</string>
 
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>

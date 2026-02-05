@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.useai.core.designsystem.R
 import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
 
@@ -50,7 +52,7 @@ fun LogitAddButton(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1f),
-            text = "추가하기",
+            text = stringResource(R.string.add),
             style = LogitTheme.typography.body6_2,
         )
     }
