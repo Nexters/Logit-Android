@@ -37,9 +37,23 @@ internal fun LazyListScope.chatCommonStickyHeader(
     onQuestionTabChange: (Question) -> Unit,
     onQuestionAdd: () -> Unit,
     onCategoryChange: (ChatScreenCategory) -> Unit,
-    onQuestionTitleExpand: () -> Unit
+    onQuestionTitleExpand: () -> Unit,
+    onBack: () -> Unit
 ) {
     stickyHeader {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_navigate_left),
+                contentDescription = stringResource(R.string.content_description_navigate_back),
+                modifier = Modifier.noRippleClickable {
+                    onBack()
+                }
+            )
+        }
+
         QuestionTabRow(
             selectedQuestion = currentQuestion,
             questions = questions,
@@ -109,7 +123,8 @@ private fun ChatCommonStickyHeaderPreview() {
             onCategoryChange = {},
             onQuestionTitleExpand = {},
             isHeaderUIExpanded = false,
-            currentCategory = ChatScreenCategory.CHATTING
+            currentCategory = ChatScreenCategory.CHATTING,
+            onBack = {}
         )
     }
 }

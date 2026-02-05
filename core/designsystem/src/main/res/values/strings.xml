@@ -17,4 +17,5 @@
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
     <string name="content_description_external">업로드</string>
+    <string name="content_description_navigate_back">뒤로가기</string>
 </resources>

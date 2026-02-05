@@ -50,6 +50,9 @@ internal fun ChatLetterUI(
                 },
                 onQuestionTitleExpand = {
                     state.eventSink(ChatScreen.Event.ExpandOrShrinkHeader)
+                },
+                onBack = {
+                    state.eventSink(ChatScreen.Event.NavigateBack)
                 }
             )
 

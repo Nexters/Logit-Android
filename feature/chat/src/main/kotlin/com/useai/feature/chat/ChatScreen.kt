@@ -38,6 +38,7 @@ data class ChatScreen(val projectId: String): Screen {
         data class CopyMessage(val message: String) : Event
         data class UpdateLetter(val letter: String) : Event
         data object ExpandOrShrinkHeader : Event
+        data object NavigateBack : Event
     }
 
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.util.fastMap
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.useai.core.data.repository.ChattingRepository
@@ -36,7 +37,8 @@ class ChatPresenter @AssistedInject constructor(
     private val chattingRepository: ChattingRepository,
     private val questionRepository: QuestionRepository,
     private val experienceRepository: ExperienceRepository,
-    @Assisted private val screen: ChatScreen
+    @Assisted private val screen: ChatScreen,
+    @Assisted private val navigator: Navigator
 ) : Presenter<ChatScreen.State> {
 
     private val streamingChatStringBuilder = StringBuilder()
@@ -200,6 +202,9 @@ class ChatPresenter @AssistedInject constructor(
                                         }
                                     }
                                 }
+                                is ChatScreen.Event.NavigateBack -> {
+                                    navigator.pop()
+                                }
                             }
                         }
                     }
@@ -222,6 +227,6 @@ class ChatPresenter @AssistedInject constructor(
     @CircuitInject(ChatScreen::class, ActivityRetainedComponent::class)
     @AssistedFactory
     interface Factory {
-        fun create(screen: ChatScreen): ChatPresenter
+        fun create(screen: ChatScreen, navigator: Navigator): ChatPresenter
     }
 }
