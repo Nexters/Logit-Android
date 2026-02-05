@@ -26,3 +26,11 @@ data class ProjectQuestionParam(
     val question: String,
     val maxLength: Int
 )
+
+data class ProjectListItem(
+    val id: String,
+    val company: String,
+    val jobPosition: String,
+    val questionId: String,
+    val updatedAt: LocalDateTime
+)

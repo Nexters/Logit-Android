@@ -2,11 +2,13 @@ package com.useai.core.data.repository
 
 import com.useai.core.common.extensions.toFormattedString
 import com.useai.core.model.project.Project
+import com.useai.core.model.project.ProjectListItem
 import com.useai.core.model.project.ProjectParam
 import com.useai.core.network.error.runCatchingWith
 import com.useai.core.network.request.CreateProjectRequest
 import com.useai.core.network.request.ProjectQuestionRequest
 import com.useai.core.network.response.toProject
+import com.useai.core.network.response.toProjectListItem
 import com.useai.core.network.source.ProjectRemoteDataSource
 import javax.inject.Inject
 
@@ -31,6 +33,12 @@ internal class ProjectRepositoryImpl @Inject constructor(
                     }
                 )
             ).toProject()
+        }
+    }
+
+    override suspend fun getProjects(): Result<List<ProjectListItem>> {
+        return runCatchingWith {
+            projectRemoteDataSource.getProjects().map { it.toProjectListItem() }
         }
     }
 }

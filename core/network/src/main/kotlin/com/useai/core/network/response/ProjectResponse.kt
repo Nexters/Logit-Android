@@ -3,6 +3,7 @@ package com.useai.core.network.response
 import com.useai.core.common.extensions.toLocalDate
 import com.useai.core.common.extensions.toLocalDateTime
 import com.useai.core.model.project.Project
+import com.useai.core.model.project.ProjectListItem
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -27,5 +28,22 @@ fun ProjectResponse.toProject() = Project(
     jobPosition = jobPosition,
     recruitNotice = recruitNotice,
     createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN,
+    updatedAt = updatedAt.toLocalDateTime() ?: LocalDateTime.MIN
+)
+
+@Serializable
+data class ProjectListItemResponse(
+    @SerialName("id") val id: String,
+    @SerialName("company") val company: String,
+    @SerialName("job_position") val jobPosition: String,
+    @SerialName("question_id") val questionId: String,
+    @SerialName("updated_at") val updatedAt: String
+)
+
+fun ProjectListItemResponse.toProjectListItem() = ProjectListItem(
+    id = id,
+    company = company,
+    jobPosition = jobPosition,
+    questionId = questionId,
     updatedAt = updatedAt.toLocalDateTime() ?: LocalDateTime.MIN
 )
