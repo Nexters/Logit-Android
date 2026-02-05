@@ -26,7 +26,7 @@ fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
     Column(modifier = modifier) {
         when(state) {
             is ChatScreen.State.Success -> {
-                LaunchedEffect(Unit) {
+                LaunchedEffect(state.chattingHistory.chattings.size) {
                     if (state.chattingHistory.chattings.isNotEmpty())
                         chattingListState.scrollToItem(state.chattingHistory.chattings.lastIndex, Int.MAX_VALUE)
                 }
