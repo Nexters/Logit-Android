@@ -34,3 +34,10 @@ data class ProjectListItem(
     val questionId: String,
     val updatedAt: LocalDateTime
 )
+
+data class UpdateProjectParam(
+    val company: String? = null,
+    val companyTalent: String? = null,
+    val dueDate: LocalDate? = null,
+    val jobPosition: String? = null,
+)
