@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -34,7 +35,7 @@ fun NewProjectBasicInfo(
         onClickBackButton = {
             state.eventSink(NewProjectBasicInfoScreen.Event.Back)
         },
-        bottomButtonText = "다음으로",
+        bottomButtonText = stringResource(R.string.next),
         onClickBottomButton = {
             state.eventSink(NewProjectBasicInfoScreen.Event.Next)
         },
@@ -48,52 +49,52 @@ fun NewProjectBasicInfo(
             modifier = Modifier.height(13.dp)
         )
         LogitFormTitle(
-            title = "자기소개서 작성",
-            desc = "지원하는 기업의 정보를 알려주세요"
+            title = stringResource(R.string.project_form_title_1),
+            desc = stringResource(R.string.project_form_desc_1),
         )
         Spacer(
             modifier = Modifier.height(41.dp)
         )
         LogitInputField(
-            label = "기업명",
+            label = stringResource(R.string.project_field_company_name_label),
             isRequired = true,
             maxLength = 100,
             input = state.companyName,
             onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnCompanyNameChange(it)) },
-            placeHolder = "예) 로짓 컴퍼니",
+            placeHolder = stringResource(R.string.project_field_company_name_placeholder),
         )
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
         )
         LogitInputField(
-            label = "직무명",
+            label = stringResource(R.string.project_field_job_name_label),
             isRequired = true,
             maxLength = 100,
             input = state.jobName,
             onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobNameChange(it)) },
-            placeHolder = "예) 프로덕트 디자이너",
+            placeHolder = stringResource(R.string.project_field_job_name_placeholder),
         )
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
         )
         LogitInputField(
-            label = "채용 공고",
+            label = stringResource(R.string.project_field_job_desc_label),
             isRequired = true,
             maxLength = 3000,
             input = state.jobDesc,
             onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobDescChange(it)) },
-            placeHolder = "주요 업무, 자격 요건, 우대 사항 등을 입력하세요",
+            placeHolder = stringResource(R.string.project_field_job_desc_placeholder),
         )
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
         )
         LogitInputField(
-            label = "기업 인재상",
+            label = stringResource(R.string.project_field_talent_label),
             isRequired = false,
             maxLength = 1000,
             input = state.talent,
             onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnTalentChange(it)) },
-            placeHolder = "기업의 인재상이나 핵심가치를 입력하세요",
+            placeHolder = stringResource(R.string.project_field_talent_placeholder),
         )
     }
 }
