@@ -21,5 +21,5 @@ class ScreenProviderImpl: ScreenProvider {
         talent = talent,
     )
 
-    override fun chatScreen(projectId: Int): Screen = ChatScreen(projectId)
+    override fun chatScreen(projectId: String): Screen = ChatScreen(projectId)
 }

@@ -75,7 +75,7 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
                         val projectQuestions = questions
 
                         // TODO: 서버에 프로젝트 생성 요청
-                        val projectId = 0
+                        val projectId = ""
                         val chatScreen = screenProvider.chatScreen(projectId)
                         navigator.goTo(chatScreen)
                     }
