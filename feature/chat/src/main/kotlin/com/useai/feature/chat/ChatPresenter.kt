@@ -169,7 +169,7 @@ class ChatPresenter @AssistedInject constructor(
                                                 projectId = screen.projectId,
                                                 question = currentQuestion.copy(letter = event.letter)
                                             ).onSuccess { question ->
-                                                this@ChatPresenter.chattingHistories[question] = requireNotNull(chattingHistories[currentQuestion])
+                                                this@ChatPresenter.chattingHistories[question] = chattingHistory
                                                 this@ChatPresenter.chattingHistories.remove(currentQuestion)
                                                 reduce {
                                                     copy(
@@ -177,7 +177,6 @@ class ChatPresenter @AssistedInject constructor(
                                                         questions = questions.map {
                                                             if (it.id == question.id) question else it
                                                         },
-                                                        chattingHistory = requireNotNull(chattingHistories[question])
                                                     )
                                                 }
                                             }
