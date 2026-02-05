@@ -31,6 +31,9 @@
     <string name="project_form_desc_2">자기소개서의 문항을 입력해주세요</string>
     <string name="project_field_question">%d번째 문항</string>
 
+    <string name="letter_count_placeholder">글자수</string>
+    <string name="letter_count_unit">자</string>
+
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
     <string name="content_description_external">업로드</string>

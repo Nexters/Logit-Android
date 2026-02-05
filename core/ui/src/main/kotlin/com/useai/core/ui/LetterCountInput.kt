@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +56,7 @@ fun LetterCountInput(
                     Box {
                         if (letterCount.isEmpty()) {
                             Text(
-                                text = "글자수",
+                                text = stringResource(R.string.letter_count_placeholder),
                                 style = LogitTheme.typography.body6_1,
                                 color = LogitTheme.colors.gray200,
                             )
@@ -66,7 +67,7 @@ fun LetterCountInput(
             )
             Spacer(Modifier.width(2.dp))
             Text(
-                text = "자",
+                text = stringResource(R.string.letter_count_unit),
                 style = LogitTheme.typography.body6_1,
                 color = LogitTheme.colors.primary500,
             )
