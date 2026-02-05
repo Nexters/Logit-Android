@@ -4,6 +4,8 @@ import com.useai.core.network.source.ChattingRemoteDataSource
 import com.useai.core.network.source.ChattingRemoteDataSourceImpl
 import com.useai.core.network.source.ExperienceRemoteDataSource
 import com.useai.core.network.source.ExperienceRemoteDataSourceImpl
+import com.useai.core.network.source.ProjectRemoteDataSource
+import com.useai.core.network.source.ProjectRemoteDataSourceImpl
 import com.useai.core.network.source.QuestionRemoteDataSource
 import com.useai.core.network.source.QuestionRemoteDataSourceImpl
 import dagger.Binds
@@ -33,4 +35,10 @@ internal interface DataSourceModule {
     fun bindsExperienceRemoteDataSource(
         experienceRemoteDataSourceImpl: ExperienceRemoteDataSourceImpl
     ): ExperienceRemoteDataSource
+
+    @Binds
+    @ActivityRetainedScoped
+    fun bindsProjectRemoteDataSource(
+        projectRemoteDataSourceImpl: ProjectRemoteDataSourceImpl
+    ): ProjectRemoteDataSource
 }

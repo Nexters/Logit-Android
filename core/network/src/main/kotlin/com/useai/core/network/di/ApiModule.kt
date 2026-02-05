@@ -3,6 +3,7 @@ package com.useai.core.network.di
 import com.useai.core.common.qualifiers.AuthClient
 import com.useai.core.network.api.ChattingApi
 import com.useai.core.network.api.ExperienceApi
+import com.useai.core.network.api.ProjectApi
 import com.useai.core.network.api.QuestionApi
 import dagger.Module
 import dagger.Provides
@@ -38,5 +39,13 @@ internal object ApiModule {
         @AuthClient retrofit: Retrofit
     ) : ExperienceApi {
         return retrofit.create<ExperienceApi>()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun providesProjectApi(
+        @AuthClient retrofit: Retrofit
+    ) : ProjectApi {
+        return retrofit.create<ProjectApi>()
     }
 }
