@@ -1,14 +1,18 @@
 package com.useai.feature.chat.ui.letter
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
@@ -51,10 +55,18 @@ internal fun ChatLetterUI(
 
             item {
                 Text(
+                    style = LogitTheme.typography.body5_5,
+                    text = stringResource(R.string.length_limit, state.currentQuestion.letter.length, state.currentQuestion.maxLength),
+                    color = LogitTheme.colors.gray400
+                )
+                Spacer(modifier = Modifier.height(9.dp))
+            }
+            item {
+                Text(
                     style = LogitTheme.typography.body7_3,
                     color = LogitTheme.colors.gray400,
                     text = state.currentQuestion.letter,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().padding(top = 19.dp)
                 )
             }
         }
