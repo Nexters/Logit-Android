@@ -30,7 +30,8 @@ internal fun ChatInputTextField(
     value: String,
     onValueChange: (String) -> Unit,
     onSendClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSendEnabled: Boolean = false
 ) {
 
     BasicTextField(
@@ -61,18 +62,24 @@ internal fun ChatInputTextField(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_send),
                 contentDescription = stringResource(R.string.content_description_send),
-                tint = if (value.isEmpty()) LogitTheme.colors.gray100 else LogitTheme.colors.white,
+                tint = if (!isSendEnabled) LogitTheme.colors.gray100 else LogitTheme.colors.white,
                 modifier = Modifier
                     .semantics {
                         role = Role.Button
                     }
                     .clip(CircleShape)
-                    .clickable {
-                        onSendClick()
-                    }
+                    .then(
+                        if (isSendEnabled) {
+                            Modifier.clickable {
+                                onSendClick()
+                            }
+                        } else {
+                            Modifier
+                        }
+                    )
                     .background(
                         shape = CircleShape,
-                        color = if (value.isEmpty()) LogitTheme.colors.gray50 else LogitTheme.colors.primary100
+                        color = if (!isSendEnabled) LogitTheme.colors.gray50 else LogitTheme.colors.primary100
                     )
                     .padding(7.dp)
                     .align(Alignment.CenterEnd)

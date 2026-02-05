@@ -120,6 +120,7 @@ internal fun ChatChattingUI(
                 keyboardController?.hide()
                 state.eventSink(ChatScreen.Event.SendMessage(state.userInput))
             },
+            isSendEnabled = state.userInput.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 20.dp),
