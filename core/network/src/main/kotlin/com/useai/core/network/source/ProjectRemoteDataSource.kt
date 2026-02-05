@@ -10,4 +10,5 @@ interface ProjectRemoteDataSource {
     suspend fun getProjects(): List<ProjectListItemResponse>
     suspend fun getProject(projectId: String): ProjectResponse
     suspend fun updateProject(projectId: String, request: UpdateProjectRequest): ProjectResponse
+    suspend fun deleteProject(projectId: String)
 }

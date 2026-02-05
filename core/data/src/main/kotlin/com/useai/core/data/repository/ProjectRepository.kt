@@ -10,4 +10,5 @@ interface ProjectRepository {
     suspend fun getProjects(): Result<List<ProjectListItem>>
     suspend fun getProject(projectId: String): Result<Project>
     suspend fun updateProject(projectId: String, updateProjectParam: UpdateProjectParam): Result<Project>
+    suspend fun deleteProject(projectId: String): Result<Unit>
 }

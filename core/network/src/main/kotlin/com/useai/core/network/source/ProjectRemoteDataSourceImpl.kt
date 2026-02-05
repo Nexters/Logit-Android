@@ -29,4 +29,8 @@ internal class ProjectRemoteDataSourceImpl @Inject constructor(
     ): ProjectResponse {
         return projectApi.updateProject(projectId, request)
     }
+
+    override suspend fun deleteProject(projectId: String) {
+        projectApi.deleteProject(projectId)
+    }
 }

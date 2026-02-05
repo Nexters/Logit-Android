@@ -66,4 +66,10 @@ internal class ProjectRepositoryImpl @Inject constructor(
             ).toProject()
         }
     }
+
+    override suspend fun deleteProject(projectId: String): Result<Unit> {
+        return runCatchingWith {
+            projectRemoteDataSource.deleteProject(projectId)
+        }
+    }
 }
