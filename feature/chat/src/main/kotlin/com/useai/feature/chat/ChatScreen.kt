@@ -8,6 +8,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.designsystem.R
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
+import com.useai.core.model.project.Project
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -15,6 +16,7 @@ data class ChatScreen(val projectId: String): Screen {
     sealed interface State : CircuitUiState {
 
         data class Success(
+            val project: Project,
             val questions: List<Question>,
             val currentQuestion: Question,
             val currentCategory: ChatScreenCategory,

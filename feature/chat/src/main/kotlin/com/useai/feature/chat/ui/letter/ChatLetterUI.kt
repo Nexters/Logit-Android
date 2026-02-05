@@ -16,10 +16,12 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
+import com.useai.core.model.project.Project
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.chat.ChatScreenCategory
 import com.useai.feature.chat.ChattingStreamingStatus
 import com.useai.feature.chat.ui.chatCommonStickyHeader
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Composable
@@ -35,6 +37,7 @@ internal fun ChatLetterUI(
                 .padding(horizontal = 20.dp)
         ) {
             chatCommonStickyHeader(
+                projectTitle = state.project.company + " " + state.project.jobPosition,
                 questions = state.questions,
                 currentQuestion = state.currentQuestion,
                 currentCategory = ChatScreenCategory.LETTER,
@@ -100,7 +103,16 @@ private fun ChatLetterUIPreview() {
                     "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 "),
             eventSink = {},
             currentCategory = ChatScreenCategory.LETTER,
-            isHeaderUIExpanded = false
+            isHeaderUIExpanded = false,
+            project = Project(
+                id = "",
+                company = "네이버",
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+                dueDate = LocalDate.now(),
+                jobPosition = "안드로이드 개발자",
+                recruitNotice = "채용공고"
+            )
         ),
     )
 }

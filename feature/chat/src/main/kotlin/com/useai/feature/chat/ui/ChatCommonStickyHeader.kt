@@ -30,6 +30,7 @@ import com.useai.core.ui.noRippleClickable
 import com.useai.feature.chat.ChatScreenCategory
 
 internal fun LazyListScope.chatCommonStickyHeader(
+    projectTitle: String,
     questions: List<Question>,
     currentQuestion: Question,
     currentCategory: ChatScreenCategory,
@@ -42,7 +43,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
 ) {
     stickyHeader {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -51,6 +52,11 @@ internal fun LazyListScope.chatCommonStickyHeader(
                 modifier = Modifier.noRippleClickable {
                     onBack()
                 }
+            )
+            Text(
+                text = projectTitle,
+                style = LogitTheme.typography.body4,
+                color = LogitTheme.colors.black
             )
         }
 
@@ -114,6 +120,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
 private fun ChatCommonStickyHeaderPreview() {
     LazyColumn {
         chatCommonStickyHeader(
+            projectTitle = "네이버 안드로이드 개발자",
             questions = listOf(Question("", "", 1000, ""), Question("", "", 1000, "")),
             currentQuestion = Question("", "[필수] 본 직무에 지원하게 된 동기와 본인이 이 \n" +
                     "포지션에 가장 적합한 후보라고 생각하는 이유를 \n" +

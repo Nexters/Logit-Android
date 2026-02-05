@@ -66,6 +66,7 @@ class ChatPresenter @AssistedInject constructor(
 
                     reduce {
                         ChatScreen.State.Success(
+                            project = TODO(),
                             questions = initialQuestions,
                             currentQuestion = initialQuestion,
                             chattingHistory = requireNotNull(chattingHistories[initialQuestion]),
