@@ -69,15 +69,10 @@ internal fun ChatInputTextField(
                         role = Role.Button
                     }
                     .clip(CircleShape)
-                    .then(
-                        if (isSendEnabled) {
-                            Modifier.noRippleClickable {
-                                onSendClick()
-                            }
-                        } else {
-                            Modifier
-                        }
-                    )
+                    .noRippleClickable {
+                        if(isSendEnabled)
+                            onSendClick()
+                    }
                     .background(
                         shape = CircleShape,
                         color = if (!isSendEnabled) LogitTheme.colors.gray50 else LogitTheme.colors.primary100
