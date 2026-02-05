@@ -26,7 +26,13 @@
     <string name="project_field_talent_label">기업 인재상</string>
     <string name="project_field_talent_placeholder">기업의 인재상이나 핵심가치를 입력하세요</string>
 
+    <string name="create_project">프로젝트 생성</string>
+    <string name="project_form_title_2">자기소개서 문항 입력</string>
+    <string name="project_form_desc_2">자기소개서의 문항을 입력해주세요</string>
+    <string name="project_field_question">%d번째 문항</string>
+
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
     <string name="content_description_external">업로드</string>
+    <string name="content_description_delete">삭제</string>
 </resources>

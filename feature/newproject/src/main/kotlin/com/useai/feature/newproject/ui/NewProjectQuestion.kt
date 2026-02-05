@@ -21,9 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.container.LogitOutlinedContainer
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
@@ -49,7 +51,7 @@ fun NewProjectQuestion(
         onClickBackButton = {
             state.eventSink(NewProjectQuestionScreen.Event.Back)
         },
-        bottomButtonText = "프로젝트 생성",
+        bottomButtonText = stringResource(R.string.create_project),
         onClickBottomButton = {
             state.eventSink(NewProjectQuestionScreen.Event.CreateProject)
         },
@@ -61,8 +63,8 @@ fun NewProjectQuestion(
         )
         Spacer(Modifier.height(13.dp))
         LogitFormTitle(
-            title = "자기소개서 문항 입력",
-            desc = "자기소개서의 문항을 입력해주세요"
+            title = stringResource(R.string.project_form_title_2),
+            desc = stringResource(R.string.project_form_desc_2),
         )
         Spacer(Modifier.height(75.dp))
 
@@ -81,7 +83,7 @@ fun NewProjectQuestion(
                     onDelete = {
                         state.eventSink(NewProjectQuestionScreen.Event.DeleteQuestion(i))
                     },
-                    placeHolder = if (questionText.isEmpty()) "${i + 1}번째 문항" else "",
+                    placeHolder = if (questionText.isEmpty()) stringResource(R.string.project_field_question, i + 1) else "",
                     isAdditionalQuestion = i > 0,
                 )
                 Spacer(Modifier.height(8.dp))
@@ -157,7 +159,7 @@ private fun DeleteButton(
         ) {
             Image(
                 painter = painterResource(id = LogitIcons.Trash),
-                contentDescription = "삭제",
+                contentDescription = stringResource(R.string.content_description_delete),
                 modifier = Modifier.size(20.dp),
             )
         }
