@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.noRippleClickable
 
 @Composable
 internal fun ChatInputTextField(
@@ -70,7 +71,7 @@ internal fun ChatInputTextField(
                     .clip(CircleShape)
                     .then(
                         if (isSendEnabled) {
-                            Modifier.clickable {
+                            Modifier.noRippleClickable {
                                 onSendClick()
                             }
                         } else {

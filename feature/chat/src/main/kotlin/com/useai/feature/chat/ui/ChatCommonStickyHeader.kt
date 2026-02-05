@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +26,7 @@ import androidx.compose.ui.util.fastForEach
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.Question
+import com.useai.core.ui.noRippleClickable
 import com.useai.feature.chat.ChatScreenCategory
 
 internal fun LazyListScope.chatCommonStickyHeader(
@@ -85,9 +87,9 @@ internal fun LazyListScope.chatCommonStickyHeader(
                 tint = LogitTheme.colors.gray300,
                 modifier = Modifier
                     .clip(CircleShape)
-                    .clickable {
+                    .noRippleClickable {
                         onQuestionTitleExpand()
-                    }.padding(vertical = 8.dp)
+                    }.padding(12.dp)
             )
         }
     }
