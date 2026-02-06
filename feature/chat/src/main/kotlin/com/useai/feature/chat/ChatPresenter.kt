@@ -15,6 +15,7 @@ import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.useai.core.data.repository.ChattingRepository
 import com.useai.core.data.repository.ExperienceRepository
+import com.useai.core.data.repository.ProjectRepository
 import com.useai.core.data.repository.QuestionRepository
 import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
@@ -37,6 +38,7 @@ class ChatPresenter @AssistedInject constructor(
     private val chattingRepository: ChattingRepository,
     private val questionRepository: QuestionRepository,
     private val experienceRepository: ExperienceRepository,
+    private val projectRepository: ProjectRepository,
     @Assisted private val screen: ChatScreen,
     @Assisted private val navigator: Navigator
 ) : Presenter<ChatScreen.State> {
@@ -50,6 +52,10 @@ class ChatPresenter @AssistedInject constructor(
         val localClipboard = LocalClipboard.current
 
         val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
+            val projectDetailDeferred = async {
+                projectRepository.getProject(screen.projectId).getOrNull()
+            }
+
             questionRepository.getQuestions(screen.projectId).onSuccess { initialQuestions ->
                 initialQuestions.fastMap { question ->
                     async {
@@ -60,13 +66,18 @@ class ChatPresenter @AssistedInject constructor(
                         }
                     }
                 }.awaitAll()
+                val projectDetail = projectDetailDeferred.await()
+                if (projectDetail == null)
+                    reduce {
+                        ChatScreen.State.LoadFailed
+                    }
 
                 if (value !is ChatScreen.State.LoadFailed) {
                     val initialQuestion = initialQuestions.first()
 
                     reduce {
                         ChatScreen.State.Success(
-                            project = TODO(),
+                            project = requireNotNull(projectDetail),
                             questions = initialQuestions,
                             currentQuestion = initialQuestion,
                             chattingHistory = requireNotNull(chattingHistories[initialQuestion]),
