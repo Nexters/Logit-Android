@@ -65,7 +65,7 @@ internal fun AIChattingItem(
                     text = stringResource(R.string.update_letter),
                     modifier = Modifier.padding(start = 6.dp),
                     style = LogitTheme.typography.body8_1,
-                    color = LogitTheme.colors.primary600
+                    color = LogitTheme.colors.primary400
                 )
             }
         }
