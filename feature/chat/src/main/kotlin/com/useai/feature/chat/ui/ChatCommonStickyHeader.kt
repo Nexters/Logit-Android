@@ -1,13 +1,11 @@
 package com.useai.feature.chat.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
@@ -43,7 +41,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
 ) {
     stickyHeader {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -56,7 +54,8 @@ internal fun LazyListScope.chatCommonStickyHeader(
             Text(
                 text = projectTitle,
                 style = LogitTheme.typography.body4,
-                color = LogitTheme.colors.black
+                color = LogitTheme.colors.black,
+                modifier = Modifier.padding(start = 12.dp)
             )
         }
 
@@ -121,7 +120,9 @@ private fun ChatCommonStickyHeaderPreview() {
     LazyColumn {
         chatCommonStickyHeader(
             projectTitle = "네이버 안드로이드 개발자",
-            questions = listOf(Question("", "", 1000, ""), Question("", "", 1000, "")),
+            questions = listOf(Question("", "[필수] 본 직무에 지원하게 된 동기와 본인이 이 \n" +
+                    "포지션에 가장 적합한 후보라고 생각하는 이유를 \n" +
+                    "작성해 주세요. |", 1000, ""), Question("", "", 1000, ""), Question("", "", 1000, "")),
             currentQuestion = Question("", "[필수] 본 직무에 지원하게 된 동기와 본인이 이 \n" +
                     "포지션에 가장 적합한 후보라고 생각하는 이유를 \n" +
                     "작성해 주세요. |", 1000, ""),
