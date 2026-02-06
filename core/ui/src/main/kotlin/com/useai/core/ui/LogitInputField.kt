@@ -1,8 +1,9 @@
-package com.useai.core.designsystem.component
+package com.useai.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +22,7 @@ fun LogitInputField(
     modifier: Modifier = Modifier,
     label: String,
     isRequired: Boolean,
-    maxLength: Int,
+    maxLength: Int = 0,
     input: String = "",
     onInputChange: (String) -> Unit = {},
     placeHolder: String,
@@ -39,10 +40,12 @@ fun LogitInputField(
                 text = label,
                 isRequired = isRequired,
             )
-            LetterCounter(
-                currentCount = input.length.toString(),
-                maxCount = maxLength.toString(),
-            )
+            if (maxLength > 0) {
+                LetterCounter(
+                    currentCount = input.length.toString(),
+                    maxCount = maxLength.toString(),
+                )
+            }
         }
         Spacer(
             modifier = Modifier.height(dimensionResource(R.dimen.spacing_label_to_input))
@@ -53,6 +56,10 @@ fun LogitInputField(
             modifier = Modifier.fillMaxWidth(),
             placeholder = placeHolder,
             maxLength = maxLength,
+            contentPadding = PaddingValues(
+                horizontal = dimensionResource(R.dimen.spacing_input_field_horizontal),
+                vertical = dimensionResource(R.dimen.spacing_input_field_vertical)
+            ),
             maxLines = maxLines,
             minLines = minLines,
         )
@@ -60,7 +67,7 @@ fun LogitInputField(
 }
 
 @Composable
-private fun InputFieldLabel(
+fun InputFieldLabel(
     modifier: Modifier = Modifier,
     text: String,
     isRequired: Boolean = true,
@@ -117,7 +124,24 @@ private fun LogitInputFieldPreview() {
                 label = "기업명",
                 isRequired = true,
                 maxLength = 100,
-                placeHolder = "기업명",
+                placeHolder = "예) 로짓 컴퍼니",
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun LogitInputFieldWithNoMaxLengthPreview() {
+    LogitTheme {
+        Box(
+            modifier = Modifier
+                .background(LogitTheme.colors.white)
+        ) {
+            LogitInputField(
+                label = "기업명",
+                isRequired = false,
+                placeHolder = "예) 로짓 컴퍼니",
             )
         }
     }
