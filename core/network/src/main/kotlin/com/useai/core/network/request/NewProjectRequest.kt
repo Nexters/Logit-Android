@@ -9,12 +9,6 @@ data class NewProjectRequest(
     @SerialName("company_talent") val talent: String,
     @SerialName("due_date") val dueDate: String,
     @SerialName("job_position") val jobName: String,
-    val questions: List<Question>,
+    val questions: List<CreateQuestionRequest>,
     @SerialName("recruit_notice") val jobDesc: String,
-)
-
-@Serializable
-data class Question(
-    @SerialName("max_length") val maxLength: Int,
-    val question: String,
 )

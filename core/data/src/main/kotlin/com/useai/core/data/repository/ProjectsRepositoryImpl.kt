@@ -3,8 +3,8 @@ package com.useai.core.data.repository
 import com.useai.core.model.project.NewProject
 import com.useai.core.model.project.Project
 import com.useai.core.network.error.runCatchingWith
+import com.useai.core.network.request.CreateQuestionRequest
 import com.useai.core.network.request.NewProjectRequest
-import com.useai.core.network.request.Question
 import com.useai.core.network.response.toProject
 import com.useai.core.network.source.ProjectsRemoteDataSource
 import javax.inject.Inject
@@ -21,9 +21,9 @@ class ProjectsRepositoryImpl @Inject constructor(
                     jobDesc = newProject.jobDesc,
                     talent = newProject.talent,
                     questions = newProject.questions.map {
-                        Question(
+                        CreateQuestionRequest(
                             maxLength = it.maxLength,
-                            question = it.question
+                            title = it.question
                         )
                     },
                     dueDate = newProject.dueDate,
