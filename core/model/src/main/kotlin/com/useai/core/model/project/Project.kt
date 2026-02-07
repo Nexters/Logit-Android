@@ -1,5 +1,7 @@
 package com.useai.core.model.project
 
+import java.time.LocalDateTime
+
 data class Project(
     val userId: String,
     val projectId: String,
@@ -7,6 +9,6 @@ data class Project(
     val jobName: String,
     val jobDesc: String,
     val dueDate: String,
-    val createdAt: String,
-    val updatedAt: String,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
 )
