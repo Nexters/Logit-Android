@@ -30,6 +30,7 @@ import com.useai.core.designsystem.component.container.LogitOutlinedContainer
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.model.project.NewQuestionData
 import com.useai.core.ui.InputFormContainer
 import com.useai.core.ui.LetterCountInput
 import com.useai.core.ui.LogitAddButton
@@ -44,7 +45,7 @@ fun NewProjectQuestion(
     modifier: Modifier = Modifier,
     state: NewProjectQuestionScreen.State,
 ) {
-    val isButtonEnabled = state.questions.any { it.isNotBlank() }
+    val isButtonEnabled = state.questions.any { it.question.isNotBlank() }
 
     InputFormContainer(
         modifier = modifier,
@@ -68,22 +69,22 @@ fun NewProjectQuestion(
         )
         Spacer(Modifier.height(75.dp))
 
-        state.questions.forEachIndexed { i, questionText ->
+        state.questions.forEachIndexed { i, newQuestion ->
             key(i) {
                 NewQuestion(
-                    value = questionText,
+                    value = newQuestion.question,
                     onValueChange = { newValue ->
                         state.eventSink(
                             NewProjectQuestionScreen.Event.OnQuestionChange(
                                 i,
-                                newValue
+                                newQuestion.copy(question = newValue)
                             )
                         )
                     },
                     onDelete = {
                         state.eventSink(NewProjectQuestionScreen.Event.DeleteQuestion(i))
                     },
-                    placeHolder = if (questionText.isEmpty()) stringResource(R.string.project_field_question, i + 1) else "",
+                    placeHolder = if (newQuestion.question.isEmpty()) stringResource(R.string.project_field_question, i + 1) else "",
                     isAdditionalQuestion = i > 0,
                 )
                 Spacer(Modifier.height(8.dp))
@@ -171,7 +172,7 @@ private fun DeleteButton(
 private fun NewProjectQuestionPreview() {
     NewProjectQuestion(
         state = NewProjectQuestionScreen.State(
-            questions = listOf(""),
+            questions = listOf(NewQuestionData()),
             eventSink = {},
         )
     )
