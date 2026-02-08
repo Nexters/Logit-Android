@@ -32,6 +32,7 @@ import com.useai.core.designsystem.theme.LogitTheme
 internal fun ChatInputRow(
     userInput: String,
     onUserInputChange: (String) -> Unit,
+    onTryExperienceUpload: () -> Unit,
     onSendClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSendEnabled: Boolean = false
@@ -52,7 +53,7 @@ internal fun ChatInputRow(
                 .fillMaxHeight()
                 .clip(CircleShape)
                 .clickable {
-                    // TODO : 경험 업로드
+                    onTryExperienceUpload()
                 }
                 .background(
                     color = LogitTheme.colors.primary50,
@@ -92,6 +93,7 @@ private fun ChatInputRowPreview() {
         userInput = "나는 밥을 잘 먹는다는 내용으로 초안 작성해줘",
         onUserInputChange = {},
         onSendClick = {},
+        onTryExperienceUpload = {},
         modifier = Modifier.fillMaxWidth()
     )
 }

@@ -1,25 +1,48 @@
 package com.useai.feature.chat.ui.chatting
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
+import com.slack.circuit.retained.rememberRetained
+import com.useai.core.designsystem.R
+import com.useai.core.designsystem.component.button.LogitPrimaryButton
+import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
 import com.useai.core.model.project.Project
+import com.useai.core.ui.experience.ExperienceCard
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.chat.ChatScreenCategory
 import com.useai.feature.chat.ChattingStreamingStatus
@@ -28,6 +51,7 @@ import com.useai.feature.chat.ui.chatCommonStickyHeader
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChatChattingUI(
     state: ChatScreen.State.Success,
@@ -35,6 +59,102 @@ internal fun ChatChattingUI(
     lazyListState: LazyListState = rememberLazyListState(),
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val temporarilySelectedExperiences = rememberRetained {
+        mutableStateSetOf(*state.selectedMatchingExperiences.toTypedArray())
+    }
+
+    if (state.showExperienceModal) {
+        ModalBottomSheet(
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = LogitTheme.colors.white,
+            shape = RoundedCornerShape(14.dp),
+            onDismissRequest = {
+                state.eventSink(ChatScreen.Event.DismissExperienceModal)
+            },
+            dragHandle = null
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+                    .navigationBarsPadding()
+            ) {
+                Row(
+                    modifier = Modifier.padding(top = 27.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_ex_list),
+                        tint = LogitTheme.colors.black,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = stringResource(R.string.select_experience),
+                        style = LogitTheme.typography.body3_1,
+                        color = LogitTheme.colors.black,
+                        modifier = Modifier.padding(start = 10.dp)
+                    )
+                }
+
+                Text(
+                    text = stringResource(R.string.select_experience_explain),
+                    style = LogitTheme.typography.body6_1,
+                    color = LogitTheme.colors.gray300,
+                    modifier = Modifier.padding(top = 6.dp)
+                )
+
+                Row(
+                    modifier = Modifier.padding(top = 35.dp).clip(RoundedCornerShape(8.dp)).background(
+                        shape = RoundedCornerShape(8.dp),
+                        color = LogitTheme.colors.primary50
+                    ).clickable {
+                        TODO("AddExperience Event")
+                    },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(start = 14.dp).padding(vertical = 13.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_add),
+                        tint = Color.Unspecified,
+                        contentDescription = null,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.add_experience),
+                        style = LogitTheme.typography.body6_2,
+                        color = LogitTheme.colors.gray300,
+                        modifier = Modifier.padding(start = 8.dp).fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.padding(top = 12.dp))
+                state.matchingExperiences.fastForEach { matchingExperience ->
+                    ExperienceCard(
+                        matchingExperience = matchingExperience,
+                        isSelected = matchingExperience in temporarilySelectedExperiences,
+                        onClick = {
+                            if (matchingExperience in temporarilySelectedExperiences)
+                                temporarilySelectedExperiences.remove(matchingExperience)
+                            else
+                                temporarilySelectedExperiences.add(matchingExperience)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.padding(top = 8.dp))
+                }
+
+                LogitPrimaryButton(
+                    text = stringResource(R.string.select_experiences, state.selectedMatchingExperiences.size),
+                    onClick = {
+                        state.eventSink(ChatScreen.Event.CompleteSelectExperience(
+                            experienceIds = temporarilySelectedExperiences.map { it.experience.id }
+                        ))
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
 
     Column(modifier = modifier) {
         LazyColumn(
@@ -126,6 +246,9 @@ internal fun ChatChattingUI(
                 state.eventSink(ChatScreen.Event.SendMessage(state.userInput))
             },
             isSendEnabled = state.userInput.isNotEmpty(),
+            onTryExperienceUpload = {
+                state.eventSink(ChatScreen.Event.TryUploadExperience)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 20.dp),
@@ -190,7 +313,8 @@ createdAt = LocalDateTime.MIN
                 dueDate = LocalDate.now(),
                 jobPosition = "안드로이드 개발자",
                 recruitNotice = "채용공고"
-            )
+            ),
+            matchingExperiences = listOf(),
         ),
     )
 }

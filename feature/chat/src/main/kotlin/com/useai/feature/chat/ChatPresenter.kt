@@ -3,7 +3,6 @@ package com.useai.feature.chat
 import android.content.ClipData
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.toClipEntry
@@ -21,6 +20,7 @@ import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.ChattingStreaming
 import com.useai.core.model.chat.Question
+import com.useai.core.model.experience.MatchingExperience
 import com.useai.core.ui.reduce
 import com.useai.core.ui.runOn
 import dagger.assisted.Assisted
@@ -45,6 +45,7 @@ class ChatPresenter @AssistedInject constructor(
 
     private val streamingChatStringBuilder = StringBuilder()
     private val chattingHistories = hashMapOf<Question, ChattingHistory>()
+    private val matchingExperiencesList = hashMapOf<Question, List<MatchingExperience>>()
 
     @Composable
     override fun present(): ChatScreen.State {
@@ -53,22 +54,48 @@ class ChatPresenter @AssistedInject constructor(
 
         val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
             val projectDetailDeferred = async {
-                projectRepository.getProject(screen.projectId).getOrNull()
+                try {
+                    projectRepository.getProject(screen.projectId).getOrThrow()
+
+                }catch (e: Exception) {
+                    println("dddddddddd $e")
+                    null
+                }
             }
 
             questionRepository.getQuestions(screen.projectId).onSuccess { initialQuestions ->
+                if (initialQuestions.isEmpty()) {
+                    println("ddddd111111")
+                    reduce { ChatScreen.State.LoadFailed }
+                    return@produceRetainedState
+                }
+
+                initialQuestions.fastMap { question ->
+                    async {
+                        experienceRepository.getMatchingExperiences(question.id).onSuccess { matchingExperiences ->
+                            this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
+                        }.onFailure {
+                            println("dddddd$it")
+                            reduce { ChatScreen.State.LoadFailed }
+                        }
+                    }
+                }.awaitAll()
+
                 initialQuestions.fastMap { question ->
                     async {
                         chattingRepository.getChatHistory(question.id).onSuccess { chattingHistory ->
                             chattingHistories[question] = chattingHistory
                         }.onFailure {
+                            println("dddddd333")
                             reduce { ChatScreen.State.LoadFailed }
                         }
                     }
                 }.awaitAll()
+
                 val projectDetail = projectDetailDeferred.await()
                 if (projectDetail == null)
                     reduce {
+                        println("dddddd444")
                         ChatScreen.State.LoadFailed
                     }
 
@@ -81,6 +108,7 @@ class ChatPresenter @AssistedInject constructor(
                             questions = initialQuestions,
                             currentQuestion = initialQuestion,
                             chattingHistory = requireNotNull(chattingHistories[initialQuestion]),
+                            matchingExperiences = requireNotNull(matchingExperiencesList[initialQuestion]),
                             streamingStatus = ChattingStreamingStatus.Idle,
                             userInput = "",
                             currentCategory = ChatScreenCategory.CHATTING,
@@ -102,7 +130,8 @@ class ChatPresenter @AssistedInject constructor(
                                         reduce {
                                             copy(
                                                 currentQuestion = event.question,
-                                                chattingHistory = requireNotNull(chattingHistories[event.question])
+                                                chattingHistory = requireNotNull(chattingHistories[event.question]),
+                                                matchingExperiences = requireNotNull(matchingExperiencesList[event.question])
                                             )
                                         }
                                     }
@@ -185,6 +214,8 @@ class ChatPresenter @AssistedInject constructor(
                                             ).onSuccess { question ->
                                                 this@ChatPresenter.chattingHistories[question] = chattingHistory
                                                 this@ChatPresenter.chattingHistories.remove(currentQuestion)
+                                                this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
+                                                this@ChatPresenter.matchingExperiencesList.remove(currentQuestion)
                                                 reduce {
                                                     copy(
                                                         currentQuestion = question,
@@ -204,8 +235,29 @@ class ChatPresenter @AssistedInject constructor(
                                         }
                                     }
                                 }
-                                is ChatScreen.Event.UploadExperience -> {
-                                    // MVP X
+                                is ChatScreen.Event.CompleteSelectExperience -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        reduce {
+                                            copy(
+                                                showExperienceModal = false,
+                                                selectedMatchingExperiences = matchingExperiences.filter { it.experience.id in event.experienceIds }.toSet()
+                                            )
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.TryUploadExperience -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        reduce {
+                                            copy(showExperienceModal = true)
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.DismissExperienceModal -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        reduce {
+                                            copy(showExperienceModal = false)
+                                        }
+                                    }
                                 }
                                 is ChatScreen.Event.ExpandOrShrinkHeader -> {
                                     value.runOn<ChatScreen.State.Success> {

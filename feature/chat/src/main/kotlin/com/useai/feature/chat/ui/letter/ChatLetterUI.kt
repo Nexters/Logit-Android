@@ -112,7 +112,8 @@ private fun ChatLetterUIPreview() {
                 dueDate = LocalDate.now(),
                 jobPosition = "안드로이드 개발자",
                 recruitNotice = "채용공고"
-            )
+            ),
+            matchingExperiences = listOf()
         ),
     )
 }

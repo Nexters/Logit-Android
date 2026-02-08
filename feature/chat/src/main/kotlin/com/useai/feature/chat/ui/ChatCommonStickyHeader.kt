@@ -41,7 +41,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
 ) {
     stickyHeader {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+            modifier = Modifier.fillMaxWidth().background(color = LogitTheme.colors.white).padding(vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
