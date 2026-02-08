@@ -54,18 +54,11 @@ class ChatPresenter @AssistedInject constructor(
 
         val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
             val projectDetailDeferred = async {
-                try {
-                    projectRepository.getProject(screen.projectId).getOrThrow()
-
-                }catch (e: Exception) {
-                    println("dddddddddd $e")
-                    null
-                }
+                projectRepository.getProject(screen.projectId).getOrNull()
             }
 
             questionRepository.getQuestions(screen.projectId).onSuccess { initialQuestions ->
                 if (initialQuestions.isEmpty()) {
-                    println("ddddd111111")
                     reduce { ChatScreen.State.LoadFailed }
                     return@produceRetainedState
                 }
@@ -75,7 +68,6 @@ class ChatPresenter @AssistedInject constructor(
                         experienceRepository.getMatchingExperiences(question.id).onSuccess { matchingExperiences ->
                             this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
                         }.onFailure {
-                            println("dddddd$it")
                             reduce { ChatScreen.State.LoadFailed }
                         }
                     }
@@ -86,7 +78,6 @@ class ChatPresenter @AssistedInject constructor(
                         chattingRepository.getChatHistory(question.id).onSuccess { chattingHistory ->
                             chattingHistories[question] = chattingHistory
                         }.onFailure {
-                            println("dddddd333")
                             reduce { ChatScreen.State.LoadFailed }
                         }
                     }
@@ -95,7 +86,6 @@ class ChatPresenter @AssistedInject constructor(
                 val projectDetail = projectDetailDeferred.await()
                 if (projectDetail == null)
                     reduce {
-                        println("dddddd444")
                         ChatScreen.State.LoadFailed
                     }
 
@@ -146,7 +136,8 @@ class ChatPresenter @AssistedInject constructor(
                                         scope.launch {
                                             chattingRepository.startChattingStream(
                                                 questionId = currentQuestion.id,
-                                                sendingMessage = event.message
+                                                sendingMessage = event.message,
+                                                experienceIds = chattingHistory.experienceIds.toList()
                                             ).onStart {
                                                 value.runOn<ChatScreen.State.Success> {
                                                     reduce {
@@ -237,10 +228,13 @@ class ChatPresenter @AssistedInject constructor(
                                 }
                                 is ChatScreen.Event.CompleteSelectExperience -> {
                                     value.runOn<ChatScreen.State.Success> {
+                                        val currentChatHistory = chattingHistories[currentQuestion]
+                                        val updatedChatHistory = currentChatHistory?.copy(experienceIds = event.experienceIds.toSet()) ?: chattingHistory.copy(experienceIds = event.experienceIds.toSet())
+                                        chattingHistories[currentQuestion] = updatedChatHistory
                                         reduce {
                                             copy(
                                                 showExperienceModal = false,
-                                                selectedMatchingExperiences = matchingExperiences.filter { it.experience.id in event.experienceIds }.toSet()
+                                                chattingHistory = updatedChatHistory
                                             )
                                         }
                                     }

@@ -27,7 +27,6 @@ data class ChatScreen(val projectId: String): Screen {
             val userInput: String,
             val isHeaderUIExpanded: Boolean,
             val showExperienceModal: Boolean = false,
-            val selectedMatchingExperiences: Set<MatchingExperience> = emptySet(),
             val eventSink: (Event) -> Unit
         ) : State
         data object Loading : State

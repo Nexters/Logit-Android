@@ -16,12 +16,16 @@ internal class ChattingRepositoryImpl @Inject constructor(
     private val chattingRemoteDataSource: ChattingRemoteDataSource
 ) : ChattingRepository {
 
-    override fun startChattingStream(questionId: String, sendingMessage: String): Flow<ChattingStreaming> {
+    override fun startChattingStream(
+        questionId: String,
+        sendingMessage: String,
+        experienceIds: List<String>
+    ): Flow<ChattingStreaming> {
         return chattingRemoteDataSource.startChattingStream(
             StartChattingStreamRequest(
                 sendingMessage = sendingMessage,
                 questionId = questionId,
-                experienceIds = listOf()
+                experienceIds = experienceIds
             )
         ).map { it.toChattingStreaming() }
     }

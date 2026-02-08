@@ -87,7 +87,7 @@ private fun ChatLetterUIPreview() {
             chattingHistory = ChattingHistory(
                 chattings = listOf(),
                 projectCreatedAt = LocalDateTime.now(),
-                experienceIds = emptyList(),
+                experienceIds = emptySet(),
                 questionId = "",
                 projectName = "Test Project",
                 questionTitle = "Test Question",

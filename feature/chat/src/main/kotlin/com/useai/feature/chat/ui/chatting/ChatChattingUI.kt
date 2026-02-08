@@ -60,7 +60,7 @@ internal fun ChatChattingUI(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val temporarilySelectedExperiences = rememberRetained {
-        mutableStateSetOf(*state.selectedMatchingExperiences.toTypedArray())
+        mutableStateSetOf(*state.chattingHistory.experienceIds.toTypedArray())
     }
 
     if (state.showExperienceModal) {
@@ -131,12 +131,12 @@ internal fun ChatChattingUI(
                 state.matchingExperiences.fastForEach { matchingExperience ->
                     ExperienceCard(
                         matchingExperience = matchingExperience,
-                        isSelected = matchingExperience in temporarilySelectedExperiences,
+                        isSelected = matchingExperience.experience.id in temporarilySelectedExperiences,
                         onClick = {
-                            if (matchingExperience in temporarilySelectedExperiences)
-                                temporarilySelectedExperiences.remove(matchingExperience)
+                            if (matchingExperience.experience.id in temporarilySelectedExperiences)
+                                temporarilySelectedExperiences.remove(matchingExperience.experience.id)
                             else
-                                temporarilySelectedExperiences.add(matchingExperience)
+                                temporarilySelectedExperiences.add(matchingExperience.experience.id)
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -144,10 +144,10 @@ internal fun ChatChattingUI(
                 }
 
                 LogitPrimaryButton(
-                    text = stringResource(R.string.select_experiences, state.selectedMatchingExperiences.size),
+                    text = stringResource(R.string.select_experiences, temporarilySelectedExperiences.size),
                     onClick = {
                         state.eventSink(ChatScreen.Event.CompleteSelectExperience(
-                            experienceIds = temporarilySelectedExperiences.map { it.experience.id }
+                            experienceIds = temporarilySelectedExperiences.toList()
                         ))
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -290,7 +290,7 @@ createdAt = LocalDateTime.MIN
                     ),
                 ),
                 projectCreatedAt = LocalDateTime.now(),
-                experienceIds = emptyList(),
+                experienceIds = emptySet(),
                 questionId = "",
                 projectName = "Test Project",
                 questionTitle = "Test Question",
