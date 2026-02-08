@@ -14,7 +14,7 @@ data class ProjectResponse(
     @SerialName("id") val id: String,
     @SerialName("user_id") val userId: String,
     @SerialName("company") val company: String,
-    @SerialName("due_date") val dueDate: String,
+    @SerialName("due_date") val dueDate: String?, // Changed to nullable String
     @SerialName("job_position") val jobPosition: String,
     @SerialName("recruit_notice") val recruitNotice: String,
     @SerialName("created_at") val createdAt: String,
