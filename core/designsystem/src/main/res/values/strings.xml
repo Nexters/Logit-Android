@@ -13,6 +13,11 @@
     <string name="chatting">채팅</string>
     <string name="letter">자기소개서</string>
     <string name="length_limit">%s/%s</string>
+    <string name="select_experience">경험 선택</string>
+    <string name="select_experience_explain">반영할 경험카드를 선택하세요 (최대 3개)</string>
+    <string name="add_experience">추가하기</string>
+    <string name="experience_score">%s점</string>
+    <string name="select_experiences">%s개 경험선택</string>
 
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>

@@ -8,3 +8,8 @@ plugins {
 android {
     namespace = "com.useai.core.ui"
 }
+
+dependencies {
+    api(projects.core.model)
+    api(projects.core.designsystem)
+}
