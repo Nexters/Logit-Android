@@ -6,6 +6,7 @@ import com.useai.core.network.request.UpdateExperienceRequest
 import com.useai.core.network.response.ExperienceResponse
 import com.useai.core.network.response.ExperiencesResponse
 import com.useai.core.network.response.MatchingExperiencesResponse
+import com.useai.core.network.response.QuestionMatchingExperiencesResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -32,6 +33,11 @@ interface ExperienceApi {
         @IntRange(1,100) @Query("limit") limit: Int = 100,
     ): MatchingExperiencesResponse
 
+    @GET("api/v1/experiences/match-question/{question_id}")
+    suspend fun getMatchingExperiences(
+        @Path("question_id") questionId: String
+    ): QuestionMatchingExperiencesResponse
+
     @GET("api/v1/experiences/{experience_id}")
     suspend fun getExperience(
         @Path("experience_id") experienceId: String
@@ -47,4 +53,6 @@ interface ExperienceApi {
     suspend fun deleteExperience(
         @Path("experience_id") experienceId: String
     )
+
+
 }

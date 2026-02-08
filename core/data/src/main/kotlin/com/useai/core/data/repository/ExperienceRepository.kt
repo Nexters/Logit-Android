@@ -11,6 +11,7 @@ interface ExperienceRepository {
     suspend fun getExperiences(): Result<List<Experience>>
     suspend fun getExperience(experienceId: String): Result<Experience>
     suspend fun searchExperience(query: String): Result<List<MatchingExperience>>
+    suspend fun getMatchingExperiences(questionId: String): Result<List<MatchingExperience>>
     suspend fun updateExperience(experienceId: String, request: UpdateExperienceRequest): Result<Experience>
     suspend fun deleteExperience(experienceId: String): Result<Unit>
 }

@@ -6,6 +6,7 @@ import com.useai.core.network.request.UpdateExperienceRequest
 import com.useai.core.network.response.ExperienceResponse
 import com.useai.core.network.response.ExperiencesResponse
 import com.useai.core.network.response.MatchingExperiencesResponse
+import com.useai.core.network.response.QuestionMatchingExperiencesResponse
 import javax.inject.Inject
 
 internal class ExperienceRemoteDataSourceImpl @Inject constructor(
@@ -26,6 +27,10 @@ internal class ExperienceRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun searchExperience(query: String): MatchingExperiencesResponse {
         return experienceApi.searchExperience(query)
+    }
+
+    override suspend fun getMatchingExperiences(questionId: String): QuestionMatchingExperiencesResponse {
+        return experienceApi.getMatchingExperiences(questionId)
     }
 
     override suspend fun updateExperience(
