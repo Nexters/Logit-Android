@@ -13,8 +13,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +36,7 @@ fun LogitOutlinedTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     placeholder: String? = null,
+    maxLength: Int = Int.MAX_VALUE,
     contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
     border: BorderStroke = BorderStroke(1.dp, LogitTheme.colors.gray100),
     shape: Shape = RoundedCornerShape(8.dp),
@@ -51,13 +50,17 @@ fun LogitOutlinedTextField(
     interactionSource: MutableInteractionSource? = null,
     cursorBrush: Brush = SolidColor(LogitTheme.colors.black)
 ) {
-    val showPlaceholder by remember {
-        derivedStateOf { placeholder != null && value.isEmpty() }
+    val showPlaceholder = remember(value, placeholder) {
+        placeholder != null && value.isEmpty()
     }
 
     BasicTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { newValue ->
+            if (newValue.length <= maxLength) {
+                onValueChange(newValue)
+            }
+        },
         modifier = Modifier
             .clip(shape)
             .background(color = LogitTheme.colors.white, shape = shape)

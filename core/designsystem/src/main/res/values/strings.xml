@@ -19,8 +19,30 @@
     <string name="experience_score">%s점</string>
     <string name="select_experiences">%s개 경험선택</string>
 
+    <string name="next">다음으로</string>
+    <string name="project_form_title_1">자기소개서 작성</string>
+    <string name="project_form_desc_1">지원하는 기업의 정보를 알려주세요</string>
+    <string name="project_field_company_name_label">기업명</string>
+    <string name="project_field_company_name_placeholder">예) 로짓 컴퍼니</string>
+    <string name="project_field_job_name_label">직무명</string>
+    <string name="project_field_job_name_placeholder">예) 프로덕트 디자이너</string>
+    <string name="project_field_job_desc_label">채용 공고</string>
+    <string name="project_field_job_desc_placeholder">주요 업무, 자격 요건, 우대 사항 등을 입력하세요</string>
+    <string name="project_field_talent_label">기업 인재상</string>
+    <string name="project_field_talent_placeholder">기업의 인재상이나 핵심가치를 입력하세요</string>
+
+    <string name="create_project">프로젝트 생성</string>
+    <string name="project_form_title_2">자기소개서 문항 입력</string>
+    <string name="project_form_desc_2">자기소개서의 문항을 입력해주세요</string>
+    <string name="project_field_question">%d번째 문항</string>
+
+    <string name="letter_count_placeholder">글자수</string>
+    <string name="letter_count_unit">자</string>
+    <string name="add">추가하기</string>
+
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
     <string name="content_description_external">업로드</string>
     <string name="content_description_navigate_back">뒤로가기</string>
+    <string name="content_description_delete">삭제</string>
 </resources>

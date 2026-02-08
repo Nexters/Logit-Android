@@ -1,0 +1,33 @@
+package com.useai.core.network.response
+
+import com.useai.core.common.extensions.toLocalDate
+import com.useai.core.common.extensions.toLocalDateTime
+import com.useai.core.model.project.Project
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import java.time.LocalDate
+import java.time.LocalDateTime
+
+@Serializable
+data class NewProjectResponse(
+    val company: String,
+    @SerialName("created_at") val createdAt: String,
+    @SerialName("due_date") val dueDate: String,
+    val id: String,
+    @SerialName("job_position") val jobPosition: String,
+    @SerialName("recruit_notice") val recruitNotice: String,
+    @SerialName("updated_at") val updatedAt: String,
+    @SerialName("user_id") val userId: String,
+)
+
+fun NewProjectResponse.toProject(): Project {
+    return Project(
+        id = id,
+        company = company,
+        jobPosition = jobPosition,
+        recruitNotice = recruitNotice,
+        dueDate = dueDate.toLocalDate() ?: LocalDate.MIN,
+        createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN,
+        updatedAt = updatedAt.toLocalDateTime() ?: LocalDateTime.MIN,
+    )
+}

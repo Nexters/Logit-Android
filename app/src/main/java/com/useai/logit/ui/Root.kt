@@ -43,7 +43,7 @@ fun Root(
     val screens = remember {
         listOf(
             HomeScreen,
-            ChatScreen(0), // TODO: 자소서 screen으로 변경
+            ChatScreen(""),
             NewProjectBasicInfoScreen,
             ExperienceScreen,
             ReportScreen,

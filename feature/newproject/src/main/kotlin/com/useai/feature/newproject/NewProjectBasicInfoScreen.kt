@@ -3,14 +3,15 @@ package com.useai.feature.newproject
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.navigation.LocalScreenProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -42,10 +43,11 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
 ) : Presenter<NewProjectBasicInfoScreen.State> {
     @Composable
     override fun present(): NewProjectBasicInfoScreen.State {
-        var companyName by remember { mutableStateOf("") }
-        var jobName by remember { mutableStateOf("") }
-        var jobDesc by remember { mutableStateOf("") }
-        var talent by remember { mutableStateOf("") }
+        var companyName by rememberRetained { mutableStateOf("") }
+        var jobName by rememberRetained { mutableStateOf("") }
+        var jobDesc by rememberRetained { mutableStateOf("") }
+        var talent by rememberRetained { mutableStateOf("") }
+        val screenProvider = LocalScreenProvider.current
 
         return NewProjectBasicInfoScreen.State(
             companyName = companyName,
@@ -59,12 +61,15 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
                 is NewProjectBasicInfoScreen.Event.OnJobNameChange -> jobName = event.job
                 is NewProjectBasicInfoScreen.Event.OnJobDescChange -> jobDesc = event.desc
                 is NewProjectBasicInfoScreen.Event.OnTalentChange -> talent = event.talent
-                is NewProjectBasicInfoScreen.Event.Next -> navigator.goTo(
-                    NewProjectQuestionScreen(
+                is NewProjectBasicInfoScreen.Event.Next -> {
+                    val newProjectQuestionScreen = screenProvider.newProjectQuestionScreen(
                         companyName = companyName,
-                        jobName = jobName
+                        jobName = jobName,
+                        jobDesc = jobDesc,
+                        talent = talent,
                     )
-                )
+                    navigator.goTo(newProjectQuestionScreen)
+                }
             }
         }
     }
