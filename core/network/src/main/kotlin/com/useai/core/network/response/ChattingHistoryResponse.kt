@@ -33,7 +33,7 @@ data class ChattingContentResponse(
 fun ChattingHistoryResponse.toChattingHistory() = ChattingHistory(
     chattings = chats.map { it.toChattingContent() },
     projectCreatedAt = projectCreatedAt.toLocalDateTime() ?: LocalDateTime.MIN,
-    experienceIds = experienceIds,
+    experienceIds = experienceIds.toSet(),
     questionId = questionId,
     projectName = projectName,
     questionTitle = questionTitle,

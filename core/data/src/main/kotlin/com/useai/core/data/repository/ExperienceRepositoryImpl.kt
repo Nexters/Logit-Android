@@ -10,6 +10,7 @@ import com.useai.core.network.request.UpdateExperienceRequest
 import com.useai.core.network.response.toExperience
 import com.useai.core.network.response.toMatchingExperience
 import com.useai.core.network.source.ExperienceRemoteDataSource
+import com.useai.core.network.response.toMatchingExperience as toQuestionMatchingExperience // For mapper
 import javax.inject.Inject
 
 internal class ExperienceRepositoryImpl @Inject constructor(
@@ -48,6 +49,12 @@ internal class ExperienceRepositoryImpl @Inject constructor(
     override suspend fun searchExperience(query: String): Result<List<MatchingExperience>> {
         return runCatchingWith {
             experienceRemoteDataSource.searchExperience(query).results.map { it.toMatchingExperience() }
+        }
+    }
+
+    override suspend fun getMatchingExperiences(questionId: String): Result<List<MatchingExperience>> {
+        return runCatchingWith {
+            experienceRemoteDataSource.getMatchingExperiences(questionId).experiences.map { it.toQuestionMatchingExperience() }
         }
     }
 

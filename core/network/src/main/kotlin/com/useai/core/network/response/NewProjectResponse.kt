@@ -1,9 +1,11 @@
 package com.useai.core.network.response
 
+import com.useai.core.common.extensions.toLocalDate
 import com.useai.core.common.extensions.toLocalDateTime
 import com.useai.core.model.project.Project
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Serializable
@@ -20,12 +22,11 @@ data class NewProjectResponse(
 
 fun NewProjectResponse.toProject(): Project {
     return Project(
-        userId = userId,
-        projectId = id,
-        companyName = company,
-        jobName = jobPosition,
-        jobDesc = recruitNotice,
-        dueDate = dueDate,
+        id = id,
+        company = company,
+        jobPosition = jobPosition,
+        recruitNotice = recruitNotice,
+        dueDate = dueDate.toLocalDate() ?: LocalDate.MIN,
         createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN,
         updatedAt = updatedAt.toLocalDateTime() ?: LocalDateTime.MIN,
     )

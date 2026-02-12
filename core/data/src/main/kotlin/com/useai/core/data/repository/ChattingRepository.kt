@@ -6,7 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChattingRepository {
 
-    fun startChattingStream(questionId: String, sendingMessage: String): Flow<ChattingStreaming>
+    fun startChattingStream(
+        questionId: String,
+        sendingMessage: String,
+        experienceIds: List<String>
+    ): Flow<ChattingStreaming>
     suspend fun getChatHistory(questionId: String): Result<ChattingHistory>
     suspend fun updateLetter(chattingId: String, questionId: String, content: String): Result<Unit>
 }

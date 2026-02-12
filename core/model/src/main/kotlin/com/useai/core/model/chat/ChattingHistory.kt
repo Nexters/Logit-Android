@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class ChattingHistory(
     val chattings: List<ChattingContent>,
     val projectCreatedAt: LocalDateTime,
-    val experienceIds: List<String>,
+    val experienceIds: Set<String>,
     val questionId: String,
     val projectName: String,
     val questionTitle: String,

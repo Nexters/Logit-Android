@@ -89,7 +89,7 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
                                 dueDate = "2024-12-31" // TODO: due date 입력 폼 추가
                             )
                         ).onSuccess {
-                            val projectId = it.projectId
+                            val projectId = it.id
                             val chatScreen = screenProvider.chatScreen(projectId)
                             navigator.goTo(chatScreen)
                         }.onFailure {
