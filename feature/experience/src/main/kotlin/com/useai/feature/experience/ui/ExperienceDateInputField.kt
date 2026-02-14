@@ -112,7 +112,19 @@ private fun cursorIndexForDigitCount(formatted: String, digitCount: Int): Int {
     formatted.forEachIndexed { index, c ->
         if (c.isDigit()) {
             seenDigits += 1
-            if (seenDigits == digitCount) return index + 1
+            if (seenDigits == digitCount) {
+                val baseCursor = index + 1
+                // When "." is auto-inserted after YYYY/MM, place cursor after ". ".
+                return if (
+                    (digitCount == 4 || digitCount == 6) &&
+                    formatted.getOrNull(baseCursor) == '.' &&
+                    formatted.getOrNull(baseCursor + 1) == ' '
+                ) {
+                    baseCursor + 2
+                } else {
+                    baseCursor
+                }
+            }
         }
     }
     return formatted.length
