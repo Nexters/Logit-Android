@@ -38,7 +38,6 @@ internal fun ExperienceLoadFailedUI(
             LogitPrimaryButton(
                 text = stringResource(R.string.experience_retry),
                 onClick = onRetry,
-                modifier = Modifier.width(140.dp)
             )
         }
     }

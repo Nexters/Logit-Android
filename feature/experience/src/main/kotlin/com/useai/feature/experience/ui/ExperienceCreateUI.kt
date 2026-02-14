@@ -1,11 +1,7 @@
 package com.useai.feature.experience.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -13,7 +9,10 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.InputFormContainer
+import com.useai.core.ui.LogitStepper
 import com.useai.feature.experience.ExperienceCreateScreen
+import com.useai.feature.experience.ExperienceCreateStep
 import dagger.hilt.android.components.ActivityRetainedComponent
 
 @Composable
@@ -22,26 +21,62 @@ fun ExperienceCreateUI(
     state: ExperienceCreateScreen.State,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(LogitTheme.colors.white)
-            .padding(horizontal = 20.dp, vertical = 24.dp)
+    InputFormContainer(
+        modifier = modifier,
+        onClickBackButton = {
+            state.eventSink(ExperienceCreateScreen.Event.Back)
+        },
+        bottomButtonText = if (state.currentStep == ExperienceCreateStep.CATEGORY) {
+            stringResource(R.string.experience_register)
+        } else {
+            stringResource(R.string.next)
+        },
+        onClickBottomButton = {
+            state.eventSink(ExperienceCreateScreen.Event.Next)
+        },
+        bottomButtonEnabled = isBottomButtonEnabled(state),
     ) {
-        Text(
-            text = stringResource(R.string.content_description_navigate_back),
-            style = LogitTheme.typography.body6_2,
-            color = LogitTheme.colors.gray300,
-            modifier = Modifier.clickable {
-                state.eventSink(ExperienceCreateScreen.Event.Back)
-            }
+        LogitStepper(
+            currentStep = state.currentStep.step.toString(),
+            totalStep = state.currentStep.total.toString()
         )
 
-        Text(
-            text = stringResource(R.string.experience_register),
-            style = LogitTheme.typography.body1,
-            color = LogitTheme.colors.black,
-            modifier = Modifier.padding(top = 20.dp)
-        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        when (state.currentStep) {
+            ExperienceCreateStep.BASIC_INFO -> ExperienceCreateBasicInfoStep(state = state)
+            ExperienceCreateStep.STAR -> ExperienceCreateStarStep(state = state)
+            ExperienceCreateStep.CATEGORY -> ExperienceCreateCategoryStep(state = state)
+        }
     }
+}
+
+private fun isBottomButtonEnabled(state: ExperienceCreateScreen.State): Boolean {
+    return when (state.currentStep) {
+        ExperienceCreateStep.BASIC_INFO -> {
+            state.title.isNotBlank() &&
+                isDateFormatValid(state.startDate) &&
+                (state.isInProgress || isDateFormatValid(state.endDate)) &&
+                state.selectedExperienceType != null
+        }
+
+        ExperienceCreateStep.STAR -> {
+            state.situation.trim().length >= 50 &&
+                state.task.trim().length >= 50 &&
+                state.action.trim().length >= 50 &&
+                state.result.trim().length >= 50
+        }
+
+        ExperienceCreateStep.CATEGORY -> {
+            state.selectedCategory != null && !state.isSubmitting
+        }
+    }
+}
+
+private val DATE_INPUT_REGEX by lazy {
+    Regex("^\\d{4}\\.\\s\\d{2}\\.\\s\\d{2}$")
+}
+
+private fun isDateFormatValid(value: String): Boolean {
+    return DATE_INPUT_REGEX.matches(value.trim())
 }

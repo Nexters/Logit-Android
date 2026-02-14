@@ -40,7 +40,7 @@ fun LogitOutlinedTextField(
     contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
     border: BorderStroke = BorderStroke(1.dp, LogitTheme.colors.gray100),
     shape: Shape = RoundedCornerShape(8.dp),
-    textStyle: TextStyle = LogitTheme.typography.body5_4,
+    textStyle: TextStyle = LogitTheme.typography.body6_1,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     maxLines: Int = Int.MAX_VALUE,
