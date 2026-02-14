@@ -1,6 +1,5 @@
 package com.useai.feature.experience.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +18,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.noRippleClickable
 
 @Composable
 internal fun ExperienceListHeader(
@@ -44,7 +44,8 @@ internal fun ExperienceListHeader(
                 contentDescription = null,
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable(onClick = onClickAdd)
+                    .noRippleClickable(onClick = onClickAdd)
+                    .padding(8.dp)
             )
         }
 
