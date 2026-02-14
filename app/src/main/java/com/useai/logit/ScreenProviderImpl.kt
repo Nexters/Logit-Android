@@ -3,6 +3,7 @@ package com.useai.logit
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.navigation.ScreenProvider
 import com.useai.feature.chat.ChatScreen
+import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import com.useai.feature.newproject.NewProjectQuestionScreen
 
@@ -22,4 +23,6 @@ class ScreenProviderImpl: ScreenProvider {
     )
 
     override fun chatScreen(projectId: String): Screen = ChatScreen(projectId)
+
+    override fun experienceCreateScreen(): Screen = ExperienceCreateScreen
 }

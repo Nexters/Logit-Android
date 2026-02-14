@@ -11,4 +11,5 @@ interface ScreenProvider {
         talent: String
     ): Screen
     fun chatScreen(projectId: String): Screen
+    fun experienceCreateScreen(): Screen
 }

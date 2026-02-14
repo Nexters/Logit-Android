@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home_title">홈</string>
     <string name="cover_letter_title">자소서</string>
@@ -18,6 +18,14 @@
     <string name="add_experience">추가하기</string>
     <string name="experience_score">%s점</string>
     <string name="select_experiences">%s개 경험선택</string>
+    <string name="experience_list_title">경험 목록</string>
+    <string name="experience_count">%1$d개</string>
+    <string name="experience_empty">등록된 경험이 없어요</string>
+    <string name="experience_register">경험 등록하기</string>
+    <string name="experience_loading">불러오는 중…</string>
+    <string name="experience_load_failed">경험을 불러오지 못했어요</string>
+    <string name="experience_retry">다시 시도</string>
+    <string name="experience_more_not_supported">더보기 기능은 준비 중이에요</string>
 
     <string name="next">다음으로</string>
     <string name="project_form_title_1">자기소개서 작성</string>
@@ -45,4 +53,6 @@
     <string name="content_description_external">업로드</string>
     <string name="content_description_navigate_back">뒤로가기</string>
     <string name="content_description_delete">삭제</string>
+
 </resources>
+
