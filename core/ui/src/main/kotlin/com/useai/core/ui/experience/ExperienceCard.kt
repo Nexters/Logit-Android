@@ -44,15 +44,19 @@ fun ExperienceCard(
         )
 
         FlowRow(
-            modifier = Modifier.padding(top = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            modifier = Modifier.padding(top = 10.dp).height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.Center
         ) {
             CategoryChip(
                 category = experience.category,
             )
 
             experience.tags.forEach { tag ->
-                TagChip(tag = tag)
+                TagChip(
+                    tag = tag,
+                    modifier = Modifier.fillMaxHeight()
+                )
             }
         }
     }
