@@ -1,5 +1,6 @@
 package com.useai.feature.experience.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -41,6 +42,7 @@ internal fun ExperienceCreateBasicInfoStep(
             input = state.title,
             onInputChange = { state.eventSink(ExperienceCreateScreen.Event.ChangeTitle(it)) },
             placeHolder = stringResource(R.string.experience_create_title_placeholder),
+            focusedBorder = BorderStroke(1.dp, LogitTheme.colors.primary200)
         )
 
         Spacer(modifier = Modifier.padding(top = 36.dp))

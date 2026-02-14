@@ -2,6 +2,8 @@ package com.useai.feature.experience.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +38,8 @@ internal fun ExperienceDateInputField(
     var fieldValue by remember {
         mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
     }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     LaunchedEffect(value) {
         if (value != fieldValue.text) {
@@ -49,8 +53,28 @@ internal fun ExperienceDateInputField(
     BasicTextField(
         value = fieldValue,
         onValueChange = { newValue ->
-            val digitCursor = countDigitsBeforeCursor(newValue.text, newValue.selection.start)
-            val formatted = formatDateInput(newValue.text)
+            val previous = fieldValue
+            val isDeleting = newValue.text.length < previous.text.length
+            val previousDigits = previous.text.filter { it.isDigit() }
+            val newDigits = newValue.text.filter { it.isDigit() }
+            val deletingOnlySeparator = isDeleting && previousDigits.length == newDigits.length
+
+            val rawDigits = if (deletingOnlySeparator) {
+                val previousCursorDigitCount = countDigitsBeforeCursor(
+                    text = previous.text,
+                    cursor = previous.selection.start
+                )
+                removeDigitAt(previousDigits, previousCursorDigitCount - 1)
+            } else {
+                newValue.text
+            }
+
+            val digitCursor = if (deletingOnlySeparator) {
+                (countDigitsBeforeCursor(previous.text, previous.selection.start) - 1).coerceAtLeast(0)
+            } else {
+                countDigitsBeforeCursor(newValue.text, newValue.selection.start)
+            }
+            val formatted = formatDateInput(rawDigits)
             val nextCursor = cursorIndexForDigitCount(formatted, digitCursor)
 
             fieldValue = TextFieldValue(
@@ -62,6 +86,7 @@ internal fun ExperienceDateInputField(
         enabled = enabled,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
+        interactionSource = interactionSource,
         textStyle = LogitTheme.typography.body5_4.copy(color = LogitTheme.colors.black),
         cursorBrush = SolidColor(LogitTheme.colors.black),
         modifier = modifier
@@ -69,7 +94,7 @@ internal fun ExperienceDateInputField(
             .background(color = LogitTheme.colors.white, shape = RoundedCornerShape(8.dp))
             .border(
                 width = 1.dp,
-                color = LogitTheme.colors.gray100,
+                color = if (isFocused) LogitTheme.colors.primary200 else LogitTheme.colors.gray100,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(PaddingValues(horizontal = 18.dp, vertical = 10.dp)),
@@ -86,6 +111,14 @@ internal fun ExperienceDateInputField(
             }
         }
     )
+}
+
+private fun removeDigitAt(digitsText: String, index: Int): String {
+    if (index !in digitsText.indices) return digitsText
+    return buildString(digitsText.length - 1) {
+        append(digitsText.substring(0, index))
+        append(digitsText.substring(index + 1))
+    }
 }
 
 private fun formatDateInput(raw: String): String {
