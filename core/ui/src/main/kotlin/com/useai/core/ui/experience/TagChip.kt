@@ -24,7 +24,7 @@ fun TagChip(
         textAlign = TextAlign.Center,
         modifier = modifier.background(
             color = LogitTheme.colors.gray20,
-            shape = RoundedCornerShape(14.dp)
+            shape = RoundedCornerShape(8.dp)
         ).padding(vertical = 5.dp, horizontal = 8.dp)
     )
 }

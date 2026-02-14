@@ -26,6 +26,13 @@
     <string name="experience_load_failed">경험을 불러오지 못했어요</string>
     <string name="experience_retry">다시 시도</string>
     <string name="experience_more_not_supported">더보기 기능은 준비 중이에요</string>
+    <string name="experience_detail_type_label">경험 종류</string>
+    <string name="experience_detail_period_label">경험 날짜</string>
+    <string name="experience_detail_keyword_label">경험 키워드</string>
+    <string name="experience_detail_situation">Situation (상황)</string>
+    <string name="experience_detail_task">Task (과제/목표)</string>
+    <string name="experience_detail_action">Action (행동)</string>
+    <string name="experience_detail_result">Result (결과)</string>
 
     <string name="next">다음으로</string>
     <string name="project_form_title_1">자기소개서 작성</string>

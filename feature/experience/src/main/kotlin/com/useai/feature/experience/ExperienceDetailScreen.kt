@@ -7,10 +7,12 @@ import com.useai.core.model.experience.Experience
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object ExperienceScreen : Screen {
+data class ExperienceDetailScreen(
+    val experienceId: String,
+) : Screen {
     sealed interface State : CircuitUiState {
         data class Success(
-            val experiences: List<Experience>,
+            val experience: Experience,
             val eventSink: (Event) -> Unit,
         ) : State
 
@@ -23,8 +25,7 @@ data object ExperienceScreen : Screen {
 
     sealed interface Event : CircuitUiEvent {
         data object Retry : Event
-        data object ClickAddExperience : Event
-        data object ClickRegisterExperience : Event
-        data class ClickExperienceMore(val experienceId: String) : Event
+        data object Back : Event
+        data object ClickMore : Event
     }
 }
