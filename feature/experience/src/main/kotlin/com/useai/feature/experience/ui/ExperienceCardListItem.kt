@@ -1,5 +1,6 @@
 package com.useai.feature.experience.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,10 @@ internal fun ExperienceCardListItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
+            .background(
+                color = LogitTheme.colors.white,
+                shape = RoundedCornerShape(14.dp)
+            )
             .border(
                 width = 1.dp,
                 color = LogitTheme.colors.gray70,

@@ -27,7 +27,7 @@ internal fun ExperienceSuccessUI(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(LogitTheme.colors.white)
+            .background(LogitTheme.colors.gray20)
     ) {
         ExperienceListHeader(
             count = experiences.size,

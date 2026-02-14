@@ -59,6 +59,11 @@ fun Root(
                 screens.any { it == rootUiState.displayedScreen }
         }
     }
+    val rootContainerColor = if (rootUiState.displayedScreen == ExperienceScreen) {
+        LogitTheme.colors.gray20
+    } else {
+        LogitTheme.colors.white
+    }
 
     BackHandler(enabled = rootUiState.canPop) {
         rootUiState.eventSink(RootScreen.RootEvent.NestedNavEvent(NavEvent.Pop()))
@@ -66,7 +71,7 @@ fun Root(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = LogitTheme.colors.white,
+        containerColor = rootContainerColor,
         snackbarHost = {
             LogitSnackbarHost(hostState = snackbarHostState)
         },

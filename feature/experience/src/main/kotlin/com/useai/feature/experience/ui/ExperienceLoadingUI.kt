@@ -18,7 +18,7 @@ internal fun ExperienceLoadingUI(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(LogitTheme.colors.white),
+            .background(LogitTheme.colors.gray20),
         contentAlignment = Alignment.Center
     ) {
         Text(
