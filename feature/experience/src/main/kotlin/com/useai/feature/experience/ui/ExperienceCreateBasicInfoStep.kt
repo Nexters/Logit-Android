@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.useai.core.designsystem.R
-import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFieldLabel
 import com.useai.core.ui.LogitInputField
@@ -55,7 +54,7 @@ internal fun ExperienceCreateBasicInfoStep(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            LogitOutlinedTextField(
+            ExperienceDateInputField(
                 value = state.startDate,
                 onValueChange = { state.eventSink(ExperienceCreateScreen.Event.ChangeStartDate(it)) },
                 placeholder = "YYYY. MM. DD",
@@ -66,7 +65,7 @@ internal fun ExperienceCreateBasicInfoStep(
                 style = LogitTheme.typography.body5_4,
                 color = LogitTheme.colors.gray200,
             )
-            LogitOutlinedTextField(
+            ExperienceDateInputField(
                 value = state.endDate,
                 onValueChange = { state.eventSink(ExperienceCreateScreen.Event.ChangeEndDate(it)) },
                 placeholder = "YYYY. MM. DD",

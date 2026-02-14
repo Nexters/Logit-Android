@@ -26,7 +26,7 @@ internal fun ExperienceCreateCategoryStep(
         ExperienceCreateSectionHeader(
             title = stringResource(R.string.experience_create_step3_title),
             description = stringResource(R.string.experience_create_step3_desc),
-            onClickLoadExample = { state.eventSink(ExperienceCreateScreen.Event.LoadExample) }
+            onClickLoadExample = null
         )
 
         Spacer(modifier = Modifier.padding(top = 84.dp))

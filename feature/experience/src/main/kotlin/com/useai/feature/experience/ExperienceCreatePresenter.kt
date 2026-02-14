@@ -163,8 +163,8 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                 }
 
                 is ExperienceCreateScreen.Event.ChangeTitle -> title = event.value
-                is ExperienceCreateScreen.Event.ChangeStartDate -> startDate = sanitizeDateInput(event.value)
-                is ExperienceCreateScreen.Event.ChangeEndDate -> endDate = sanitizeDateInput(event.value)
+                is ExperienceCreateScreen.Event.ChangeStartDate -> startDate = event.value
+                is ExperienceCreateScreen.Event.ChangeEndDate -> endDate = event.value
                 ExperienceCreateScreen.Event.ToggleInProgress -> {
                     isInProgress = !isInProgress
                     if (isInProgress) endDate = ""
@@ -234,18 +234,6 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         } catch (_: DateTimeParseException) {
             null
         }
-    }
-
-    private fun sanitizeDateInput(raw: String): String {
-        val digits = raw.filter { it.isDigit() }.take(8)
-        val builder = StringBuilder()
-        digits.forEachIndexed { index, c ->
-            builder.append(c)
-            if (index == 3 || index == 5) {
-                builder.append(". ")
-            }
-        }
-        return builder.toString()
     }
 
     private fun ExperienceCreateStep.previous(): ExperienceCreateStep = when (this) {

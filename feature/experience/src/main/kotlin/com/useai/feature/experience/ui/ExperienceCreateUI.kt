@@ -1,5 +1,6 @@
 package com.useai.feature.experience.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -21,6 +22,10 @@ fun ExperienceCreateUI(
     state: ExperienceCreateScreen.State,
     modifier: Modifier = Modifier,
 ) {
+    BackHandler {
+        state.eventSink(ExperienceCreateScreen.Event.Back)
+    }
+
     InputFormContainer(
         modifier = modifier,
         onClickBackButton = {
