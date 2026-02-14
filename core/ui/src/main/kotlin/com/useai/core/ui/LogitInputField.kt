@@ -1,5 +1,6 @@
 package com.useai.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ fun LogitInputField(
     placeHolder: String,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
+    focusedBorder: BorderStroke? = null,
 ) {
     Column (
         modifier = modifier,
@@ -56,6 +58,7 @@ fun LogitInputField(
             modifier = Modifier.fillMaxWidth(),
             placeholder = placeHolder,
             maxLength = maxLength,
+            focusedBorder = focusedBorder,
             contentPadding = PaddingValues(
                 horizontal = dimensionResource(R.dimen.spacing_input_field_horizontal),
                 vertical = dimensionResource(R.dimen.spacing_input_field_vertical)
