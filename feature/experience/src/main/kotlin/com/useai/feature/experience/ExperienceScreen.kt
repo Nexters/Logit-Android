@@ -25,6 +25,7 @@ data object ExperienceScreen : Screen {
         data object Retry : Event
         data object ClickAddExperience : Event
         data object ClickRegisterExperience : Event
+        data class ClickExperienceCard(val experienceId: String) : Event
         data class ClickExperienceMore(val experienceId: String) : Event
     }
 }

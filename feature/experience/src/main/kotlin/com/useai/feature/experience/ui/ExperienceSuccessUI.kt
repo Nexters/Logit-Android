@@ -20,6 +20,7 @@ internal fun ExperienceSuccessUI(
     experiences: List<Experience>,
     onClickAdd: () -> Unit,
     onClickRegister: () -> Unit,
+    onClickExperienceCard: (String) -> Unit,
     onClickExperienceMore: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -53,6 +54,7 @@ internal fun ExperienceSuccessUI(
                 ) { experience ->
                     ExperienceCardListItem(
                         experience = experience,
+                        onClickCard = { onClickExperienceCard(experience.id) },
                         onClickMore = { onClickExperienceMore(experience.id) }
                     )
                     Spacer(modifier = Modifier.height(8.dp))

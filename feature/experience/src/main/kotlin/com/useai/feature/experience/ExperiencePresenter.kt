@@ -45,8 +45,12 @@ class ExperiencePresenter @AssistedInject constructor(
                         navigator.goTo(screenProvider.experienceCreateScreen())
                     }
 
-                    is ExperienceScreen.Event.ClickExperienceMore -> {
+                    is ExperienceScreen.Event.ClickExperienceCard -> {
                         navigator.goTo(screenProvider.experienceDetailScreen(event.experienceId))
+                    }
+
+                    is ExperienceScreen.Event.ClickExperienceMore -> {
+                        // TODO: show context menu (edit/delete) on card more icon.
                     }
                 }
             }

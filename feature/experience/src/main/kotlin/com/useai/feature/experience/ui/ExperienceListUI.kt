@@ -40,6 +40,9 @@ fun ExperienceListUI(
                 onClickRegister = {
                     state.eventSink(ExperienceScreen.Event.ClickRegisterExperience)
                 },
+                onClickExperienceCard = { experienceId ->
+                    state.eventSink(ExperienceScreen.Event.ClickExperienceCard(experienceId))
+                },
                 onClickExperienceMore = { experienceId ->
                     state.eventSink(ExperienceScreen.Event.ClickExperienceMore(experienceId))
                 },

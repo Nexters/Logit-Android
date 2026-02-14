@@ -21,6 +21,7 @@ import com.useai.core.ui.experience.ExperienceCard
 @Composable
 internal fun ExperienceCardListItem(
     experience: Experience,
+    onClickCard: () -> Unit,
     onClickMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -33,6 +34,7 @@ internal fun ExperienceCardListItem(
                 color = LogitTheme.colors.gray70,
                 shape = RoundedCornerShape(14.dp)
             )
+            .clickable(onClick = onClickCard)
             .padding(start = 18.dp, end = 12.dp, bottom = 14.dp),
     ) {
         ExperienceCard(
