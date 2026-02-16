@@ -7,6 +7,7 @@
     <string name="report_title">리포트</string>
 
     <!-- region UI -->
+    <string name="home_experience_type_banner_desc_format">관련경험 %d개</string>
     <string name="update_letter">자기소개서 업데이트</string>
     <string name="placeholder_message_input">어떤 내용을 만들어볼까요?</string>
     <string name="question_number">Q%s</string>
