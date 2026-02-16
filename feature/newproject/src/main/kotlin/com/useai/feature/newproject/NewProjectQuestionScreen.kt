@@ -33,16 +33,17 @@ data class NewProjectQuestionScreen(
     val talent: String,
 ) : Screen {
     data class State(
-        val questions: List<ProjectQuestionParam> = emptyList(),
+        val questions: List<ProjectQuestionParam>,
         val eventSink: (Event) -> Unit,
     ) : CircuitUiState
 
     sealed interface Event : CircuitUiEvent {
         data object Back : Event
-        data class OnQuestionChange(val index: Int, val value: ProjectQuestionParam) : Event
-        data object AddQuestion : Event
-        data class DeleteQuestion(val index: Int) : Event
-        data object CreateProject : Event
+        data class QuestionChanged(val index: Int, val value: String) : Event
+        data class MaxLengthChanged(val index: Int, val value: Int) : Event
+        data object AddQuestionClicked : Event
+        data class DeleteQuestionClicked(val index: Int) : Event
+        data object FinishClicked : Event
     }
 }
 
@@ -64,20 +65,29 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
         ) { event ->
             when (event) {
                 NewProjectQuestionScreen.Event.Back -> navigator.pop()
-                is NewProjectQuestionScreen.Event.OnQuestionChange -> {
-                    val newList = questions.toMutableList()
-                    newList[event.index] = event.value
-                    questions = newList
+
+                is NewProjectQuestionScreen.Event.QuestionChanged -> {
+                    val oldValue = questions[event.index]
+                    questions = questions.update(event.index, oldValue.copy(question = event.value))
                 }
-                NewProjectQuestionScreen.Event.AddQuestion -> {
+
+                is NewProjectQuestionScreen.Event.MaxLengthChanged -> {
+                    val oldValue = questions[event.index]
+                    questions = questions.update(event.index, oldValue.copy(maxLength = event.value))
+                    Log.d(TAG, questions.toString())
+                }
+
+                NewProjectQuestionScreen.Event.AddQuestionClicked -> {
                     questions = questions + emptyQuestion
                 }
-                is NewProjectQuestionScreen.Event.DeleteQuestion -> {
+
+                is NewProjectQuestionScreen.Event.DeleteQuestionClicked -> {
                     val newList = questions.toMutableList()
                     newList.removeAt(event.index)
                     questions = newList
                 }
-                NewProjectQuestionScreen.Event.CreateProject -> {
+
+                NewProjectQuestionScreen.Event.FinishClicked -> {
                     scope.launch {
                         val basicInfo = screen
                         val projectQuestions = questions
@@ -101,6 +111,12 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun <T> List<T>.update(index: Int, item: T): List<T> {
+        return toMutableList().apply {
+            set(index, item)
         }
     }
 
