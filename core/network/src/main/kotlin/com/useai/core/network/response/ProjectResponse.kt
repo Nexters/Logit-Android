@@ -36,14 +36,20 @@ data class ProjectListItemResponse(
     @SerialName("id") val id: String,
     @SerialName("company") val company: String,
     @SerialName("job_position") val jobPosition: String,
+    @SerialName("due_date") val dueDate: String,
     @SerialName("question_id") val questionId: String,
-    @SerialName("updated_at") val updatedAt: String
+    @SerialName("total_questions") val totalQuestions: Int,
+    @SerialName("completed_questions") val completedQuestions: Int,
+    @SerialName("updated_at") val updatedAt: String,
 )
 
 fun ProjectListItemResponse.toProjectListItem() = ProjectListItem(
     id = id,
     company = company,
     jobPosition = jobPosition,
+    dueDate = dueDate.toLocalDate() ?: LocalDate.MAX,
     questionId = questionId,
+    totalQuestions = totalQuestions,
+    completedQuestions = completedQuestions,
     updatedAt = updatedAt.toLocalDateTime() ?: LocalDateTime.MIN
 )

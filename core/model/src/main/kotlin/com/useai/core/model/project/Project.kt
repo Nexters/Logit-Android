@@ -31,7 +31,10 @@ data class ProjectListItem(
     val id: String,
     val company: String,
     val jobPosition: String,
+    val dueDate: LocalDate,
     val questionId: String,
+    val totalQuestions: Int,
+    val completedQuestions: Int,
     val updatedAt: LocalDateTime
 )
 
