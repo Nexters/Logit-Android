@@ -199,7 +199,7 @@ private fun ProjectItem(
 private fun HomeWithEmptyProjectPreview() {
     LogitTheme {
         Scaffold(
-            modifier = Modifier.background(LogitTheme.colors.white),
+            containerColor = LogitTheme.colors.white,
         ) { paddingValues ->
             Home(
                 modifier = Modifier.padding(paddingValues),
@@ -234,7 +234,7 @@ private fun HomeWithEmptyProjectPreview() {
 private fun HomePreview() {
     LogitTheme {
         Scaffold(
-            modifier = Modifier.background(LogitTheme.colors.white),
+            containerColor = LogitTheme.colors.white,
         ) { paddingValues ->
             Home(
                 modifier = Modifier
