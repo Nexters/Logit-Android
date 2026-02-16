@@ -86,7 +86,12 @@ fun Home(
                 Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
                 LogitExperienceBanner(state.bannerItems)
                 Spacer(Modifier.height(43.dp))
-                ProjectList(state.projects)
+                ProjectList(
+                    onClickCreateProject = {
+                        state.eventSink(HomeScreen.Event.CreateProject)
+                    },
+                    projectList = state.projects,
+                )
             }
         }
     }
@@ -94,15 +99,16 @@ fun Home(
 
 @Composable
 private fun ColumnScope.ProjectList(
-    projectList: List<ProjectListItem>,
     modifier: Modifier = Modifier,
+    onClickCreateProject: () -> Unit,
+    projectList: List<ProjectListItem>,
 ) {
     LogitFormTitle(
         title = stringResource(R.string.home_project_list_title),
     )
     Spacer(Modifier.height(16.dp))
     if (projectList.isEmpty()) {
-        EmptyProjectList()
+        EmptyProjectList(onClickCreateProject = onClickCreateProject)
     } else {
         Column(modifier = modifier.fillMaxWidth()) {
             projectList.forEachIndexed { index, project ->
@@ -123,6 +129,7 @@ private fun ColumnScope.ProjectList(
 @Composable
 private fun EmptyProjectList(
     modifier: Modifier = Modifier,
+    onClickCreateProject: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -145,7 +152,7 @@ private fun EmptyProjectList(
         LogitPrimaryButton(
             text = stringResource(R.string.home_new_project),
             onClick = {
-                // TODO: go to new project screen
+                onClickCreateProject()
             },
             textStyle = LogitTheme.typography.body6_2,
             shape = RoundedCornerShape(8.dp),
@@ -218,7 +225,7 @@ private fun HomeWithEmptyProjectPreview() {
                     experienceCount = 30,
                 ),
             ),
-            projects = emptyList()
+            projects = emptyList(),
         ),
     )
 }

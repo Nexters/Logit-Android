@@ -2,11 +2,13 @@ package com.useai.feature.home
 
 import androidx.compose.runtime.Composable
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.model.project.ProjectListItem
+import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.ui.ExperienceBannerItem
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,7 +21,12 @@ data object HomeScreen : Screen {
     data class State(
         val bannerItems: List<ExperienceBannerItem>,
         val projects: List<ProjectListItem>,
+        val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
+
+    sealed interface Event : CircuitUiEvent {
+        data object CreateProject : Event
+    }
 }
 
 class HomePresenter @AssistedInject constructor(
@@ -27,10 +34,16 @@ class HomePresenter @AssistedInject constructor(
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
+        val screenProvider = LocalScreenProvider.current
+
         return HomeScreen.State(
             bannerItems = emptyList(),
             projects = emptyList() // TODO: api 응답 값 사용
-        )
+        ) { event ->
+            when (event) {
+                HomeScreen.Event.CreateProject -> navigator.goTo(screenProvider.newProjectBasicInfoScreen())
+            }
+        }
     }
 
     @AssistedFactory
