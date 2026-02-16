@@ -5,25 +5,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -55,29 +50,27 @@ fun Home(
     modifier: Modifier = Modifier,
     state: HomeScreen.State,
 ) {
-    Scaffold(
+    LazyColumn(
         modifier = modifier.fillMaxSize(),
-        containerColor = LogitTheme.colors.white,
-        // 내비바와 키보드 padding이 중복 계산되어 여백이 생기는 문제 방지
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.union(WindowInsets.ime),
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState()),
-        ) {
+        contentPadding = PaddingValues(bottom = 20.dp)
+    ) {
+        item {
             AppHeader(
                 onClickProfile = {
                     // TODO: go to user profile screen
                 }
             )
+        }
+
+        item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = dimensionResource(R.dimen.spacing_form_horizontal),
-                        vertical = 22.dp
+                        start = dimensionResource(R.dimen.spacing_form_horizontal),
+                        end = dimensionResource(R.dimen.spacing_form_horizontal),
+                        top = 22.dp,
+                        bottom = 0.dp // 하단 패딩을 제거하여 하위 아이템과의 이중 여백 방지
                     ),
             ) {
                 LogitFormTitle(
@@ -86,37 +79,36 @@ fun Home(
                 Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
                 LogitExperienceBanner(state.bannerItems)
                 Spacer(Modifier.height(43.dp))
-                ProjectList(
-                    onClickCreateProject = {
-                        state.eventSink(HomeScreen.Event.CreateProject)
-                    },
-                    projectList = state.projects,
+                LogitFormTitle(
+                    title = stringResource(R.string.home_project_list_title),
                 )
+                Spacer(Modifier.height(16.dp))
             }
         }
-    }
-}
 
-@Composable
-private fun ColumnScope.ProjectList(
-    modifier: Modifier = Modifier,
-    onClickCreateProject: () -> Unit,
-    projectList: List<ProjectListItem>,
-) {
-    LogitFormTitle(
-        title = stringResource(R.string.home_project_list_title),
-    )
-    Spacer(Modifier.height(16.dp))
-    if (projectList.isEmpty()) {
-        EmptyProjectList(onClickCreateProject = onClickCreateProject)
-    } else {
-        Column(modifier = modifier.fillMaxWidth()) {
-            projectList.forEachIndexed { index, project ->
-                ProjectItem(project)
-                // 마지막 아이템이 아닐 때만 구분선 추가
-                if (index < projectList.lastIndex) {
+        if (state.projects.isEmpty()) {
+            item {
+                EmptyProjectList(
+                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
+                    onClickCreateProject = {
+                        state.eventSink(HomeScreen.Event.CreateProject)
+                    }
+                )
+            }
+        } else {
+            itemsIndexed(
+                items = state.projects,
+                key = { _, project -> project.id }
+            ) { index, project ->
+                ProjectItem(
+                    project = project,
+                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal))
+                )
+                if (index < state.projects.lastIndex) {
                     HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
                         thickness = 1.dp,
                         color = LogitTheme.colors.gray70
                     )
@@ -205,159 +197,102 @@ private fun ProjectItem(
 @Preview
 @Composable
 private fun HomeWithEmptyProjectPreview() {
-    Home(
-        state = HomeScreen.State(
-            bannerItems = listOf(
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Leadership,
-                    experienceCount = 7,
+    LogitTheme {
+        Scaffold(
+            modifier = Modifier.background(LogitTheme.colors.white),
+        ) { paddingValues ->
+            Home(
+                modifier = Modifier.padding(paddingValues),
+                state = HomeScreen.State(
+                    bannerItems = listOf(
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Leadership,
+                            experienceCount = 7,
+                        ),
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Expertise,
+                            experienceCount = 1,
+                        ),
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Analysis,
+                            experienceCount = 3,
+                        ),
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Creativity,
+                            experienceCount = 30,
+                        ),
+                    ),
+                    projects = emptyList(),
                 ),
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Expertise,
-                    experienceCount = 1,
-                ),
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Analysis,
-                    experienceCount = 3,
-                ),
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Creativity,
-                    experienceCount = 30,
-                ),
-            ),
-            projects = emptyList(),
-        ),
-    )
+            )
+        }
+    }
 }
 
 @Preview
 @Composable
 private fun HomePreview() {
     LogitTheme {
-        Home(
-            modifier = Modifier.fillMaxSize(),
-            state = HomeScreen.State(
-                bannerItems = listOf(
-                    ExperienceBannerItem(
-                        experienceType = ExperienceType.Leadership,
-                        experienceCount = 7,
+        Scaffold(
+            modifier = Modifier.background(LogitTheme.colors.white),
+        ) { paddingValues ->
+            Home(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                state = HomeScreen.State(
+                    bannerItems = listOf(
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Leadership,
+                            experienceCount = 7,
+                        ),
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Expertise,
+                            experienceCount = 1,
+                        ),
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Analysis,
+                            experienceCount = 3,
+                        ),
+                        ExperienceBannerItem(
+                            experienceType = ExperienceType.Creativity,
+                            experienceCount = 30,
+                        ),
                     ),
-                    ExperienceBannerItem(
-                        experienceType = ExperienceType.Expertise,
-                        experienceCount = 1,
-                    ),
-                    ExperienceBannerItem(
-                        experienceType = ExperienceType.Analysis,
-                        experienceCount = 3,
-                    ),
-                    ExperienceBannerItem(
-                        experienceType = ExperienceType.Creativity,
-                        experienceCount = 30,
-                    ),
+                    projects = listOf(
+                        ProjectListItem(
+                            id = "1",
+                            company = "카카오페이",
+                            jobPosition = "디자인 어시스턴트 어쩌구 저쩌구 어쩌구 저쩌구",
+                            dueDate = LocalDate.of(2026, 1, 7),
+                            questionId = "",
+                            totalQuestions = 0,
+                            completedQuestions = 0,
+                            updatedAt = LocalDateTime.now()
+                        ),
+                        ProjectListItem(
+                            id = "2",
+                            company = "네이버",
+                            jobPosition = "프론트엔드 개발",
+                            dueDate = LocalDate.of(2026, 1, 7),
+                            questionId = "",
+                            totalQuestions = 0,
+                            completedQuestions = 0,
+                            updatedAt = LocalDateTime.now()
+                        ),
+                        ProjectListItem(
+                            id = "3",
+                            company = "토스",
+                            jobPosition = "iOS 개발",
+                            dueDate = LocalDate.of(2026, 1, 7),
+                            questionId = "",
+                            totalQuestions = 0,
+                            completedQuestions = 0,
+                            updatedAt = LocalDateTime.now()
+                        ),
+                    )
                 ),
-                projects = listOf(
-                    ProjectListItem(
-                        id = "1",
-                        company = "카카오페이",
-                        jobPosition = "디자인 어시스턴트 어쩌구 저쩌구 어쩌구 저쩌구",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                    ProjectListItem(
-                        id = "1",
-                        company = "네이버",
-                        jobPosition = "프론트엔드 개발",
-                        dueDate = LocalDate.of(2026, 1, 7),
-                        questionId = "",
-                        totalQuestions = 0,
-                        completedQuestions = 0,
-                        updatedAt = LocalDateTime.now()
-                    ),
-                )
-            ),
-        )
+            )
+        }
     }
 }

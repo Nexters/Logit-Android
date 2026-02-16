@@ -40,7 +40,7 @@ class HomePresenter @AssistedInject constructor(
     @Composable
     override fun present(): HomeScreen.State {
         val projects by produceState(initialValue = emptyList()) {
-            projectRepository.getProjects()
+            projectRepository.getProjects() // TODO: 페이징 사용하여 개선
                 .onSuccess { value = it }
                 .onFailure {
                     Log.e(TAG, "getProjects failed: $it")
