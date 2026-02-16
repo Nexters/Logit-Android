@@ -57,7 +57,7 @@ fun Home(
         item {
             AppHeader(
                 onClickProfile = {
-                    // TODO: go to user profile screen
+                    state.eventSink(HomeScreen.Event.AccountClicked)
                 }
             )
         }
@@ -91,7 +91,7 @@ fun Home(
                 EmptyProjectList(
                     modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
                     onClickCreateProject = {
-                        state.eventSink(HomeScreen.Event.CreateProject)
+                        state.eventSink(HomeScreen.Event.NewProjectClicked)
                     }
                 )
             }
@@ -104,7 +104,7 @@ fun Home(
                     modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
                     project = project,
                     onClick = {
-                        state.eventSink(HomeScreen.Event.ContinueProject(project.id))
+                        state.eventSink(HomeScreen.Event.ProjectClicked(project.id))
                     }
                 )
                 if (index < state.projects.lastIndex) {

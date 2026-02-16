@@ -30,8 +30,9 @@ data object HomeScreen : Screen {
     ) : CircuitUiState
 
     sealed interface Event : CircuitUiEvent {
-        data object CreateProject : Event
-        data class ContinueProject(val projectId: String) : Event
+        data object NewProjectClicked : Event
+        data class ProjectClicked(val projectId: String) : Event
+        data object AccountClicked : Event
     }
 }
 
@@ -60,7 +61,7 @@ class HomePresenter @AssistedInject constructor(
             ),
         )
         val projects by produceState(initialValue = emptyList()) {
-            projectRepository.getProjects() // TODO: 페이징 사용하여 개선
+            projectRepository.getProjects() // TODO: 페이징 사용, 화면 진입 시마다 요청하지 않도록 개선 필요
                 .onSuccess { value = it }
                 .onFailure {
                     Log.e(TAG, "getProjects failed: $it")
@@ -73,14 +74,18 @@ class HomePresenter @AssistedInject constructor(
             projects = projects
         ) { event ->
             when (event) {
-                HomeScreen.Event.CreateProject -> navigator.goTo(
+                HomeScreen.Event.NewProjectClicked -> navigator.goTo(
                     screenProvider.newProjectBasicInfoScreen()
                 )
 
-                is HomeScreen.Event.ContinueProject -> navigator.goTo(
+                is HomeScreen.Event.ProjectClicked -> navigator.goTo(
                     screenProvider.chatScreen(
                         event.projectId
                     )
+                )
+
+                HomeScreen.Event.AccountClicked -> navigator.goTo(
+                    screenProvider.accountScreen()
                 )
             }
         }
