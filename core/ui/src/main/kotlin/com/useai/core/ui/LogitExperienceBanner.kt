@@ -33,7 +33,13 @@ fun LogitExperienceBanner(
     items: List<ExperienceBannerItem>,
     modifier: Modifier = Modifier,
 ) {
-    val pagerState = rememberPagerState(pageCount = { items.size })
+    if (items.isEmpty()) return
+
+    val totalPageCount = if (items.size > 1) Int.MAX_VALUE else items.size
+    val pagerState = rememberPagerState(
+        pageCount = { totalPageCount },
+        initialPage = if (items.size > 1) (Int.MAX_VALUE / 2) - ((Int.MAX_VALUE / 2) % items.size) else 0
+    )
 
     Box(
         modifier = modifier
@@ -44,7 +50,8 @@ fun LogitExperienceBanner(
             state = pagerState,
             pageSpacing = 20.dp,
         ) { page ->
-            BannerContent(item = items[page])
+            val index = page % items.size
+            BannerContent(item = items[index])
         }
         Column(
             modifier = Modifier
@@ -62,12 +69,12 @@ fun LogitExperienceBanner(
             ) {
                 Row {
                     Text(
-                        text = (pagerState.currentPage + 1).toString(),
+                        text = (pagerState.currentPage % items.size + 1).toString(),
                         style = LogitTheme.typography.body7_1,
                         color = LogitTheme.colors.white,
                     )
                     Text(
-                        text = " / ${pagerState.pageCount}",
+                        text = " / ${items.size}",
                         style = LogitTheme.typography.body7_4,
                         color = LogitTheme.colors.white
                     )

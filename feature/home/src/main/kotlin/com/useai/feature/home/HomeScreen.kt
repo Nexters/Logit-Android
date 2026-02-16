@@ -14,6 +14,7 @@ import com.useai.core.data.repository.ProjectRepository
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.ui.ExperienceBannerItem
+import com.useai.core.ui.ExperienceType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -39,6 +40,24 @@ class HomePresenter @AssistedInject constructor(
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
+        val dummyBannerItems = listOf(
+            ExperienceBannerItem(
+                experienceType = ExperienceType.Leadership,
+                experienceCount = 7,
+            ),
+            ExperienceBannerItem(
+                experienceType = ExperienceType.Expertise,
+                experienceCount = 1,
+            ),
+            ExperienceBannerItem(
+                experienceType = ExperienceType.Analysis,
+                experienceCount = 3,
+            ),
+            ExperienceBannerItem(
+                experienceType = ExperienceType.Creativity,
+                experienceCount = 30,
+            ),
+        )
         val projects by produceState(initialValue = emptyList()) {
             projectRepository.getProjects() // TODO: 페이징 사용하여 개선
                 .onSuccess { value = it }
@@ -49,7 +68,7 @@ class HomePresenter @AssistedInject constructor(
         val screenProvider = LocalScreenProvider.current
 
         return HomeScreen.State(
-            bannerItems = emptyList(),
+            bannerItems = dummyBannerItems,
             projects = projects
         ) { event ->
             when (event) {
