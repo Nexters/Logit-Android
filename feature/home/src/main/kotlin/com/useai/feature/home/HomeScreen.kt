@@ -6,6 +6,8 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.model.project.ProjectListItem
+import com.useai.core.ui.ExperienceBannerItem
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -14,7 +16,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data object HomeScreen : Screen {
-    data object State : CircuitUiState
+    data class State(
+        val bannerItems: List<ExperienceBannerItem>,
+        val projects: List<ProjectListItem>,
+    ) : CircuitUiState
 }
 
 class HomePresenter @AssistedInject constructor(
@@ -22,7 +27,10 @@ class HomePresenter @AssistedInject constructor(
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
-        return HomeScreen.State
+        return HomeScreen.State(
+            bannerItems = emptyList(),
+            projects = emptyList() // TODO: api 응답 값 사용
+        )
     }
 
     @AssistedFactory
