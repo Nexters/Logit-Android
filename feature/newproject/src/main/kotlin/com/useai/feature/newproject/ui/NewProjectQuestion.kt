@@ -30,7 +30,6 @@ import com.useai.core.designsystem.component.container.LogitOutlinedContainer
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.core.model.project.NewQuestionData
 import com.useai.core.ui.InputFormContainer
 import com.useai.core.ui.LetterCountInput
 import com.useai.core.ui.LogitAddButton
@@ -172,7 +171,6 @@ private fun DeleteButton(
 private fun NewProjectQuestionPreview() {
     NewProjectQuestion(
         state = NewProjectQuestionScreen.State(
-            questions = listOf(NewQuestionData()),
             eventSink = {},
         )
     )
