@@ -101,8 +101,11 @@ fun Home(
                 key = { _, project -> project.id }
             ) { index, project ->
                 ProjectItem(
+                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
                     project = project,
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal))
+                    onClick = {
+                        state.eventSink(HomeScreen.Event.ContinueProject(project.id))
+                    }
                 )
                 if (index < state.projects.lastIndex) {
                     HorizontalDivider(
@@ -155,16 +158,15 @@ private fun EmptyProjectList(
 
 @Composable
 private fun ProjectItem(
-    project: ProjectListItem,
     modifier: Modifier = Modifier,
+    project: ProjectListItem,
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable(
-                onClick = {
-                    // TODO: go to chat screen
-                }
+                onClick = onClick,
             )
             .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,

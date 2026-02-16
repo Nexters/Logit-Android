@@ -31,6 +31,7 @@ data object HomeScreen : Screen {
 
     sealed interface Event : CircuitUiEvent {
         data object CreateProject : Event
+        data class ContinueProject(val projectId: String) : Event
     }
 }
 
@@ -72,7 +73,15 @@ class HomePresenter @AssistedInject constructor(
             projects = projects
         ) { event ->
             when (event) {
-                HomeScreen.Event.CreateProject -> navigator.goTo(screenProvider.newProjectBasicInfoScreen())
+                HomeScreen.Event.CreateProject -> navigator.goTo(
+                    screenProvider.newProjectBasicInfoScreen()
+                )
+
+                is HomeScreen.Event.ContinueProject -> navigator.goTo(
+                    screenProvider.chatScreen(
+                        event.projectId
+                    )
+                )
             }
         }
     }
