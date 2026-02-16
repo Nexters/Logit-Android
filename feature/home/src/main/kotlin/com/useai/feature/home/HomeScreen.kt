@@ -1,12 +1,16 @@
 package com.useai.feature.home
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.data.repository.ProjectRepository
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.ui.ExperienceBannerItem
@@ -31,14 +35,22 @@ data object HomeScreen : Screen {
 
 class HomePresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
+    private val projectRepository: ProjectRepository,
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
+        val projects by produceState(initialValue = emptyList()) {
+            projectRepository.getProjects()
+                .onSuccess { value = it }
+                .onFailure {
+                    Log.e(TAG, "getProjects failed: $it")
+                }
+        }
         val screenProvider = LocalScreenProvider.current
 
         return HomeScreen.State(
             bannerItems = emptyList(),
-            projects = emptyList() // TODO: api 응답 값 사용
+            projects = projects
         ) { event ->
             when (event) {
                 HomeScreen.Event.CreateProject -> navigator.goTo(screenProvider.newProjectBasicInfoScreen())
@@ -52,5 +64,9 @@ class HomePresenter @AssistedInject constructor(
         fun create(
             navigator: Navigator,
         ): HomePresenter
+    }
+
+    companion object {
+        private val TAG = HomePresenter::class.simpleName
     }
 }
