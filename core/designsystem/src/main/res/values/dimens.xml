@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="app_header_horizontal_padding">20dp</dimen>
+    <dimen name="app_header_user_profile_area_size">44dp</dimen>
+    <dimen name="app_header_user_profile_image_size">35dp</dimen>
     <dimen name="spacing_form_horizontal">20dp</dimen>
     <dimen name="spacing_form_vertical">12dp</dimen>
     <dimen name="spacing_title_to_desc">3dp</dimen>
