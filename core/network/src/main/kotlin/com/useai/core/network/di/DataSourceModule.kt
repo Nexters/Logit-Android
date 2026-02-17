@@ -6,8 +6,6 @@ import com.useai.core.network.source.ExperienceRemoteDataSource
 import com.useai.core.network.source.ExperienceRemoteDataSourceImpl
 import com.useai.core.network.source.ProjectRemoteDataSource
 import com.useai.core.network.source.ProjectRemoteDataSourceImpl
-import com.useai.core.network.source.ProjectsRemoteDataSource
-import com.useai.core.network.source.ProjectsRemoteDataSourceImpl
 import com.useai.core.network.source.QuestionRemoteDataSource
 import com.useai.core.network.source.QuestionRemoteDataSourceImpl
 import dagger.Binds
@@ -19,12 +17,6 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 internal interface DataSourceModule {
-    @Binds
-    @ActivityRetainedScoped
-    fun bindsNewProjectRemoteDataSource(
-        newProjectRemoteDataSourceImpl: ProjectsRemoteDataSourceImpl
-    ): ProjectsRemoteDataSource
-
     @Binds
     @ActivityRetainedScoped
     fun bindsChattingRemoteDataSource(

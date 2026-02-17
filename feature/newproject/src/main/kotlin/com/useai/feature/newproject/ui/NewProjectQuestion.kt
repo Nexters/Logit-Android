@@ -1,7 +1,7 @@
 package com.useai.feature.newproject.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,11 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,7 +26,7 @@ import com.useai.core.designsystem.component.container.LogitOutlinedContainer
 import com.useai.core.designsystem.component.textfield.LogitOutlinedTextField
 import com.useai.core.designsystem.icon.LogitIcons
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.core.model.project.NewQuestionData
+import com.useai.core.model.project.ProjectQuestionParam
 import com.useai.core.ui.InputFormContainer
 import com.useai.core.ui.LetterCountInput
 import com.useai.core.ui.LogitAddButton
@@ -45,6 +41,10 @@ fun NewProjectQuestion(
     modifier: Modifier = Modifier,
     state: NewProjectQuestionScreen.State,
 ) {
+    BackHandler {
+        state.eventSink(NewProjectQuestionScreen.Event.Back)
+    }
+
     val isButtonEnabled = state.questions.any { it.question.isNotBlank() }
 
     InputFormContainer(
@@ -54,7 +54,7 @@ fun NewProjectQuestion(
         },
         bottomButtonText = stringResource(R.string.create_project),
         onClickBottomButton = {
-            state.eventSink(NewProjectQuestionScreen.Event.CreateProject)
+            state.eventSink(NewProjectQuestionScreen.Event.FinishClicked)
         },
         bottomButtonEnabled = isButtonEnabled,
     ) {
@@ -72,17 +72,26 @@ fun NewProjectQuestion(
         state.questions.forEachIndexed { i, newQuestion ->
             key(i) {
                 NewQuestion(
-                    value = newQuestion.question,
-                    onValueChange = { newValue ->
+                    question = newQuestion.question,
+                    onQuestionChange = { newValue ->
                         state.eventSink(
-                            NewProjectQuestionScreen.Event.OnQuestionChange(
+                            NewProjectQuestionScreen.Event.QuestionChanged(
                                 i,
-                                newQuestion.copy(question = newValue)
+                                newValue
+                            )
+                        )
+                    },
+                    maxLength = newQuestion.maxLength,
+                    onMaxLengthChange = { newValue ->
+                        state.eventSink(
+                            NewProjectQuestionScreen.Event.MaxLengthChanged(
+                                i,
+                                newValue.toIntOrNull() ?: 0
                             )
                         )
                     },
                     onDelete = {
-                        state.eventSink(NewProjectQuestionScreen.Event.DeleteQuestion(i))
+                        state.eventSink(NewProjectQuestionScreen.Event.DeleteQuestionClicked(i))
                     },
                     placeHolder = if (newQuestion.question.isEmpty()) stringResource(R.string.project_field_question, i + 1) else "",
                     isAdditionalQuestion = i > 0,
@@ -93,7 +102,7 @@ fun NewProjectQuestion(
         
         LogitAddButton(
             onClick = {
-                state.eventSink(NewProjectQuestionScreen.Event.AddQuestion)
+                state.eventSink(NewProjectQuestionScreen.Event.AddQuestionClicked)
             }
         )
     }
@@ -102,14 +111,14 @@ fun NewProjectQuestion(
 @Composable
 private fun NewQuestion(
     modifier: Modifier = Modifier,
-    value: String = "",
-    onValueChange: (String) -> Unit = {},
-    onDelete: () -> Unit = {},
+    question: String,
+    onQuestionChange: (String) -> Unit,
+    maxLength: Int,
+    onMaxLengthChange: (String) -> Unit,
+    onDelete: () -> Unit,
     placeHolder: String = "",
     isAdditionalQuestion: Boolean = false,
 ) {
-    var letterCount by remember { mutableStateOf("") }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -117,8 +126,8 @@ private fun NewQuestion(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LogitOutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
+            value = question,
+            onValueChange = onQuestionChange,
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f),
@@ -131,8 +140,8 @@ private fun NewQuestion(
                 .fillMaxHeight()
                 .width(82.dp),
             contentPadding = PaddingValues(horizontal = 14.dp),
-            letterCount = letterCount,
-            onValueChange = { letterCount = it }
+            letterCount = maxLength.takeIf { it > 0 }?.toString() ?: "",
+            onValueChange = onMaxLengthChange
         )
         if (isAdditionalQuestion) {
             Spacer(Modifier.width(12.dp))
@@ -170,26 +179,15 @@ private fun DeleteButton(
 @Preview
 @Composable
 private fun NewProjectQuestionPreview() {
-    NewProjectQuestion(
-        state = NewProjectQuestionScreen.State(
-            questions = listOf(NewQuestionData()),
-            eventSink = {},
-        )
-    )
-}
-
-@Preview
-@Composable
-private fun AdditionalQuestionPreview() {
     LogitTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LogitTheme.colors.white)
-        ) {
-            NewQuestion(
-                isAdditionalQuestion = true,
+        NewProjectQuestion(
+            state = NewProjectQuestionScreen.State(
+                questions = listOf(
+                    ProjectQuestionParam("", 0),
+                    ProjectQuestionParam("", 0),
+                ),
+                eventSink = {},
             )
-        }
+        )
     }
 }

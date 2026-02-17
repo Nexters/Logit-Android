@@ -18,7 +18,7 @@ import com.useai.core.designsystem.theme.LogitTheme
 fun LogitFormTitle(
     modifier: Modifier = Modifier,
     title: String,
-    desc: String,
+    desc: String = "",
 ) {
     Column(
         modifier = modifier,
@@ -28,14 +28,16 @@ fun LogitFormTitle(
             color = LogitTheme.colors.black,
             style = LogitTheme.typography.body3_1,
         )
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.spacing_title_to_desc))
-        )
-        Text(
-            text = desc,
-            color = LogitTheme.colors.gray300,
-            style = LogitTheme.typography.body6_1,
-        )
+        if (desc.isNotEmpty()) {
+            Spacer(
+                modifier = Modifier.height(dimensionResource(R.dimen.spacing_title_to_desc))
+            )
+            Text(
+                text = desc,
+                color = LogitTheme.colors.gray300,
+                style = LogitTheme.typography.body6_1,
+            )
+        }
     }
 }
 

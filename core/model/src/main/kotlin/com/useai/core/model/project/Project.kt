@@ -11,6 +11,13 @@ data class Project(
     val dueDate: LocalDate,
     val jobPosition: String,
     val recruitNotice: String,
+    val questions: List<QuestionItem>,
+)
+
+data class QuestionItem(
+    val id: String,
+    val question: String,
+    val maxLength: Int,
 )
 
 data class ProjectParam(
@@ -31,7 +38,10 @@ data class ProjectListItem(
     val id: String,
     val company: String,
     val jobPosition: String,
+    val dueDate: LocalDate,
     val questionId: String,
+    val totalQuestions: Int,
+    val completedQuestions: Int,
     val updatedAt: LocalDateTime
 )
 
