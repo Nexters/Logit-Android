@@ -1,15 +1,14 @@
 package com.useai.logit
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import com.slack.circuit.backstack.BackStack
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.foundation.NavEvent
-import com.slack.circuit.foundation.onNavEvent
-import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.foundation.rememberAnsweringResultNavigator
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.ExperimentalCircuitApi
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
@@ -23,59 +22,46 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data object RootScreen : Screen {
     data class RootUiState(
-        val displayedScreen: Screen,
-        val canPop: Boolean,
+        val backStack: BackStack<out BackStack.Record>,
+        val navigator: Navigator,
         val eventSink: (RootEvent) -> Unit,
     ) : CircuitUiState
 
     sealed interface RootEvent : CircuitUiEvent {
         data class ChangeScreen(val screen: Screen) : RootEvent
-        data class NestedNavEvent(val navEvent: NavEvent) : RootEvent
     }
 }
 
 class RootPresenter @AssistedInject constructor(
-    @Assisted private val navigator: Navigator,
+    @Assisted private val parentNavigator: Navigator,
 ) : Presenter<RootScreen.RootUiState> {
+    @OptIn(ExperimentalCircuitApi::class)
     @Composable
     override fun present(): RootScreen.RootUiState {
-        var displayedScreen by rememberRetained { mutableStateOf<Screen>(HomeScreen) }
-        var screenStack by rememberRetained { mutableStateOf(listOf<Screen>()) }
+        val backStack = rememberSaveableBackStack(HomeScreen)
+        val baseNavigator = rememberCircuitNavigator(backStack) {
+            parentNavigator.pop()
+        }
+        val navigator = rememberAnsweringResultNavigator(baseNavigator, backStack)
 
         return RootScreen.RootUiState(
-            displayedScreen = displayedScreen,
-            canPop = screenStack.isNotEmpty()
+            backStack = backStack,
+            navigator = navigator
         ) { event ->
             when (event) {
-                is RootScreen.RootEvent.NestedNavEvent -> {
-                    when (val navEvent = event.navEvent) {
-                        is NavEvent.Pop -> {
-                            if (screenStack.isNotEmpty()) {
-                                displayedScreen = screenStack.last()
-                                screenStack = screenStack.dropLast(1)
-                            } else {
-                                navigator.pop()
-                            }
-                        }
-                        is NavEvent.GoTo -> {
-                            if (displayedScreen != navEvent.screen) {
-                                screenStack = screenStack.filter { it != navEvent.screen } + displayedScreen
-                                displayedScreen = navEvent.screen
-                            }
-                        }
-                        else -> navigator.onNavEvent(event.navEvent)
-                    }
-                }
                 is RootScreen.RootEvent.ChangeScreen -> {
-                    if (displayedScreen != event.screen) {
-                        if (event.screen == HomeScreen) {
-                            screenStack = emptyList()
-                        } else {
-                            if (displayedScreen == HomeScreen) {
-                                screenStack = listOf(HomeScreen)
-                            }
+                    val currentScreen = backStack.topRecord?.screen
+                    if (currentScreen != event.screen) {
+                        while (backStack.size > 0) {
+                            backStack.pop()
                         }
-                        displayedScreen = event.screen
+                        
+                        if (event.screen == HomeScreen) {
+                            backStack.push(HomeScreen)
+                        } else {
+                            backStack.push(HomeScreen)
+                            backStack.push(event.screen)
+                        }
                     }
                 }
             }
