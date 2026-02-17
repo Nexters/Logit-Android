@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -25,13 +26,14 @@ class MainActivity : ComponentActivity() {
     private val screenProvider: ScreenProvider = ScreenProviderImpl()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             LogitTheme {
                 CompositionLocalProvider(LocalScreenProvider provides screenProvider) {
                     CircuitCompositionLocals(circuit) {
-                        val backStack = rememberSaveableBackStack(root = RootScreen)
+                        val backStack = rememberSaveableBackStack(root = SplashScreen)
                         val navigator = rememberCircuitNavigator(backStack)
 
                         NavigableCircuitContent(
