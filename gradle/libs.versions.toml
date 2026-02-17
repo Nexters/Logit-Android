@@ -20,7 +20,7 @@ coroutine = "1.10.2"
 javaxInject = "1"
 appcompat = "1.7.1"
 material = "1.13.0"
-circuit = "0.31.0"
+circuit = "0.33.0"
 composeMarkdown = "0.5.8"
 coreSplashscreen = "1.2.0"
 
