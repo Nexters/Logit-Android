@@ -70,7 +70,6 @@ fun Home(
                         start = dimensionResource(R.dimen.spacing_form_horizontal),
                         end = dimensionResource(R.dimen.spacing_form_horizontal),
                         top = 22.dp,
-                        bottom = 0.dp // 하단 패딩을 제거하여 하위 아이템과의 이중 여백 방지
                     ),
             ) {
                 LogitFormTitle(
