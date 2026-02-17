@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="launcher_phrase">자소서가 쉬워지는 곳</string>
+
     <string name="home_title">홈</string>
     <string name="cover_letter_title">자소서</string>
     <string name="new_project_title">작성</string>
