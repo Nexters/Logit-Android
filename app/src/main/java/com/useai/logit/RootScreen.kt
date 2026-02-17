@@ -68,7 +68,13 @@ class RootPresenter @AssistedInject constructor(
                 }
                 is RootScreen.RootEvent.ChangeScreen -> {
                     if (displayedScreen != event.screen) {
-                        screenStack = screenStack.filter { it != event.screen } + displayedScreen
+                        if (event.screen == HomeScreen) {
+                            screenStack = emptyList()
+                        } else {
+                            if (displayedScreen == HomeScreen) {
+                                screenStack = listOf(HomeScreen)
+                            }
+                        }
                         displayedScreen = event.screen
                     }
                 }
