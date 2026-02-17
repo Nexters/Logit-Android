@@ -1,11 +1,13 @@
 package com.useai.logit.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -99,14 +101,22 @@ fun Root(
             }
         }
     ) { paddingValues ->
-        CircuitContent(
-            screen = rootUiState.displayedScreen,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            onNavEvent = { navEvent ->
-                rootUiState.eventSink(RootScreen.RootEvent.NestedNavEvent(navEvent))
-            }
-        )
+        AnimatedContent(
+            targetState = rootUiState.displayedScreen,
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            },
+            label = "RootContentAnimation"
+        ) { targetScreen ->
+            CircuitContent(
+                screen = targetScreen,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                onNavEvent = { navEvent ->
+                    rootUiState.eventSink(RootScreen.RootEvent.NestedNavEvent(navEvent))
+                }
+            )
+        }
     }
 }
