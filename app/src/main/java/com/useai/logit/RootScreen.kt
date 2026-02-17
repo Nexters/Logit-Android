@@ -12,7 +12,9 @@ import com.slack.circuit.runtime.ExperimentalCircuitApi
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.feature.chat.ChatScreen
 import com.useai.feature.home.HomeScreen
+import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -55,13 +57,13 @@ class RootPresenter @AssistedInject constructor(
                         while (backStack.size > 0) {
                             backStack.pop()
                         }
-                        
-                        if (event.screen == HomeScreen) {
-                            backStack.push(HomeScreen)
-                        } else {
-                            backStack.push(HomeScreen)
-                            backStack.push(event.screen)
+
+                        if (currentScreen != null &&
+                            (event.screen is ChatScreen || event.screen is NewProjectBasicInfoScreen)
+                        ) {
+                            backStack.push(currentScreen)
                         }
+                        backStack.push(event.screen)
                     }
                 }
             }
