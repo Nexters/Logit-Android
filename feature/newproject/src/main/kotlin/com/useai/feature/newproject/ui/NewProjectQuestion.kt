@@ -1,5 +1,6 @@
 package com.useai.feature.newproject.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,6 +46,10 @@ fun NewProjectQuestion(
     modifier: Modifier = Modifier,
     state: NewProjectQuestionScreen.State,
 ) {
+    BackHandler {
+        state.eventSink(NewProjectQuestionScreen.Event.Back)
+    }
+
     val isButtonEnabled = state.questions.any { it.question.isNotBlank() }
 
     InputFormContainer(

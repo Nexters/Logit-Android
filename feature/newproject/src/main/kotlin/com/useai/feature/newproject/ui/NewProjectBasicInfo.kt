@@ -1,5 +1,6 @@
 package com.useai.feature.newproject.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,10 @@ fun NewProjectBasicInfo(
     state: NewProjectBasicInfoScreen.State,
     modifier: Modifier = Modifier
 ) {
+    BackHandler {
+        state.eventSink(NewProjectBasicInfoScreen.Event.Back)
+    }
+
     val isButtonEnabled = state.companyName.isNotBlank() &&
         state.jobName.isNotBlank() &&
         state.jobDesc.isNotBlank()
