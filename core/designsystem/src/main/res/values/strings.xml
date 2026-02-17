@@ -37,6 +37,9 @@
     <string name="project_field_job_desc_placeholder">주요 업무, 자격 요건, 우대 사항 등을 입력하세요</string>
     <string name="project_field_talent_label">기업 인재상</string>
     <string name="project_field_talent_placeholder">기업의 인재상이나 핵심가치를 입력하세요</string>
+    <string name="project_exit_dialog_text">프로젝트 생성을 취소하시겠어요?</string>
+    <string name="project_exit_dialog_cancel">계속하기</string>
+    <string name="project_exit_dialog_confirm">그만하기</string>
 
     <string name="create_project">프로젝트 생성</string>
     <string name="project_form_title_2">자기소개서 문항 입력</string>
