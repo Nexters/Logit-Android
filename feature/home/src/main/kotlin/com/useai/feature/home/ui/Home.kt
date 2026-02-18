@@ -67,8 +67,8 @@ fun Home(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = dimensionResource(R.dimen.spacing_form_horizontal),
-                        end = dimensionResource(R.dimen.spacing_form_horizontal),
+                        start = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                        end = dimensionResource(R.dimen.screen_common_padding_horizontal),
                         top = 22.dp,
                     ),
             ) {
@@ -88,7 +88,7 @@ fun Home(
         if (state.projects.isEmpty()) {
             item {
                 EmptyProjectList(
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
+                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
                     onClickCreateProject = {
                         state.eventSink(HomeScreen.Event.NewProjectClicked)
                     }
@@ -100,7 +100,7 @@ fun Home(
                 key = { _, project -> project.id }
             ) { index, project ->
                 ProjectItem(
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
+                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
                     project = project,
                     onClick = {
                         state.eventSink(HomeScreen.Event.ProjectClicked(project.id))
@@ -110,7 +110,7 @@ fun Home(
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = dimensionResource(R.dimen.spacing_form_horizontal)),
+                            .padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
                         thickness = 1.dp,
                         color = LogitTheme.colors.gray70
                     )

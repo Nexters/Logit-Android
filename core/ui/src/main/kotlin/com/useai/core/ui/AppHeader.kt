@@ -30,7 +30,7 @@ fun AppHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = dimensionResource(R.dimen.app_header_horizontal_padding)),
+            .padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(

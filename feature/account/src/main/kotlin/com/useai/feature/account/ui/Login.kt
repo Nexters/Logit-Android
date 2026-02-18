@@ -51,7 +51,7 @@ fun Login(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(
-                    horizontal = dimensionResource(R.dimen.spacing_form_horizontal),
+                    horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
                     vertical = 8.dp,
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
