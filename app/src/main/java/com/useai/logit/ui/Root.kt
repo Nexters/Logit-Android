@@ -70,6 +70,7 @@ fun Root(
         snackbarHost = {
             LogitSnackbarHost(hostState = snackbarHostState)
         },
+        // app bar 영역은 제외하고 status bar 영역만 padding에 포함
         contentWindowInsets = WindowInsets.statusBars,
         bottomBar = {
             AnimatedVisibility(
@@ -103,7 +104,8 @@ fun Root(
                     }
                 }
             }
-        }
+        },
+        containerColor = LogitTheme.colors.white,
     ) { paddingValues ->
         NavigableCircuitContent(
             navigator = rootUiState.navigator,
