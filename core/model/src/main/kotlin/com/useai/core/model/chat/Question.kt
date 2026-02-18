@@ -11,3 +11,8 @@ data class Question(
         val EMPTY = Question("", "", 0, "")
     }
 }
+
+data class NewQuestion(
+    val question: String,
+    val maxLength: Int,
+)

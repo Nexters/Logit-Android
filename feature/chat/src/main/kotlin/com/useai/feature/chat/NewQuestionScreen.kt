@@ -1,9 +1,11 @@
 package com.useai.feature.chat
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.rememberRetained
@@ -12,10 +14,13 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.data.repository.QuestionRepository
+import com.useai.core.model.chat.NewQuestion
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -35,12 +40,15 @@ data class NewQuestionScreen(val projectId: String) : Screen {
 }
 
 class NewQuestionPresenter @AssistedInject constructor(
+    @Assisted private val screen: NewQuestionScreen,
     @Assisted private val navigator: Navigator,
+    private val questionRepository: QuestionRepository,
 ) : Presenter<NewQuestionScreen.State> {
     @Composable
     override fun present(): NewQuestionScreen.State {
         var question by rememberRetained { mutableStateOf("") }
         var maxLength by rememberRetained { mutableIntStateOf(0) }
+        val scope = rememberCoroutineScope()
 
         return NewQuestionScreen.State(
             question = question,
@@ -60,7 +68,18 @@ class NewQuestionPresenter @AssistedInject constructor(
                 }
 
                 NewQuestionScreen.Event.ConfirmClicked -> {
-                    // TODO: 문항 추가 로직
+                    scope.launch {
+                        questionRepository.createQuestion(
+                            projectId = screen.projectId,
+                            question = NewQuestion(
+                                question = question,
+                                maxLength = maxLength,
+                            )
+                        ).onFailure {
+                            Log.e(TAG, "createQuestion failed: $it")
+                        }
+                        navigator.pop()
+                    }
                 }
             }
         }
@@ -70,6 +89,7 @@ class NewQuestionPresenter @AssistedInject constructor(
     @CircuitInject(NewQuestionScreen::class, ActivityRetainedComponent::class)
     fun interface Factory {
         fun create(
+            screen: NewQuestionScreen,
             navigator: Navigator,
         ): NewQuestionPresenter
     }
