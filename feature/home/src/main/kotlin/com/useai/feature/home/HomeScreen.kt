@@ -3,8 +3,10 @@ package com.useai.feature.home
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -24,6 +26,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data object HomeScreen : Screen {
     data class State(
+        val userName: String,
         val bannerItems: List<ExperienceBannerItem>,
         val projects: List<ProjectListItem>,
         val eventSink: (Event) -> Unit = {},
@@ -42,6 +45,8 @@ class HomePresenter @AssistedInject constructor(
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
+        // TODO: Google 사용자 이름으로 설정
+        val userName by rememberRetained { mutableStateOf("로짓") }
         val dummyBannerItems = listOf(
             ExperienceBannerItem(
                 experienceType = ExperienceType.Leadership,
@@ -70,6 +75,7 @@ class HomePresenter @AssistedInject constructor(
         val screenProvider = LocalScreenProvider.current
 
         return HomeScreen.State(
+            userName = userName,
             bannerItems = dummyBannerItems,
             projects = projects
         ) { event ->
