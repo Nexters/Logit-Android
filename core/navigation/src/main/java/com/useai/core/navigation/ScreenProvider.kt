@@ -13,6 +13,7 @@ interface ScreenProvider {
         talent: String
     ): Screen
     fun chatScreen(projectId: String): Screen
+    fun newQuestionScreen(projectId: String): Screen
     fun experienceCreateScreen(): Screen
     fun experienceDetailScreen(experienceId: String): Screen
 }

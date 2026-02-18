@@ -30,7 +30,7 @@ fun LetterCountInput(
         horizontal = dimensionResource(R.dimen.spacing_input_field_horizontal),
         vertical = dimensionResource(R.dimen.spacing_input_field_vertical),
     ),
-    letterCount: String = "",
+    letterCount: String,
     onValueChange: (String) -> Unit,
 ) {
     LogitOutlinedContainer(
@@ -81,6 +81,7 @@ private fun LetterCountInputPreview() {
     LogitTheme {
         LetterCountInput(
             modifier = Modifier.fillMaxWidth(),
+            letterCount = "",
             onValueChange = {},
         )
     }

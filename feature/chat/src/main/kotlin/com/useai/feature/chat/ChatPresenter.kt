@@ -21,6 +21,7 @@ import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.ChattingStreaming
 import com.useai.core.model.chat.Question
 import com.useai.core.model.experience.MatchingExperience
+import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.ui.reduce
 import com.useai.core.ui.runOn
 import dagger.assisted.Assisted
@@ -50,6 +51,7 @@ class ChatPresenter @AssistedInject constructor(
     @Composable
     override fun present(): ChatScreen.State {
         val scope = rememberStableCoroutineScope()
+        val screenProvider = LocalScreenProvider.current
         val localClipboard = LocalClipboard.current
 
         val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
@@ -106,7 +108,7 @@ class ChatPresenter @AssistedInject constructor(
                         ) { event ->
                             when(event) {
                                 is ChatScreen.Event.AddQuestion -> {
-                                    // TODO
+                                    navigator.goTo(screenProvider.newQuestionScreen(screen.projectId))
                                 }
                                 is ChatScreen.Event.ChangeCategory -> {
                                     value.runOn<ChatScreen.State.Success> {
