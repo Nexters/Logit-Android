@@ -38,5 +38,9 @@ gradlePlugin {
             id = "com.useai.plugin.android.feature.common.dependencies"
             implementationClass = "plugins.AndroidFeatureCommonDependenciesPlugin"
         }
+        register("splashscreenPlugin") {
+            id = "com.useai.plugin.splashscreen"
+            implementationClass = "plugins.SplashscreenPlugin"
+        }
     }
 }

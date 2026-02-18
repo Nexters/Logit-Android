@@ -17,7 +17,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.Logit">
+            android:theme="@style/Theme.Logit.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

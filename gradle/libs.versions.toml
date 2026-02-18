@@ -20,8 +20,9 @@ coroutine = "1.10.2"
 javaxInject = "1"
 appcompat = "1.7.1"
 material = "1.13.0"
-circuit = "0.31.0"
+circuit = "0.33.0"
 composeMarkdown = "0.5.8"
+coreSplashscreen = "1.2.0"
 
 [libraries]
 # region Android KTX
@@ -84,6 +85,9 @@ circuit-retained = { group = "com.slack.circuit", name = "circuit-retained", ver
 circuit-codegen-annotations = { group = "com.slack.circuit", name = "circuit-codegen-annotations", version.ref = "circuit" }
 circuit-codegen = { group = "com.slack.circuit", name = "circuit-codegen", version.ref = "circuit" }
 
+# region Splashscreen
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+
 [plugins]
 # region Top-level plugins
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -103,6 +107,7 @@ logit-kotlin-library-common = { id = "com.useai.plugin.kotlin.library.common", v
 logit-android-library-common = { id = "com.useai.plugin.android.library", version = "unspecified" }
 logit-circuit = { id = "com.useai.plugin.circuit", version = "unspecified" }
 logit-feature-common-dependencies = { id = "com.useai.plugin.android.feature.common.dependencies", version = "unspecified" }
+logit-splashscreen = { id = "com.useai.plugin.splashscreen", version = "unspecified" }
 
 [bundles]
 bundle-compose = ["androidx-compose-ui", "androidx-activity-compose", "androidx-compose-material3",

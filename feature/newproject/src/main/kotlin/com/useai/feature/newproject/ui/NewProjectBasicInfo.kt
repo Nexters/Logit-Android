@@ -1,5 +1,6 @@
 package com.useai.feature.newproject.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,6 +14,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFormContainer
+import com.useai.core.ui.LogitDialog
 import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.LogitInputField
 import com.useai.core.ui.LogitStepper
@@ -26,6 +28,21 @@ fun NewProjectBasicInfo(
     state: NewProjectBasicInfoScreen.State,
     modifier: Modifier = Modifier
 ) {
+    BackHandler {
+        state.eventSink(NewProjectBasicInfoScreen.Event.Back)
+    }
+
+    if (state.showExitDialog) {
+        LogitDialog(
+            onDismissRequest = { state.eventSink(NewProjectBasicInfoScreen.Event.DismissExitDialog) },
+            title = stringResource(R.string.project_exit_dialog_text),
+            confirmText = stringResource(R.string.project_exit_dialog_confirm),
+            onConfirm = { state.eventSink(NewProjectBasicInfoScreen.Event.ConfirmExit) },
+            cancelText = stringResource(R.string.project_exit_dialog_cancel),
+            onCancel = { state.eventSink(NewProjectBasicInfoScreen.Event.DismissExitDialog) }
+        )
+    }
+
     val isButtonEnabled = state.companyName.isNotBlank() &&
         state.jobName.isNotBlank() &&
         state.jobDesc.isNotBlank()
@@ -109,6 +126,7 @@ private fun NewProjectBasicInfoPreview() {
                 jobName = "",
                 jobDesc = "",
                 talent = "",
+                showExitDialog = false,
                 eventSink = {}
             )
         )

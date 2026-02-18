@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="launcher_phrase">자소서가 쉬워지는 곳</string>
+
     <string name="home_title">홈</string>
     <string name="cover_letter_title">자소서</string>
     <string name="new_project_title">작성</string>
@@ -37,6 +39,9 @@
     <string name="project_field_job_desc_placeholder">주요 업무, 자격 요건, 우대 사항 등을 입력하세요</string>
     <string name="project_field_talent_label">기업 인재상</string>
     <string name="project_field_talent_placeholder">기업의 인재상이나 핵심가치를 입력하세요</string>
+    <string name="project_exit_dialog_text">프로젝트 생성을 취소하시겠어요?</string>
+    <string name="project_exit_dialog_cancel">계속하기</string>
+    <string name="project_exit_dialog_confirm">그만하기</string>
 
     <string name="create_project">프로젝트 생성</string>
     <string name="project_form_title_2">자기소개서 문항 입력</string>
@@ -46,6 +51,13 @@
     <string name="letter_count_placeholder">글자수</string>
     <string name="letter_count_unit">자</string>
     <string name="add">추가하기</string>
+
+    <string name="account_notification_settings_title">알림설정</string>
+    <string name="account_report_notification_setting">커리어 리포트 업데이트 알림 표시</string>
+    <string name="account_support_and_info_title">고객 지원 및 정보</string>
+    <string name="account_contact">문의하기</string>
+    <string name="account_logout">로그아웃</string>
+    <string name="account_withdraw">회원탈퇴</string>
 
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
