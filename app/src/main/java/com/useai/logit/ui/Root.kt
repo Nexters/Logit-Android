@@ -23,6 +23,8 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.runtime.ExperimentalCircuitApi
 import com.useai.core.designsystem.component.LogitNavigationBar
 import com.useai.core.designsystem.component.LogitNavigationBarItem
+import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
+import com.useai.core.designsystem.component.snackbar.LogitSnackbarHost
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
@@ -41,6 +43,8 @@ fun Root(
     rootUiState: RootScreen.RootUiState,
     modifier: Modifier = Modifier,
 ) {
+    val snackbarHostState = LocalLogitSnackbarHostState.current
+
     val screens = remember {
         listOf(
             HomeScreen,
@@ -63,8 +67,9 @@ fun Root(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = LogitTheme.colors.white,
-        // app bar 영역은 제외하고 status bar 영역만 padding에 포함
+        snackbarHost = {
+            LogitSnackbarHost(hostState = snackbarHostState)
+        },
         contentWindowInsets = WindowInsets.statusBars,
         bottomBar = {
             AnimatedVisibility(

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="launcher_phrase">자소서가 쉬워지는 곳</string>
 
@@ -27,6 +27,38 @@
     <string name="add_experience">추가하기</string>
     <string name="experience_score">%s점</string>
     <string name="select_experiences">%s개 경험선택</string>
+    <string name="experience_list_title">경험 목록</string>
+    <string name="experience_count">%1$d개</string>
+    <string name="experience_empty">등록된 경험이 없어요</string>
+    <string name="experience_register">경험 등록</string>
+    <string name="experience_loading">불러오는 중…</string>
+    <string name="experience_load_failed">경험을 불러오지 못했어요</string>
+    <string name="experience_retry">다시 시도</string>
+    <string name="experience_more_not_supported">더보기 기능은 준비 중이에요</string>
+    <string name="experience_detail_type_label">경험 종류</string>
+    <string name="experience_detail_period_label">경험 날짜</string>
+    <string name="experience_detail_keyword_label">경험 키워드</string>
+    <string name="experience_detail_situation">Situation (상황)</string>
+    <string name="experience_detail_task">Task (과제/목표)</string>
+    <string name="experience_detail_action">Action (행동)</string>
+    <string name="experience_detail_result">Result (결과)</string>
+    <string name="experience_create_step1_title">경험 정보 입력</string>
+    <string name="experience_create_step1_desc">등록하는 경험의 정보를 알려주세요</string>
+    <string name="experience_create_step2_title">STAR 기반 경험 정리</string>
+    <string name="experience_create_step2_desc">최소 50자 이상 입력해 주세요.</string>
+    <string name="experience_create_step3_title">경험유형 선택</string>
+    <string name="experience_create_step3_desc">활용될 핵심 역량을 선택하세요</string>
+    <string name="experience_create_title_label">경험 제목</string>
+    <string name="experience_create_title_placeholder">예 ) 로짓 데이터 분석을 통한 이탈률 개선</string>
+    <string name="experience_create_date_label">경험 날짜</string>
+    <string name="experience_create_type_label">경험 종류</string>
+    <string name="experience_create_situation_placeholder">어떤 일이 일어났는지 배경을 기술합니다.</string>
+    <string name="experience_create_task_placeholder">해결해야 했던 과제를 기술합니다.</string>
+    <string name="experience_create_action_placeholder">문제를 해결하기 위해 한 행동을 기술합니다.</string>
+    <string name="experience_create_result_placeholder">행동으로 얻은 성과와 배운 점을 서술합니다.</string>
+    <string name="experience_create_invalid_input">입력값을 다시 확인해 주세요</string>
+    <string name="experience_create_failed">경험 등록에 실패했어요</string>
+    <string name="experience_create_load_example">예시 불러오기</string>
 
     <string name="next">다음으로</string>
     <string name="project_form_title_1">자기소개서 작성</string>
@@ -68,3 +100,4 @@
     <string name="content_description_app_logo">로짓 로고</string>
     <string name="content_description_user_profile">사용자 프로필</string>
 </resources>
+

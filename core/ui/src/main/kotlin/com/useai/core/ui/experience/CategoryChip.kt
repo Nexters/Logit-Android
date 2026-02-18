@@ -28,7 +28,7 @@ fun CategoryChip(
     Row(
         modifier = modifier.background(
             color = Color(0xFFE3F5FF),
-            shape = RoundedCornerShape(14.dp)
+            shape = RoundedCornerShape(8.dp)
         ).padding(6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,8 +41,9 @@ fun LogitOutlinedTextField(
     maxLength: Int = Int.MAX_VALUE,
     contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
     border: BorderStroke = BorderStroke(1.dp, LogitTheme.colors.gray100),
+    focusedBorder: BorderStroke? = null,
     shape: Shape = RoundedCornerShape(8.dp),
-    textStyle: TextStyle = LogitTheme.typography.body5_4,
+    textStyle: TextStyle = LogitTheme.typography.body6_1,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     maxLines: Int = Int.MAX_VALUE,
@@ -53,6 +56,13 @@ fun LogitOutlinedTextField(
     val showPlaceholder = remember(value, placeholder) {
         placeholder != null && value.isEmpty()
     }
+    val effectiveInteractionSource = interactionSource ?: remember { MutableInteractionSource() }
+    val isFocused by effectiveInteractionSource.collectIsFocusedAsState()
+    val effectiveBorder = if (isFocused) {
+        focusedBorder ?: border
+    } else {
+        border
+    }
 
     BasicTextField(
         value = value,
@@ -64,7 +74,7 @@ fun LogitOutlinedTextField(
         modifier = Modifier
             .clip(shape)
             .background(color = LogitTheme.colors.white, shape = shape)
-            .border(border = border, shape = shape)
+            .border(border = effectiveBorder, shape = shape)
             .then(modifier),
         enabled = enabled,
         readOnly = readOnly,
@@ -76,7 +86,7 @@ fun LogitOutlinedTextField(
         minLines = minLines,
         visualTransformation = visualTransformation,
         onTextLayout = onTextLayout,
-        interactionSource = interactionSource,
+        interactionSource = effectiveInteractionSource,
         cursorBrush = cursorBrush,
         decorationBox = { field ->
 

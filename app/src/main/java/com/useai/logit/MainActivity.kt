@@ -4,13 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.compose.runtime.remember
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.navigation.ScreenProvider
@@ -31,7 +34,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LogitTheme {
-                CompositionLocalProvider(LocalScreenProvider provides screenProvider) {
+                val snackbarHostState = remember { SnackbarHostState() }
+                CompositionLocalProvider(
+                    LocalScreenProvider provides screenProvider,
+                    LocalLogitSnackbarHostState provides snackbarHostState
+                ) {
                     CircuitCompositionLocals(circuit) {
                         val backStack = rememberSaveableBackStack(root = SplashScreen)
                         val navigator = rememberCircuitNavigator(backStack)
