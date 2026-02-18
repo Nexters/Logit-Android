@@ -3,6 +3,7 @@ package com.useai.core.network.api
 import com.useai.core.network.request.CreateProjectRequest
 import com.useai.core.network.request.UpdateProjectRequest
 import com.useai.core.network.response.ProjectListItemResponse
+import com.useai.core.network.response.ProjectResponse
 import com.useai.core.network.response.ProjectWithQuestionResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -28,7 +29,7 @@ interface ProjectApi {
     @GET("api/v1/projects/{project_id}")
     suspend fun getProject(
         @Path("project_id") projectId: String
-    ): ProjectWithQuestionResponse
+    ): ProjectResponse
 
     @PATCH("api/v1/projects/{project_id}")
     suspend fun updateProject(

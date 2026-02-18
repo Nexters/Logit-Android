@@ -1,6 +1,7 @@
 package com.useai.feature.chat
 
 import android.content.ClipData
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.Clipboard
@@ -54,11 +55,14 @@ class ChatPresenter @AssistedInject constructor(
 
         val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
             val projectDetailDeferred = async {
-                projectRepository.getProject(screen.projectId).getOrNull()
+                projectRepository.getProject(screen.projectId).onFailure {
+                    Log.e(TAG, "getProject failed: $it")
+                }.getOrNull()
             }
 
             questionRepository.getQuestions(screen.projectId).onSuccess { initialQuestions ->
                 if (initialQuestions.isEmpty()) {
+                    Log.e(TAG, "initialQuestions is empty")
                     reduce { ChatScreen.State.LoadFailed }
                     return@produceRetainedState
                 }
@@ -68,6 +72,7 @@ class ChatPresenter @AssistedInject constructor(
                         experienceRepository.getMatchingExperiences(question.id).onSuccess { matchingExperiences ->
                             this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
                         }.onFailure {
+                            Log.e(TAG, "getMatchingExperiences failed: $it")
                             reduce { ChatScreen.State.LoadFailed }
                         }
                     }
@@ -78,16 +83,19 @@ class ChatPresenter @AssistedInject constructor(
                         chattingRepository.getChatHistory(question.id).onSuccess { chattingHistory ->
                             chattingHistories[question] = chattingHistory
                         }.onFailure {
+                            Log.e(TAG, "getChatHistory failed: $it")
                             reduce { ChatScreen.State.LoadFailed }
                         }
                     }
                 }.awaitAll()
 
                 val projectDetail = projectDetailDeferred.await()
-                if (projectDetail == null)
+                if (projectDetail == null) {
+                    Log.d(TAG, "projectDetail is null")
                     reduce {
                         ChatScreen.State.LoadFailed
                     }
+                }
 
                 if (value !is ChatScreen.State.LoadFailed) {
                     val initialQuestion = initialQuestions.first()
@@ -268,6 +276,7 @@ class ChatPresenter @AssistedInject constructor(
                     }
                 }
             }.onFailure {
+                Log.e(TAG, "getQuestions failed: $it")
                 reduce { ChatScreen.State.LoadFailed }
             }
         }
@@ -286,5 +295,9 @@ class ChatPresenter @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(screen: ChatScreen, navigator: Navigator): ChatPresenter
+    }
+
+    companion object {
+        private val TAG = ChatPresenter::class.simpleName
     }
 }

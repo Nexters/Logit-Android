@@ -1,6 +1,7 @@
 package com.useai.core.data.repository
 
 import com.useai.core.common.extensions.toFormattedString
+import com.useai.core.model.project.NewProject
 import com.useai.core.model.project.Project
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.model.project.ProjectParam
@@ -9,7 +10,7 @@ import com.useai.core.network.error.runCatchingWith
 import com.useai.core.network.request.CreateProjectRequest
 import com.useai.core.network.request.ProjectQuestionRequest
 import com.useai.core.network.request.UpdateProjectRequest
-import com.useai.core.network.response.toProject
+import com.useai.core.network.response.toNewProject
 import com.useai.core.network.response.toProjectListItem
 import com.useai.core.network.source.ProjectRemoteDataSource
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ internal class ProjectRepositoryImpl @Inject constructor(
     private val projectRemoteDataSource: ProjectRemoteDataSource
 ) : ProjectRepository {
 
-    override suspend fun createProject(projectParam: ProjectParam): Result<Project> {
+    override suspend fun createProject(projectParam: ProjectParam): Result<NewProject> {
         return runCatchingWith {
             projectRemoteDataSource.createProject(
                 CreateProjectRequest(
@@ -36,7 +37,7 @@ internal class ProjectRepositoryImpl @Inject constructor(
                         )
                     }
                 )
-            ).toProject()
+            ).toNewProject()
         }
     }
 
@@ -49,14 +50,14 @@ internal class ProjectRepositoryImpl @Inject constructor(
 
     override suspend fun getProject(projectId: String): Result<Project> {
         return runCatchingWith {
-            projectRemoteDataSource.getProject(projectId).toProject()
+            projectRemoteDataSource.getProject(projectId).toNewProject()
         }
     }
 
     override suspend fun updateProject(
         projectId: String,
         updateProjectParam: UpdateProjectParam
-    ): Result<Project> {
+    ): Result<NewProject> {
         return runCatchingWith {
             projectRemoteDataSource.updateProject(
                 projectId,
@@ -66,7 +67,7 @@ internal class ProjectRepositoryImpl @Inject constructor(
                     dueDate = updateProjectParam.dueDate?.toFormattedString(),
                     jobPosition = updateProjectParam.jobPosition
                 )
-            ).toProject()
+            ).toNewProject()
         }
     }
 
