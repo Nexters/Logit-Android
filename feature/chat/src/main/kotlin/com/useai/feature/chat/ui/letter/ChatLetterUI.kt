@@ -1,5 +1,6 @@
 package com.useai.feature.chat.ui.letter
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,9 @@ internal fun ChatLetterUI(
     state: ChatScreen.State.Success,
     modifier: Modifier = Modifier
 ) {
+    BackHandler {
+        state.eventSink(ChatScreen.Event.NavigateBack)
+    }
 
     Column(modifier = modifier) {
         LazyColumn(

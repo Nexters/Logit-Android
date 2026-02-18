@@ -1,5 +1,6 @@
 package com.useai.feature.chat.ui.chatting
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -58,6 +59,10 @@ internal fun ChatChattingUI(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
 ) {
+    BackHandler {
+        state.eventSink(ChatScreen.Event.NavigateBack)
+    }
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val temporarilySelectedExperiences = rememberRetained {
         mutableStateSetOf(*state.chattingHistory.experienceIds.toTypedArray())
