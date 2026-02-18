@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="launcher_phrase">자소서가 쉬워지는 곳</string>
+
     <string name="home_title">홈</string>
     <string name="cover_letter_title">자소서</string>
     <string name="new_project_title">작성</string>
@@ -7,6 +9,13 @@
     <string name="report_title">리포트</string>
 
     <!-- region UI -->
+    <string name="home_experience_type_title_format">%s님의 경험 유형</string>
+    <string name="home_experience_type_banner_desc_format">관련경험 %d개</string>
+    <string name="home_project_list_title">프로젝트 목록</string>
+    <string name="home_empty_project_phrase">자기소개서를 생성해보세요</string>
+    <string name="home_new_project">자기소개서 작성</string>
+    <string name="home_project_list_item_title_format">%s %s</string>
+
     <string name="update_letter">자기소개서 업데이트</string>
     <string name="placeholder_message_input">어떤 내용을 만들어볼까요?</string>
     <string name="question_number">Q%s</string>
@@ -62,6 +71,9 @@
     <string name="project_field_job_desc_placeholder">주요 업무, 자격 요건, 우대 사항 등을 입력하세요</string>
     <string name="project_field_talent_label">기업 인재상</string>
     <string name="project_field_talent_placeholder">기업의 인재상이나 핵심가치를 입력하세요</string>
+    <string name="project_exit_dialog_text">프로젝트 생성을 취소하시겠어요?</string>
+    <string name="project_exit_dialog_cancel">계속하기</string>
+    <string name="project_exit_dialog_confirm">그만하기</string>
 
     <string name="create_project">프로젝트 생성</string>
     <string name="project_form_title_2">자기소개서 문항 입력</string>
@@ -72,11 +84,20 @@
     <string name="letter_count_unit">자</string>
     <string name="add">추가하기</string>
 
+    <string name="account_notification_settings_title">알림설정</string>
+    <string name="account_report_notification_setting">커리어 리포트 업데이트 알림 표시</string>
+    <string name="account_support_and_info_title">고객 지원 및 정보</string>
+    <string name="account_contact">문의하기</string>
+    <string name="account_logout">로그아웃</string>
+    <string name="account_withdraw">회원탈퇴</string>
+
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
     <string name="content_description_external">업로드</string>
     <string name="content_description_navigate_back">뒤로가기</string>
     <string name="content_description_delete">삭제</string>
 
+    <string name="content_description_app_logo">로짓 로고</string>
+    <string name="content_description_user_profile">사용자 프로필</string>
 </resources>
 

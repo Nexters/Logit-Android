@@ -25,6 +25,7 @@ data object NewProjectBasicInfoScreen : Screen {
         val jobName: String,
         val jobDesc: String,
         val talent: String,
+        val showExitDialog: Boolean,
         val eventSink: (Event) -> Unit,
     ) : CircuitUiState
 
@@ -35,6 +36,8 @@ data object NewProjectBasicInfoScreen : Screen {
         data class OnJobDescChange(val desc: String) : Event
         data class OnTalentChange(val talent: String) : Event
         data object Next : Event
+        data object DismissExitDialog : Event
+        data object ConfirmExit : Event
     }
 }
 
@@ -47,6 +50,7 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
         var jobName by rememberRetained { mutableStateOf("") }
         var jobDesc by rememberRetained { mutableStateOf("") }
         var talent by rememberRetained { mutableStateOf("") }
+        var showExitDialog by rememberRetained { mutableStateOf(false) }
         val screenProvider = LocalScreenProvider.current
 
         return NewProjectBasicInfoScreen.State(
@@ -54,9 +58,10 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
             jobName = jobName,
             jobDesc = jobDesc,
             talent = talent,
+            showExitDialog = showExitDialog,
         ) { event ->
             when (event) {
-                is NewProjectBasicInfoScreen.Event.Back -> navigator.pop()
+                is NewProjectBasicInfoScreen.Event.Back -> showExitDialog = true
                 is NewProjectBasicInfoScreen.Event.OnCompanyNameChange -> companyName = event.name
                 is NewProjectBasicInfoScreen.Event.OnJobNameChange -> jobName = event.job
                 is NewProjectBasicInfoScreen.Event.OnJobDescChange -> jobDesc = event.desc
@@ -69,6 +74,11 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
                         talent = talent,
                     )
                     navigator.goTo(newProjectQuestionScreen)
+                }
+                is NewProjectBasicInfoScreen.Event.DismissExitDialog -> showExitDialog = false
+                is NewProjectBasicInfoScreen.Event.ConfirmExit -> {
+                    showExitDialog = false
+                    navigator.pop()
                 }
             }
         }

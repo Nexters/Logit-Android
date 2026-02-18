@@ -6,8 +6,6 @@ import com.useai.core.data.repository.ExperienceRepository
 import com.useai.core.data.repository.ExperienceRepositoryImpl
 import com.useai.core.data.repository.ProjectRepository
 import com.useai.core.data.repository.ProjectRepositoryImpl
-import com.useai.core.data.repository.ProjectsRepository
-import com.useai.core.data.repository.ProjectsRepositoryImpl
 import com.useai.core.data.repository.QuestionRepository
 import com.useai.core.data.repository.QuestionRepositoryImpl
 import dagger.Binds
@@ -19,12 +17,6 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 internal interface RepositoryModule {
-    @Binds
-    @ActivityRetainedScoped
-    fun providesProjectsRepository(
-        impl: ProjectsRepositoryImpl
-    ) : ProjectsRepository
-
     @Binds
     @ActivityRetainedScoped
     fun providesChattingRepository(

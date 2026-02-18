@@ -12,6 +12,8 @@ import com.useai.core.network.request.UpdateProjectRequest
 import com.useai.core.network.response.toProject
 import com.useai.core.network.response.toProjectListItem
 import com.useai.core.network.source.ProjectRemoteDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class ProjectRepositoryImpl @Inject constructor(
@@ -38,11 +40,12 @@ internal class ProjectRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProjects(): Result<List<ProjectListItem>> {
-        return runCatchingWith {
-            projectRemoteDataSource.getProjects().map { it.toProjectListItem() }
+    override suspend fun getProjects(): Result<List<ProjectListItem>> =
+        withContext(Dispatchers.IO) {
+            return@withContext runCatchingWith {
+                projectRemoteDataSource.getProjects().map { it.toProjectListItem() }
+            }
         }
-    }
 
     override suspend fun getProject(projectId: String): Result<Project> {
         return runCatchingWith {

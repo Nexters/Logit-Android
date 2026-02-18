@@ -3,10 +3,12 @@ plugins {
     alias(libs.plugins.logit.compose.common)
     alias(libs.plugins.logit.hilt)
     alias(libs.plugins.logit.circuit)
+    alias(libs.plugins.logit.splashscreen)
 }
 
 dependencies {
     implementation(projects.feature.home)
+    implementation(projects.feature.account)
     implementation(projects.feature.chat)
     implementation(projects.feature.newproject)
     implementation(projects.feature.experience)

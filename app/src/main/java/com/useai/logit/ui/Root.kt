@@ -1,6 +1,5 @@
 package com.useai.logit.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -20,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.foundation.CircuitContent
-import com.slack.circuit.foundation.NavEvent
+import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.runtime.ExperimentalCircuitApi
 import com.useai.core.designsystem.component.LogitNavigationBar
 import com.useai.core.designsystem.component.LogitNavigationBarItem
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
@@ -31,11 +30,13 @@ import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
+import com.useai.feature.newproject.NewProjectQuestionScreen
 import com.useai.feature.report.ReportScreen
 import com.useai.logit.RootScreen
 import com.useai.logit.navigation.TopLevelNavItem
 import dagger.hilt.android.components.ActivityRetainedComponent
 
+@OptIn(ExperimentalCircuitApi::class)
 @Composable
 @CircuitInject(RootScreen::class, ActivityRetainedComponent::class)
 fun Root(
@@ -53,25 +54,19 @@ fun Root(
             ReportScreen,
         )
     }
-    val shouldShowBottomBar by remember(rootUiState.displayedScreen) {
+    val topScreen = rootUiState.backStack.topRecord?.screen
+    val shouldShowBottomBar by remember(topScreen) {
         derivedStateOf {
-            rootUiState.displayedScreen != NewProjectBasicInfoScreen &&
-                screens.any { it == rootUiState.displayedScreen }
+            val isNewProjectFlow =
+                topScreen is NewProjectBasicInfoScreen || topScreen is NewProjectQuestionScreen
+            val isTabRoot = screens.any { it == topScreen }
+            
+            isTabRoot && !isNewProjectFlow
         }
-    }
-    val rootContainerColor = if (rootUiState.displayedScreen == ExperienceScreen) {
-        LogitTheme.colors.gray20
-    } else {
-        LogitTheme.colors.white
-    }
-
-    BackHandler(enabled = rootUiState.canPop) {
-        rootUiState.eventSink(RootScreen.RootEvent.NestedNavEvent(NavEvent.Pop()))
     }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = rootContainerColor,
         snackbarHost = {
             LogitSnackbarHost(hostState = snackbarHostState)
         },
@@ -99,7 +94,7 @@ fun Root(
                                 )
                             },
                             labelText = stringResource(navItem.titleTextId),
-                            selected = screen == rootUiState.displayedScreen,
+                            selected = screen == topScreen,
                             alwaysShowLabel = true,
                             onClick = {
                                 rootUiState.eventSink(RootScreen.RootEvent.ChangeScreen(screen))
@@ -110,14 +105,12 @@ fun Root(
             }
         }
     ) { paddingValues ->
-        CircuitContent(
-            screen = rootUiState.displayedScreen,
+        NavigableCircuitContent(
+            navigator = rootUiState.navigator,
+            backStack = rootUiState.backStack,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            onNavEvent = { navEvent ->
-                rootUiState.eventSink(RootScreen.RootEvent.NestedNavEvent(navEvent))
-            }
+                .padding(paddingValues)
         )
     }
 }

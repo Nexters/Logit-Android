@@ -4,7 +4,6 @@ import com.useai.core.common.qualifiers.AuthClient
 import com.useai.core.network.api.ChattingApi
 import com.useai.core.network.api.ExperienceApi
 import com.useai.core.network.api.ProjectApi
-import com.useai.core.network.api.ProjectsApi
 import com.useai.core.network.api.QuestionApi
 import dagger.Module
 import dagger.Provides
@@ -17,12 +16,6 @@ import retrofit2.create
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 internal object ApiModule {
-    @Provides
-    @ActivityRetainedScoped
-    fun providesNewProjectApi(
-        @AuthClient retrofit: Retrofit
-    ) = retrofit.create<ProjectsApi>()
-
     @Provides
     @ActivityRetainedScoped
     fun providesChattingApi(

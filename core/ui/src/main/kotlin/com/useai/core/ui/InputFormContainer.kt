@@ -51,7 +51,7 @@ fun InputFormContainer(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .padding(
-                        horizontal = dimensionResource(R.dimen.spacing_form_horizontal),
+                        horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
                         vertical = dimensionResource(R.dimen.spacing_form_vertical)
                     ),
             ) {
