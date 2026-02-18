@@ -23,8 +23,6 @@ import com.useai.core.ui.LogitInputField
 import com.useai.feature.chat.NewQuestionScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
-private val TAG = NewQuestionScreen::class.simpleName
-
 @Composable
 @CircuitInject(NewQuestionScreen::class, ActivityRetainedComponent::class)
 fun NewQuestion(
@@ -40,7 +38,7 @@ fun NewQuestion(
         onClickBackButton = { state.eventSink(NewQuestionScreen.Event.Back) },
         bottomButtonText = stringResource(R.string.question_form_confirm),
         onClickBottomButton = { state.eventSink(NewQuestionScreen.Event.ConfirmClicked) },
-        bottomButtonEnabled = true,
+        bottomButtonEnabled = state.isButtonEnabled,
     ) {
         LogitFormTitle(
             title = stringResource(R.string.question_form_title),
@@ -109,6 +107,7 @@ private fun NewQuestionPreview() {
             state = NewQuestionScreen.State(
                 question = "",
                 maxLength = 0,
+                isButtonEnabled = false,
             )
         )
     }

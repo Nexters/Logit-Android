@@ -28,6 +28,7 @@ data class NewQuestionScreen(val projectId: String) : Screen {
     data class State(
         val question: String,
         val maxLength: Int,
+        val isButtonEnabled: Boolean,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
 
@@ -53,6 +54,7 @@ class NewQuestionPresenter @AssistedInject constructor(
         return NewQuestionScreen.State(
             question = question,
             maxLength = maxLength,
+            isButtonEnabled = question.isNotBlank() && maxLength > 0,
         ) { event ->
             when (event) {
                 NewQuestionScreen.Event.Back -> {
@@ -75,10 +77,11 @@ class NewQuestionPresenter @AssistedInject constructor(
                                 question = question,
                                 maxLength = maxLength,
                             )
-                        ).onFailure {
+                        ).onSuccess {
+                            navigator.pop()
+                        }.onFailure {
                             Log.e(TAG, "createQuestion failed: $it")
                         }
-                        navigator.pop()
                     }
                 }
             }
