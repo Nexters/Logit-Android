@@ -5,14 +5,14 @@ import com.useai.core.network.request.CreateProjectRequest
 import com.useai.core.network.request.UpdateProjectRequest
 import com.useai.core.network.response.ProjectListItemResponse
 import com.useai.core.network.response.ProjectResponse
-import com.useai.core.network.response.ProjectWithQuestionResponse
+import com.useai.core.network.response.NewProjectResponse
 import javax.inject.Inject
 
 internal class ProjectRemoteDataSourceImpl @Inject constructor(
     private val projectApi: ProjectApi
 ) : ProjectRemoteDataSource {
 
-    override suspend fun createProject(request: CreateProjectRequest): ProjectWithQuestionResponse {
+    override suspend fun createProject(request: CreateProjectRequest): NewProjectResponse {
         return projectApi.createProject(request)
     }
 
@@ -27,7 +27,7 @@ internal class ProjectRemoteDataSourceImpl @Inject constructor(
     override suspend fun updateProject(
         projectId: String,
         request: UpdateProjectRequest
-    ): ProjectWithQuestionResponse {
+    ): NewProjectResponse {
         return projectApi.updateProject(projectId, request)
     }
 

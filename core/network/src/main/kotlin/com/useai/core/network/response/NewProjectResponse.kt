@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Serializable
-data class ProjectWithQuestionResponse(
+data class NewProjectResponse(
     val project: ProjectResponse,
     val questions: List<QuestionItemResponse>,
 )
@@ -46,7 +46,7 @@ data class QuestionItemResponse(
     @SerialName("max_length") val maxLength: Int,
 )
 
-fun ProjectWithQuestionResponse.toNewProject() = NewProject(
+fun NewProjectResponse.toNewProject() = NewProject(
     id = project.id,
     company = project.company,
     dueDate = project.dueDate.toLocalDate() ?: LocalDate.MIN,
