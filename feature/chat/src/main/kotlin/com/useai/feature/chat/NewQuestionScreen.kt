@@ -15,7 +15,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.QuestionRepository
-import com.useai.core.model.chat.NewQuestion
+import com.useai.core.model.project.ProjectQuestionParam
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -73,7 +73,7 @@ class NewQuestionPresenter @AssistedInject constructor(
                     scope.launch {
                         questionRepository.createQuestion(
                             projectId = screen.projectId,
-                            question = NewQuestion(
+                            question = ProjectQuestionParam(
                                 question = question,
                                 maxLength = maxLength,
                             )

@@ -1,11 +1,11 @@
 package com.useai.core.data.repository
 
-import com.useai.core.model.chat.NewQuestion
 import com.useai.core.model.chat.Question
+import com.useai.core.model.project.ProjectQuestionParam
 
 interface QuestionRepository {
 
-    suspend fun createQuestion(projectId: String, question: NewQuestion): Result<String>
+    suspend fun createQuestion(projectId: String, question: ProjectQuestionParam): Result<String>
     suspend fun getQuestions(projectId: String): Result<List<Question>>
     suspend fun getQuestion(projectId: String, questionId: String): Result<Question>
     suspend fun updateQuestion(projectId: String, question: Question): Result<Question>
