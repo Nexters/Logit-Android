@@ -15,6 +15,7 @@ class ScreenProviderImpl: ScreenProvider {
     override fun homeScreen(): Screen = HomeScreen
 
     override fun accountScreen(): Screen = AccountScreen()
+    override fun accountScreen(): Screen = AccountScreen
 
     override fun newProjectBasicInfoScreen(): Screen = NewProjectBasicInfoScreen
 
