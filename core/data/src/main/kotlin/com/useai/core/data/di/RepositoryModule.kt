@@ -8,6 +8,8 @@ import com.useai.core.data.repository.ProjectRepository
 import com.useai.core.data.repository.ProjectRepositoryImpl
 import com.useai.core.data.repository.QuestionRepository
 import com.useai.core.data.repository.QuestionRepositoryImpl
+import com.useai.core.data.repository.ReportRepository
+import com.useai.core.data.repository.ReportRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -40,4 +42,10 @@ internal interface RepositoryModule {
     fun providesProjectRepository(
         impl: ProjectRepositoryImpl
     ) : ProjectRepository
+
+    @Binds
+    @ActivityRetainedScoped
+    fun providesReportRepository(
+        impl: ReportRepositoryImpl
+    ) : ReportRepository
 }
