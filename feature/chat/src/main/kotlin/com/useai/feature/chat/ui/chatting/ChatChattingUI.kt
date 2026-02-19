@@ -1,5 +1,6 @@
 package com.useai.feature.chat.ui.chatting
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -42,7 +43,6 @@ import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
 import com.useai.core.model.project.Project
-import com.useai.core.model.project.QuestionItem
 import com.useai.core.ui.experience.ExperienceCard
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.chat.ChatScreenCategory
@@ -59,6 +59,10 @@ internal fun ChatChattingUI(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
 ) {
+    BackHandler {
+        state.eventSink(ChatScreen.Event.NavigateBack)
+    }
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val temporarilySelectedExperiences = rememberRetained {
         mutableStateSetOf(*state.chattingHistory.experienceIds.toTypedArray())
@@ -314,23 +318,6 @@ createdAt = LocalDateTime.MIN
                 dueDate = LocalDate.now(),
                 jobPosition = "안드로이드 개발자",
                 recruitNotice = "채용공고",
-                questions = listOf(
-                    QuestionItem(
-                        id = "",
-                        question = "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요.",
-                        maxLength = 1000,
-                    ),
-                    QuestionItem(
-                        id = "",
-                        question = "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요.",
-                        maxLength = 1000,
-                    ),
-                    QuestionItem(
-                        id = "",
-                        question = "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요.",
-                        maxLength = 1000,
-                    ),
-                ),
             ),
             matchingExperiences = listOf(),
         ),

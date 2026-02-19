@@ -2,6 +2,7 @@ package com.useai.core.network.response
 
 import com.useai.core.common.extensions.toLocalDate
 import com.useai.core.common.extensions.toLocalDateTime
+import com.useai.core.model.project.NewProject
 import com.useai.core.model.project.Project
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.model.project.QuestionItem
@@ -11,7 +12,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Serializable
-data class ProjectWithQuestionResponse(
+data class NewProjectResponse(
     val project: ProjectResponse,
     val questions: List<QuestionItemResponse>,
 )
@@ -28,6 +29,16 @@ data class ProjectResponse(
     @SerialName("updated_at") val updatedAt: String,
 )
 
+fun ProjectResponse.toNewProject() = Project(
+    id = id,
+    company = company,
+    createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN,
+    updatedAt = updatedAt.toLocalDateTime() ?: LocalDateTime.MIN,
+    dueDate = dueDate.toLocalDate() ?: LocalDate.MAX,
+    jobPosition = jobPosition,
+    recruitNotice = recruitNotice,
+)
+
 @Serializable
 data class QuestionItemResponse(
     @SerialName("id") val id: String,
@@ -35,7 +46,7 @@ data class QuestionItemResponse(
     @SerialName("max_length") val maxLength: Int,
 )
 
-fun ProjectWithQuestionResponse.toProject() = Project(
+fun NewProjectResponse.toNewProject() = NewProject(
     id = project.id,
     company = project.company,
     dueDate = project.dueDate.toLocalDate() ?: LocalDate.MIN,

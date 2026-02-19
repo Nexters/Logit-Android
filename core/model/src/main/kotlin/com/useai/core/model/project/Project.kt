@@ -11,6 +11,16 @@ data class Project(
     val dueDate: LocalDate,
     val jobPosition: String,
     val recruitNotice: String,
+)
+
+data class NewProject(
+    val id: String,
+    val company: String,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+    val dueDate: LocalDate,
+    val jobPosition: String,
+    val recruitNotice: String,
     val questions: List<QuestionItem>,
 )
 

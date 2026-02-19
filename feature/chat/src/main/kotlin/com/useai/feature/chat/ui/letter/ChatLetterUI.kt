@@ -1,5 +1,6 @@
 package com.useai.feature.chat.ui.letter
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +18,6 @@ import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
 import com.useai.core.model.project.Project
-import com.useai.core.model.project.QuestionItem
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.chat.ChatScreenCategory
 import com.useai.feature.chat.ChattingStreamingStatus
@@ -30,6 +30,9 @@ internal fun ChatLetterUI(
     state: ChatScreen.State.Success,
     modifier: Modifier = Modifier
 ) {
+    BackHandler {
+        state.eventSink(ChatScreen.Event.NavigateBack)
+    }
 
     Column(modifier = modifier) {
         LazyColumn(
@@ -113,23 +116,6 @@ private fun ChatLetterUIPreview() {
                 dueDate = LocalDate.now(),
                 jobPosition = "안드로이드 개발자",
                 recruitNotice = "채용공고",
-                questions = listOf(
-                    QuestionItem(
-                        id = "",
-                        question = "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요.",
-                        maxLength = 1000,
-                    ),
-                    QuestionItem(
-                        id = "",
-                        question = "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요.",
-                        maxLength = 1000,
-                    ),
-                    QuestionItem(
-                        id = "",
-                        question = "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요.",
-                        maxLength = 1000,
-                    ),
-                ),
             ),
             matchingExperiences = listOf()
         ),

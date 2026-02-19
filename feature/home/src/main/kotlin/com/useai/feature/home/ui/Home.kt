@@ -73,7 +73,7 @@ fun Home(
                     ),
             ) {
                 LogitFormTitle(
-                    title = stringResource(R.string.home_experience_type_title_format, "로짓"),
+                    title = stringResource(R.string.home_experience_type_title_format, state.userName),
                 )
                 Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
                 LogitExperienceBanner(state.bannerItems)
@@ -205,6 +205,7 @@ private fun HomeWithEmptyProjectPreview() {
             Home(
                 modifier = Modifier.padding(paddingValues),
                 state = HomeScreen.State(
+                    userName = "로짓",
                     bannerItems = listOf(
                         ExperienceBannerItem(
                             experienceType = ExperienceType.Leadership,
@@ -242,6 +243,7 @@ private fun HomePreview() {
                     .fillMaxSize()
                     .padding(paddingValues),
                 state = HomeScreen.State(
+                    userName = "로짓",
                     bannerItems = listOf(
                         ExperienceBannerItem(
                             experienceType = ExperienceType.Leadership,
