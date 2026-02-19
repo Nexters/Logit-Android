@@ -42,7 +42,9 @@ fun Home(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 20.dp)
+        contentPadding = PaddingValues(
+            bottom = dimensionResource(R.dimen.screen_common_padding_bottom),
+        ),
     ) {
         item {
             AppHeader(
