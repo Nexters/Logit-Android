@@ -3,7 +3,7 @@ package com.useai.feature.chat.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +23,7 @@ fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
 
     val chattingListState = rememberLazyListState()
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.statusBarsPadding()) {
         when(state) {
             is ChatScreen.State.Success -> {
                 LaunchedEffect(state.chattingHistory.chattings.size) {
@@ -38,13 +38,13 @@ fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
             }
 
             is ChatScreen.State.Loading -> {
-                Column(modifier = Modifier.systemBarsPadding()) {
+                Column(modifier = Modifier) {
                     Text(text = "로딩 중")
                 }
             }
 
             is ChatScreen.State.LoadFailed -> {
-                Column(modifier = Modifier.systemBarsPadding()) {
+                Column(modifier = Modifier) {
                     Text(text = "실패")
                 }
             }

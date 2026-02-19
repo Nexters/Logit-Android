@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -58,6 +59,7 @@ fun SplashUi(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .background(LogitTheme.colors.white),
         contentAlignment = Alignment.Center
     ) {

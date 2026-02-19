@@ -2,6 +2,7 @@ package com.useai.feature.experience.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.tooling.preview.Preview
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.theme.LogitTheme
@@ -19,7 +20,7 @@ fun ExperienceListUI(
 ) {
     when (state) {
         is ExperienceScreen.State.Loading -> {
-            ExperienceLoadingUI(modifier = modifier)
+            ExperienceLoadingUI(modifier = modifier.statusBarsPadding())
         }
 
         is ExperienceScreen.State.LoadFailed -> {
@@ -28,6 +29,7 @@ fun ExperienceListUI(
                     state.eventSink(ExperienceScreen.Event.Retry)
                 },
                 modifier = modifier
+                    .statusBarsPadding()
             )
         }
 
@@ -47,6 +49,7 @@ fun ExperienceListUI(
                     state.eventSink(ExperienceScreen.Event.ClickExperienceMore(experienceId))
                 },
                 modifier = modifier
+                    .statusBarsPadding()
             )
         }
     }

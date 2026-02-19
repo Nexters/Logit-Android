@@ -3,6 +3,7 @@ package com.useai.feature.experience.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,7 +28,7 @@ fun ExperienceCreateUI(
     }
 
     InputFormContainer(
-        modifier = modifier,
+        modifier = modifier.statusBarsPadding(),
         onClickBackButton = {
             state.eventSink(ExperienceCreateScreen.Event.Back)
         },
