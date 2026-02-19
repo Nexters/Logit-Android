@@ -5,10 +5,10 @@ import androidx.annotation.StringRes
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.icon.LogitIcons
-import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
+import com.useai.feature.projects.ProjectsScreen
 import com.useai.feature.report.ReportScreen
 
 data class TopLevelNavItem(
@@ -21,7 +21,7 @@ data class TopLevelNavItem(
         fun fromScreen(screen: Screen): TopLevelNavItem {
             return when (screen) {
                 is HomeScreen -> HOME
-                is ChatScreen -> COVER_LETTER
+                is ProjectsScreen -> PROJECTS
                 is NewProjectBasicInfoScreen -> NEW_PROJECT
                 is ExperienceScreen -> EXPERIENCE
                 is ReportScreen -> REPORT
@@ -38,7 +38,7 @@ val HOME = TopLevelNavItem(
     titleTextId = R.string.home_title,
 )
 
-val COVER_LETTER = TopLevelNavItem(
+val PROJECTS = TopLevelNavItem(
     selectedIconId = LogitIcons.PaperSelected,
     unselectedIconId = LogitIcons.PaperDefault,
     iconTextId = R.string.cover_letter_title,

@@ -5,6 +5,7 @@ import com.slack.circuit.runtime.screen.Screen
 interface ScreenProvider {
     fun homeScreen(): Screen
     fun accountScreen(): Screen
+    fun projectsScreen(): Screen
     fun newProjectBasicInfoScreen(): Screen
     fun newProjectQuestionScreen(
         companyName: String,
