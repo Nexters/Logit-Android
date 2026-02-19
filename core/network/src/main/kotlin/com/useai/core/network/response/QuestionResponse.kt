@@ -9,7 +9,8 @@ data class QuestionResponse(
     @SerialName("id") val id: String,
     @SerialName("answer") val letter: String?,
     @SerialName("question") val title: String,
-    @SerialName("max_length") val maxLength: Int?
+    @SerialName("max_length") val maxLength: Int?,
+    @SerialName("is_completed") val isCompleted: Boolean,
 )
 
 fun QuestionResponse.toQuestion() = Question(

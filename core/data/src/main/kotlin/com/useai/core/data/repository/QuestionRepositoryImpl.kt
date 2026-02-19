@@ -1,6 +1,7 @@
 package com.useai.core.data.repository
 
 import com.useai.core.model.chat.Question
+import com.useai.core.model.project.ProjectQuestionParam
 import com.useai.core.network.error.runCatchingWith
 import com.useai.core.network.request.CreateQuestionRequest
 import com.useai.core.network.request.UpdateQuestionRequest
@@ -12,12 +13,12 @@ internal class QuestionRepositoryImpl @Inject constructor(
     private val questionRemoteDataSource: QuestionRemoteDataSource
 ) : QuestionRepository {
 
-    override suspend fun createQuestion(projectId: String, question: Question): Result<String> {
+    override suspend fun createQuestion(projectId: String, question: ProjectQuestionParam): Result<String> {
         return runCatchingWith {
             questionRemoteDataSource.createQuestion(
                 projectId,
                 CreateQuestionRequest(
-                    title = question.title,
+                    title = question.question,
                     maxLength = question.maxLength
                 )
             ).id

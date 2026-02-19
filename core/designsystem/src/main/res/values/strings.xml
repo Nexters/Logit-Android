@@ -60,6 +60,13 @@
     <string name="experience_create_failed">경험 등록에 실패했어요</string>
     <string name="experience_create_load_example">예시 불러오기</string>
 
+    <string name="question_form_confirm">확인</string>
+    <string name="question_form_title">추가 문항 입력</string>
+    <string name="question_form_desc">추가할 문항을 입력해주세요</string>
+    <string name="question_field_label">문항</string>
+    <string name="question_field_placeholder">예) 지원동기를 입력해주세요</string>
+    <string name="question_max_length_field_label">글자수</string>
+
     <string name="next">다음으로</string>
     <string name="project_form_title_1">자기소개서 작성</string>
     <string name="project_form_desc_1">지원하는 기업의 정보를 알려주세요</string>

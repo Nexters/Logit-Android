@@ -34,6 +34,7 @@ data class NewProjectQuestionScreen(
 ) : Screen {
     data class State(
         val questions: List<ProjectQuestionParam>,
+        val isButtonEnabled: Boolean,
         val eventSink: (Event) -> Unit,
     ) : CircuitUiState
 
@@ -61,7 +62,8 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
         val screenProvider = LocalScreenProvider.current
 
         return NewProjectQuestionScreen.State(
-            questions = questions
+            questions = questions,
+            isButtonEnabled = questions.any { it.question.isNotBlank() },
         ) { event ->
             when (event) {
                 NewProjectQuestionScreen.Event.Back -> navigator.pop()

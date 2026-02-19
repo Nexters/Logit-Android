@@ -57,7 +57,7 @@ fun LogitInputField(
             onValueChange = onInputChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = placeHolder,
-            maxLength = maxLength,
+            maxLength = maxLength.takeIf { it > 0 } ?: Int.MAX_VALUE,
             focusedBorder = focusedBorder,
             contentPadding = PaddingValues(
                 horizontal = dimensionResource(R.dimen.spacing_input_field_horizontal),

@@ -45,8 +45,6 @@ fun NewProjectQuestion(
         state.eventSink(NewProjectQuestionScreen.Event.Back)
     }
 
-    val isButtonEnabled = state.questions.any { it.question.isNotBlank() }
-
     InputFormContainer(
         modifier = modifier,
         onClickBackButton = {
@@ -56,7 +54,7 @@ fun NewProjectQuestion(
         onClickBottomButton = {
             state.eventSink(NewProjectQuestionScreen.Event.FinishClicked)
         },
-        bottomButtonEnabled = isButtonEnabled,
+        bottomButtonEnabled = state.isButtonEnabled,
     ) {
         LogitStepper(
             currentStep = "2",
@@ -186,6 +184,7 @@ private fun NewProjectQuestionPreview() {
                     ProjectQuestionParam("", 0),
                     ProjectQuestionParam("", 0),
                 ),
+                isButtonEnabled = false,
                 eventSink = {},
             )
         )
