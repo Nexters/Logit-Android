@@ -27,6 +27,8 @@ import com.useai.core.ui.ExperienceBannerItem
 import com.useai.core.ui.ExperienceType
 import com.useai.core.ui.LogitExperienceBanner
 import com.useai.core.ui.LogitFormTitle
+import com.useai.core.ui.project.EmptyProjectList
+import com.useai.core.ui.project.ProjectList
 import com.useai.feature.home.HomeScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import java.time.LocalDate
@@ -85,113 +87,22 @@ fun Home(
             }
         }
 
-        if (state.projects.isEmpty()) {
-            item {
+        item {
+            if (state.projects.isEmpty()) {
                 EmptyProjectList(
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
                     onClickCreateProject = {
                         state.eventSink(HomeScreen.Event.NewProjectClicked)
+                    },
+                )
+            } else {
+                this@LazyColumn.ProjectList(
+                    projects = state.projects,
+                    onClickProject = { projectId ->
+                        state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
                     }
                 )
-            }
-        } else {
-            itemsIndexed(
-                items = state.projects,
-                key = { _, project -> project.id }
-            ) { index, project ->
-                ProjectItem(
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
-                    project = project,
-                    onClick = {
-                        state.eventSink(HomeScreen.Event.ProjectClicked(project.id))
-                    }
-                )
-                if (index < state.projects.lastIndex) {
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
-                        thickness = 1.dp,
-                        color = LogitTheme.colors.gray70
-                    )
-                }
             }
         }
-    }
-}
-
-@Composable
-private fun EmptyProjectList(
-    modifier: Modifier = Modifier,
-    onClickCreateProject: () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 42.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ic_empty_state),
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-        )
-        Spacer(Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.home_empty_project_phrase),
-            style = LogitTheme.typography.body6_2,
-            color = LogitTheme.colors.gray100,
-        )
-        Spacer(Modifier.height(17.dp))
-        LogitPrimaryButton(
-            text = stringResource(R.string.home_new_project),
-            onClick = {
-                onClickCreateProject()
-            },
-            textStyle = LogitTheme.typography.body6_2,
-            shape = RoundedCornerShape(8.dp),
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
-        )
-    }
-}
-
-@Composable
-private fun ProjectItem(
-    modifier: Modifier = Modifier,
-    project: ProjectListItem,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(
-                onClick = onClick,
-            )
-            .padding(vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(width = 3.dp, height = 24.dp)
-                .background(LogitTheme.colors.primary70)
-        )
-        Spacer(Modifier.width(12.dp))
-        Text(
-            text = stringResource(
-                R.string.home_project_list_item_title_format,
-                project.company,
-                project.jobPosition
-            ),
-            style = LogitTheme.typography.body6_2,
-            modifier = Modifier.weight(1f),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(Modifier.width(12.dp))
-        Text(
-            text = project.dueDate.toString(),
-            style = LogitTheme.typography.body7_4,
-        )
     }
 }
 
