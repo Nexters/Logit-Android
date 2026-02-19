@@ -16,6 +16,7 @@
     <string name="home_project_list_item_title_format">%s %s</string>
 
     <string name="projects_title">프로젝트 목록</string>
+    <string name="projects_count_format">%d개</string>
 
     <string name="update_letter">자기소개서 업데이트</string>
     <string name="placeholder_message_input">어떤 내용을 만들어볼까요?</string>
@@ -107,5 +108,6 @@
 
     <string name="content_description_app_logo">로짓 로고</string>
     <string name="content_description_user_profile">사용자 프로필</string>
+    <string name="content_description_new_project">프로젝트 생성</string>
 </resources>
 
