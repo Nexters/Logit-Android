@@ -25,6 +25,7 @@ import com.useai.core.model.report.ExperienceReportType
 import com.useai.core.model.report.ExperienceSummary
 import com.useai.core.model.report.ExperienceTagCount
 import com.useai.core.model.report.ExperienceTypeCount
+import com.useai.core.ui.fullName
 import com.useai.feature.report.ReportScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
@@ -127,23 +128,24 @@ private fun ReportSuccessUI(
                     .background(LogitTheme.colors.white)
                     .statusBarsPadding()
                     .padding(vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
                     text = stringResource(R.string.report_profile_title),
-                    style = LogitTheme.typography.body3_2,
+                    style = LogitTheme.typography.body1,
                     color = LogitTheme.colors.black,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
-                ReportProfileIntroCard(
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
+                if(topCategory?.category != null)
+                    ReportProfileIntroCard(
+                        category = topCategory.category,
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
                 ReportTopInsightCard(
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    title = topCategory?.category?.displayName ?: stringResource(R.string.report_default_top_category),
+                    title = topCategory?.category?.fullName ?: stringResource(R.string.report_default_top_category),
                     chips = summary.categoryCounts
                         .sortedByDescending { it.count }
-                        .take(4)
                         .map { it.category }
                 )
             }

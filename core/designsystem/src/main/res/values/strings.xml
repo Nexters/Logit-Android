@@ -106,12 +106,9 @@
     <string name="report_profile_title">로짓의 프로파일</string>
     <string name="report_intro_text">도구와 기술 스택을 농축하게 활용한 기술적 전문성</string>
     <string name="report_default_top_category">기술적 전문성</string>
-    <string name="report_insight_title">%s이 가장 도드라져요</string>
-    <string name="report_type_chart_title">[최다 경험 항목]이 두드러져요</string>
+    <string name="report_insight_title">%s이 가장 두드러져요</string>
     <string name="report_type_chart_subtitle">경험 유형별 개수 기반</string>
-    <string name="report_category_chart_title">[최다 속성군]이 강점이 있어요</string>
     <string name="report_category_chart_subtitle">핵심 역량 분포를 반영한 강점 기반</string>
-    <string name="report_tag_chart_title">[최다 경험 태그]가 가장 많아요</string>
     <string name="report_tag_chart_subtitle">AI 생성 역량 태그 기반</string>
     <string name="report_total_count">경험 %d개</string>
 

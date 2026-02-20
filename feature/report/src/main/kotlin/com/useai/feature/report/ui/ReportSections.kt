@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,40 +25,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.ExperienceCategory
-import com.useai.core.model.report.ExperienceReportType
+import com.useai.core.model.report.ExperienceSummary
 import com.useai.core.ui.experience.CategoryChip
+import com.useai.core.ui.headerRes
 
 @Composable
 internal fun ReportProfileIntroCard(
-    modifier: Modifier = Modifier,
+    category: ExperienceCategory,
+    modifier: Modifier = Modifier
 ) {
-    Box(
+    Image(
+        painter = painterResource(category.headerRes),
+        contentDescription = null,
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(LogitTheme.colors.primary20)
-            .padding(20.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_symbol_word),
-                contentDescription = null,
-                modifier = Modifier.height(28.dp)
-            )
-            Text(
-                text = stringResource(R.string.report_intro_text),
-                style = LogitTheme.typography.body7_2,
-                color = LogitTheme.colors.primary500
-            )
-        }
-    }
+            .clip(RoundedCornerShape(20.dp))
+            .aspectRatio(320f / 335f)
+    )
 }
 
 @Composable
@@ -67,20 +55,19 @@ internal fun ReportTopInsightCard(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(LogitTheme.colors.gray20)
-            .padding(16.dp),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
             text = stringResource(R.string.report_insight_title, title),
-            style = LogitTheme.typography.body6_2,
+            style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            chips.forEach { chip ->
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            chips.fastForEach { chip ->
                 CategoryChip(category = chip)
             }
         }
@@ -126,11 +113,11 @@ internal fun ReportChartLegend(
                                 .clip(CircleShape)
                                 .background(colors[indexedLabel.index % colors.size])
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = indexedLabel.value,
-                            style = LogitTheme.typography.body3_2,
-                            color = LogitTheme.colors.primary500,
+                            style = LogitTheme.typography.body7_4,
+                            color = Color(0xFF4F5967),
                             maxLines = 1
                         )
                     }
@@ -144,30 +131,3 @@ internal fun ReportChartLegend(
 }
 
 internal fun summaryCountText(total: Int): String = "${total}개"
-
-internal val ExperienceCategory.displayName: String
-    get() = when (this) {
-        ExperienceCategory.PROACTIVE_EXECUTION -> "주도적 실행력"
-        ExperienceCategory.TECHNICAL_EXPERTISE -> "기술적 전문성"
-        ExperienceCategory.LOGICAL_ANALYSIS -> "논리적 분석력"
-        ExperienceCategory.CREATIVE_PROBLEM_SOLVING -> "창의적 문제해결"
-        ExperienceCategory.COLLABORATIVE_COMMUNICATION -> "협력적 소통"
-        ExperienceCategory.TENACIOUS_RESPONSIBILITY -> "끈기있는 책임감"
-        ExperienceCategory.FLEXIBLE_ADAPTABILITY -> "유연한 적응력"
-        ExperienceCategory.CUSTOMER_VALUE_ORIENTATION -> "고객 가치 지향"
-    }
-
-internal val ExperienceReportType.displayName: String
-    get() = when (this) {
-        ExperienceReportType.PART_TIME -> "아르바이트"
-        ExperienceReportType.INTERN -> "인턴"
-        ExperienceReportType.FULL_TIME -> "정규직"
-        ExperienceReportType.CONTRACT -> "계약직"
-        ExperienceReportType.VOLUNTEER -> "봉사 활동"
-        ExperienceReportType.AWARD -> "수상경력"
-        ExperienceReportType.CLUB -> "동아리 활동"
-        ExperienceReportType.RESEARCH -> "연구 활동"
-        ExperienceReportType.MILITARY -> "군복무"
-        ExperienceReportType.PERSONAL -> "개인 활동"
-        ExperienceReportType.UNKNOWN -> "기타"
-    }
