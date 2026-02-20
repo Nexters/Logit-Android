@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.ExperienceCategory
+import com.useai.core.ui.backgroundColor
 import com.useai.core.ui.iconRes
 import com.useai.core.ui.simpleName
 
@@ -27,7 +28,7 @@ fun CategoryChip(
 
     Row(
         modifier = modifier.background(
-            color = Color(0xFFE3F5FF),
+            color = category.backgroundColor,
             shape = RoundedCornerShape(8.dp)
         ).padding(6.dp),
         verticalAlignment = Alignment.CenterVertically
