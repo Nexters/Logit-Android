@@ -34,10 +34,13 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.report.ExperienceCategoryCount
 import com.useai.core.model.report.ExperienceTagCount
 import com.useai.core.model.report.ExperienceTypeCount
+import com.useai.core.ui.displayName
+import com.useai.core.ui.fullName
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min
@@ -64,15 +67,15 @@ internal fun ReportTypeVerticalChartSection(
 
     ReportWhiteSection(modifier = modifier) {
         Text(
-            text = "{${maxItem?.type?.displayName ?: "-"} 경험 유형}이 두드러져요",
+            text = "${maxItem?.type?.displayName ?: "-"} 경험이 두드러져요",
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "{${minItem?.type?.displayName ?: "-"} 경험 유형}을 보완하면 더 균형 잡힌 역량의 인재로 보일 수 있어요!",
-            style = LogitTheme.typography.body5_4,
-            color = LogitTheme.colors.primary400
+            text = "${minItem?.type?.displayName ?: "-"} 경험을 보완하면 더 균형 잡힌 역량의 인재로 보일 수 있어요!",
+            style = LogitTheme.typography.body6_1,
+            color = LogitTheme.colors.gray300
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -95,13 +98,13 @@ internal fun ReportTypeVerticalChartSection(
                 ) {
                     Text(
                         text = animatedCount.toString(),
-                        style = LogitTheme.typography.body3_2,
+                        style = LogitTheme.typography.body9_2,
                         color = color
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
                         modifier = Modifier
-                            .width(25.dp)
+                            .width(20.dp)
                             .height(((130f * animatedRatio) + 18f).dp)
                             .clip(RoundedCornerShape(9.dp))
                             .background(color.copy(alpha = 0.55f))
@@ -134,15 +137,15 @@ internal fun ReportTagDonutChartSection(
 
     ReportWhiteSection(modifier = modifier) {
         Text(
-            text = "{${maxItem?.tag ?: "-"} 해쉬태그}에 강점이 있어요",
+            text = "${maxItem?.tag ?: "-"}에 강점이 있어요",
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "{각 해시태그 별 전문성을 강조하는 지정 멘트}",
-            style = LogitTheme.typography.body5_4,
-            color = LogitTheme.colors.primary400
+            style = LogitTheme.typography.body6_1,
+            color = LogitTheme.colors.gray300
         )
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -208,12 +211,12 @@ internal fun ReportTagDonutChartSection(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "경험키워드",
-                    style = LogitTheme.typography.title3,
+                    style = LogitTheme.typography.body5_2,
                     color = LogitTheme.colors.primary500
                 )
                 Text(
                     text = "${summaryCountText(total)} 집계",
-                    style = LogitTheme.typography.body5_4,
+                    style = LogitTheme.typography.body9_2,
                     color = LogitTheme.colors.gray200
                 )
             }
@@ -243,44 +246,45 @@ internal fun ReportCategoryHorizontalChartSection(
 
     ReportWhiteSection(modifier = modifier) {
         Text(
-            text = "{${maxItem?.category?.displayName ?: "-"} 경험 종류}이 가장 많아요",
+            text = "${maxItem?.category?.fullName ?: "-"}이 가장 많아요",
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "{카테고리 별 지정멘트}",
-            style = LogitTheme.typography.body5_4,
-            color = LogitTheme.colors.primary400
+            text = "카테고리 별 지정멘트",
+            style = LogitTheme.typography.body6_1,
+            color = LogitTheme.colors.gray300
         )
         Spacer(modifier = Modifier.height(20.dp))
 
         Column(
             verticalArrangement = Arrangement.spacedBy(15.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            data.forEachIndexed { index, item ->
+            data.fastForEachIndexed { index, item ->
                 val color = colors[index % colors.size]
                 val ratio = item.count.toFloat() / max.toFloat()
                 val animatedRatio = ratio * progress
                 val animatedCount = (item.count * progress).roundToInt()
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(.8f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = animatedCount.toString(),
-                        modifier = Modifier.width(34.dp),
-                        textAlign = TextAlign.Start,
-                        style = LogitTheme.typography.body3_2,
+                        modifier = Modifier.width(25.dp),
+                        textAlign = TextAlign.End,
+                        style = LogitTheme.typography.body9_2,
                         color = color
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(15.dp))
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(22.dp)
+                            .height(14.dp)
                             .clip(RoundedCornerShape(11.dp))
                             .background(LogitTheme.colors.gray70)
                     ) {
@@ -297,6 +301,6 @@ internal fun ReportCategoryHorizontalChartSection(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        ReportChartLegend(labels = data.map { it.category.displayName }, colors = colors)
+        ReportChartLegend(labels = data.map { it.category.fullName }, colors = colors)
     }
 }
