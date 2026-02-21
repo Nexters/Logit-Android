@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.rememberRetained
@@ -12,10 +13,12 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.data.repository.AccountRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -37,10 +40,12 @@ data object AccountScreen : Screen {
 
 class AccountPresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
+    private val accountRepository: AccountRepository,
 ) : Presenter<AccountScreen.State> {
     @Composable
     override fun present(): AccountScreen.State {
         var reportNotificationEnabled by rememberRetained { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
 
         return AccountScreen.State(
             userName = "로짓", // TODO: Google 사용자 이름 가져오기
@@ -66,7 +71,14 @@ class AccountPresenter @AssistedInject constructor(
                 }
 
                 AccountScreen.Event.Logout -> {
-                    // TODO: 로그아웃
+                    scope.launch {
+                        accountRepository.requestLogout().onSuccess {
+                            accountRepository.clear()
+                            navigator.resetRoot(LoginScreen)
+                        }.onFailure {
+                            Log.e(TAG, "Logout failed: $it")
+                        }
+                    }
                 }
 
                 AccountScreen.Event.Withdraw -> {
