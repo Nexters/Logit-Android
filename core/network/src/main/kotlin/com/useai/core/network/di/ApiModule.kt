@@ -5,6 +5,7 @@ import com.useai.core.network.api.ChattingApi
 import com.useai.core.network.api.ExperienceApi
 import com.useai.core.network.api.ProjectApi
 import com.useai.core.network.api.QuestionApi
+import com.useai.core.network.api.ReportApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,5 +47,13 @@ internal object ApiModule {
         @AuthClient retrofit: Retrofit
     ) : ProjectApi {
         return retrofit.create<ProjectApi>()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun providesReportApi(
+        @AuthClient retrofit: Retrofit
+    ) : ReportApi {
+        return retrofit.create<ReportApi>()
     }
 }

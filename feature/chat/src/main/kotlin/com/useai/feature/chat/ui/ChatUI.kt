@@ -23,7 +23,7 @@ fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
 
     val chattingListState = rememberLazyListState()
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.systemBarsPadding()) {
         when(state) {
             is ChatScreen.State.Success -> {
                 LaunchedEffect(state.chattingHistory.chattings.size) {
@@ -38,13 +38,13 @@ fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
             }
 
             is ChatScreen.State.Loading -> {
-                Column(modifier = Modifier.systemBarsPadding()) {
+                Column(modifier = Modifier) {
                     Text(text = "로딩 중")
                 }
             }
 
             is ChatScreen.State.LoadFailed -> {
-                Column(modifier = Modifier.systemBarsPadding()) {
+                Column(modifier = Modifier) {
                     Text(text = "실패")
                 }
             }

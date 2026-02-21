@@ -8,6 +8,8 @@ import com.useai.core.network.source.ProjectRemoteDataSource
 import com.useai.core.network.source.ProjectRemoteDataSourceImpl
 import com.useai.core.network.source.QuestionRemoteDataSource
 import com.useai.core.network.source.QuestionRemoteDataSourceImpl
+import com.useai.core.network.source.ReportRemoteDataSource
+import com.useai.core.network.source.ReportRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -40,4 +42,10 @@ internal interface DataSourceModule {
     fun bindsProjectRemoteDataSource(
         projectRemoteDataSourceImpl: ProjectRemoteDataSourceImpl
     ): ProjectRemoteDataSource
+
+    @Binds
+    @ActivityRetainedScoped
+    fun bindsReportRemoteDataSource(
+        reportRemoteDataSourceImpl: ReportRemoteDataSourceImpl
+    ): ReportRemoteDataSource
 }

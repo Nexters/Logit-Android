@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -70,8 +69,7 @@ fun Root(
         snackbarHost = {
             LogitSnackbarHost(hostState = snackbarHostState)
         },
-        // app bar 영역은 제외하고 status bar 영역만 padding에 포함
-        contentWindowInsets = WindowInsets.statusBars,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             AnimatedVisibility(
                 visible = shouldShowBottomBar,
