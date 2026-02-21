@@ -3,14 +3,17 @@ package com.useai.feature.chat.ui.chatting
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -19,25 +22,38 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateSetOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import com.slack.circuit.retained.rememberRetained
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.button.LogitPrimaryButton
+import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
+import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
@@ -51,6 +67,8 @@ import com.useai.feature.chat.ui.ChatInputRow
 import com.useai.feature.chat.ui.chatCommonStickyHeader
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,8 +82,97 @@ internal fun ChatChattingUI(
     }
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val snackbarHostState = LocalLogitSnackbarHostState.current
+    val scope = rememberCoroutineScope()
+    val maxExperienceSelectMessage = stringResource(R.string.select_experience_max_count_message)
+    val density = LocalDensity.current
+    val imeBottom = WindowInsets.ime.getBottom(density)
+    val isImeVisible = imeBottom > 0
     val temporarilySelectedExperiences = rememberRetained {
         mutableStateSetOf(*state.chattingHistory.experienceIds.toTypedArray())
+    }
+    val streamingLength = (state.streamingStatus as? ChattingStreamingStatus.Streaming)?.data?.length ?: -1
+    val streamingStateKey = when (state.streamingStatus) {
+        ChattingStreamingStatus.Idle -> 0
+        ChattingStreamingStatus.Loading -> 1
+        is ChattingStreamingStatus.Streaming -> 2
+        ChattingStreamingStatus.Error -> 3
+    }
+    var didInitialScrollToBottom by remember { mutableStateOf(false) }
+    var pendingScrollBaseChatCount by remember { mutableStateOf<Int?>(null) }
+    var wasNearBottomBeforeIme by remember { mutableStateOf(true) }
+    var wasNearBottomForLetterUpdate by remember { mutableStateOf(true) }
+    var previousLetterButtonCount by remember { mutableStateOf(0) }
+    var wasStreaming by remember { mutableStateOf(false) }
+    var wasImeVisible by remember { mutableStateOf(false) }
+    var fadingAiMessageId by remember { mutableStateOf<String?>(null) }
+    val currentLetterButtonCount = state.chattingHistory.chattings.count {
+        it is ChattingContent.AI && it.isLetter
+    }
+
+    LaunchedEffect(state.chattingHistory.chattings.size) {
+        if (!didInitialScrollToBottom && lazyListState.layoutInfo.totalItemsCount > 0) {
+            val targetIndex = (lazyListState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
+            lazyListState.scrollToItem(targetIndex)
+            didInitialScrollToBottom = true
+        }
+    }
+    LaunchedEffect(
+        isImeVisible,
+        lazyListState.firstVisibleItemIndex,
+        lazyListState.firstVisibleItemScrollOffset,
+        lazyListState.layoutInfo.totalItemsCount
+    ) {
+        if (!isImeVisible) {
+            wasNearBottomBeforeIme = lazyListState.isNearBottom()
+        }
+        if (!wasImeVisible && isImeVisible && wasNearBottomBeforeIme) {
+            val targetIndex = (lazyListState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
+            lazyListState.animateScrollToItem(targetIndex)
+        }
+        wasImeVisible = isImeVisible
+    }
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.isNearBottom() }.collect { isNearBottom ->
+            wasNearBottomForLetterUpdate = isNearBottom
+        }
+    }
+    LaunchedEffect(currentLetterButtonCount) {
+        val letterButtonAppeared = currentLetterButtonCount > previousLetterButtonCount
+        if (letterButtonAppeared && wasNearBottomForLetterUpdate) {
+            val targetIndex = (lazyListState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
+            lazyListState.animateScrollToItem(targetIndex)
+        }
+        previousLetterButtonCount = currentLetterButtonCount
+    }
+
+    LaunchedEffect(state.chattingHistory.chattings.size, pendingScrollBaseChatCount) {
+        val baseCount = pendingScrollBaseChatCount
+        if (baseCount != null && state.chattingHistory.chattings.size > baseCount) {
+            val targetIndex = (lazyListState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
+            lazyListState.animateScrollToItem(targetIndex)
+            pendingScrollBaseChatCount = null
+            return@LaunchedEffect
+        }
+    }
+    LaunchedEffect(state.chattingHistory.chattings.size, streamingLength, streamingStateKey) {
+        if (lazyListState.isNearBottom()) {
+            val targetIndex = (lazyListState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
+            lazyListState.animateScrollToItem(targetIndex)
+        }
+    }
+    LaunchedEffect(streamingStateKey, state.chattingHistory.chattings.size) {
+        val isStreamingNow = state.streamingStatus is ChattingStreamingStatus.Streaming
+        if (wasStreaming && !isStreamingNow) {
+            fadingAiMessageId = (state.chattingHistory.chattings.lastOrNull() as? ChattingContent.AI)?.id
+        }
+        wasStreaming = isStreamingNow
+    }
+    LaunchedEffect(fadingAiMessageId) {
+        if (fadingAiMessageId != null) {
+            delay(700)
+            fadingAiMessageId = null
+        }
     }
 
     if (state.showExperienceModal) {
@@ -140,8 +247,16 @@ internal fun ChatChattingUI(
                         onClick = {
                             if (matchingExperience.experience.id in temporarilySelectedExperiences)
                                 temporarilySelectedExperiences.remove(matchingExperience.experience.id)
-                            else
+                            else if (temporarilySelectedExperiences.size < 3) {
                                 temporarilySelectedExperiences.add(matchingExperience.experience.id)
+                            } else {
+                                scope.launch {
+                                    snackbarHostState.showLogitSnackbar(
+                                        message = maxExperienceSelectMessage,
+                                        iconResId = R.drawable.ic_alert,
+                                    )
+                                }
+                            }
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -149,9 +264,9 @@ internal fun ChatChattingUI(
                 }
 
                 LogitPrimaryButton(
-                    text = stringResource(R.string.select_experiences, temporarilySelectedExperiences.size),
+                    text = stringResource(R.string.chat_create_draft),
                     onClick = {
-                        state.eventSink(ChatScreen.Event.CompleteSelectExperience(
+                        state.eventSink(ChatScreen.Event.GenerateDraft(
                             experienceIds = temporarilySelectedExperiences.toList()
                         ))
                     },
@@ -166,7 +281,6 @@ internal fun ChatChattingUI(
             state = lazyListState,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
                 .weight(1f),
         ) {
             chatCommonStickyHeader(
@@ -187,10 +301,51 @@ internal fun ChatChattingUI(
                 onQuestionTitleExpand = {
                     state.eventSink(ChatScreen.Event.ExpandOrShrinkHeader)
                 },
+                onQuestionEdit = {
+                    state.eventSink(ChatScreen.Event.EditQuestions)
+                },
+                onQuestionDelete = {
+                    state.eventSink(ChatScreen.Event.DeleteProject)
+                },
                 onBack = {
                     state.eventSink(ChatScreen.Event.NavigateBack)
                 }
             )
+
+            if (state.chattingHistory.chattings.isEmpty() && state.streamingStatus !is ChattingStreamingStatus.Streaming) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 120.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_logit_empty),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(76.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.chat_empty_message),
+                            style = LogitTheme.typography.body6_1,
+                            color = LogitTheme.colors.gray100,
+                            modifier = Modifier.padding(top = 20.dp)
+                        )
+                        LogitPrimaryButton(
+                            text = stringResource(R.string.chat_create_draft),
+                            onClick = {
+                                state.eventSink(ChatScreen.Event.TryUploadExperience)
+                            },
+                            modifier = Modifier
+                                .padding(top = 16.dp)
+                                .padding(horizontal = 88.dp)
+                                .fillMaxWidth()
+                        )
+                    }
+                }
+            }
 
             items(
                 items = state.chattingHistory.chattings,
@@ -199,6 +354,7 @@ internal fun ChatChattingUI(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
                         .padding(bottom = 35.dp, top = 20.dp)
                 ) {
                     when (chat) {
@@ -208,7 +364,8 @@ internal fun ChatChattingUI(
                                 onUpdateLetterClick = {
                                     state.eventSink(ChatScreen.Event.UpdateLetter(chat.message))
                                 },
-                                modifier = Modifier.align(Alignment.CenterStart)
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                fadeFromGradient = chat.id == fadingAiMessageId
                             )
                         }
 
@@ -223,16 +380,26 @@ internal fun ChatChattingUI(
             }
 
             item {
-                if (state.streamingStatus is ChattingStreamingStatus.Streaming) {
-                    AIChattingItem(
-                        chatting = ChattingContent.AI(
-                            id = "",
-                            message = state.streamingStatus.data,
-                            createdAt = LocalDateTime.MIN,
-                            isLetter = false
-                        ),
-                        onUpdateLetterClick = { /* Do nothing */ },
-                    )
+                when (state.streamingStatus) {
+                    ChattingStreamingStatus.Loading -> {
+                        ChatLoadingItem(
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+                    }
+                    is ChattingStreamingStatus.Streaming -> {
+                        AIChattingItem(
+                            chatting = ChattingContent.AI(
+                                id = "",
+                                message = state.streamingStatus.data,
+                                createdAt = LocalDateTime.MIN,
+                                isLetter = false
+                            ),
+                            onUpdateLetterClick = { /* Do nothing */ },
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            isStreaming = true
+                        )
+                    }
+                    else -> Unit
                 }
             }
 
@@ -248,6 +415,9 @@ internal fun ChatChattingUI(
             },
             onSendClick = {
                 keyboardController?.hide()
+                if (lazyListState.isNearBottom()) {
+                    pendingScrollBaseChatCount = state.chattingHistory.chattings.size
+                }
                 state.eventSink(ChatScreen.Event.SendMessage(state.userInput))
             },
             isSendEnabled = state.userInput.isNotEmpty(),
@@ -256,7 +426,40 @@ internal fun ChatChattingUI(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .imePadding()
                 .padding(vertical = 10.dp, horizontal = 20.dp),
+        )
+    }
+}
+
+private fun LazyListState.isNearBottom(buffer: Int = 1): Boolean {
+    val info = layoutInfo
+    val totalItems = info.totalItemsCount
+    if (totalItems == 0) return true
+    val lastVisibleIndex = info.visibleItemsInfo.lastOrNull()?.index ?: return true
+    return lastVisibleIndex >= totalItems - 1 - buffer
+}
+
+@Composable
+private fun ChatLoadingItem(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(18.dp),
+            strokeWidth = 2.dp,
+            color = LogitTheme.colors.primary100
+        )
+        Text(
+            text = "응답 생성 중...",
+            style = LogitTheme.typography.body6_1,
+            color = LogitTheme.colors.gray300,
+            modifier = Modifier.padding(start = 8.dp)
         )
     }
 }
