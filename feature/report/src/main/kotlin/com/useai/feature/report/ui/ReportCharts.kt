@@ -39,8 +39,10 @@ import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.report.ExperienceCategoryCount
 import com.useai.core.model.report.ExperienceTagCount
 import com.useai.core.model.report.ExperienceTypeCount
+import com.useai.core.ui.description
 import com.useai.core.ui.displayName
 import com.useai.core.ui.fullName
+import com.useai.core.ui.simpleName
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min
@@ -49,7 +51,7 @@ import kotlin.math.sin
 
 @Composable
 internal fun ReportTypeVerticalChartSection(
-    data: List<ExperienceTypeCount>,
+    data: List<ExperienceCategoryCount>,
     colors: List<Color>,
     modifier: Modifier = Modifier,
 ) {
@@ -67,13 +69,13 @@ internal fun ReportTypeVerticalChartSection(
 
     ReportWhiteSection(modifier = modifier) {
         Text(
-            text = "${maxItem?.type?.displayName ?: "-"} 경험이 두드러져요",
+            text = "${maxItem?.category?.simpleName ?: "-"}이 두드러져요",
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "${minItem?.type?.displayName ?: "-"} 경험을 보완하면 더 균형 잡힌 역량의 인재로 보일 수 있어요!",
+            text = "${minItem?.category?.simpleName ?: "-"}을 보완하면 더 균형 잡힌 역량의 인재로 보일 수 있어요!",
             style = LogitTheme.typography.body6_1,
             color = LogitTheme.colors.gray300
         )
@@ -114,7 +116,7 @@ internal fun ReportTypeVerticalChartSection(
         }
 
         Spacer(modifier = Modifier.height(18.dp))
-        ReportChartLegend(labels = data.map { it.type.displayName }, colors = colors)
+        ReportChartLegend(labels = data.map { it.category.simpleName }, colors = colors)
     }
 }
 
@@ -229,7 +231,7 @@ internal fun ReportTagDonutChartSection(
 
 @Composable
 internal fun ReportCategoryHorizontalChartSection(
-    data: List<ExperienceCategoryCount>,
+    data: List<ExperienceTypeCount>,
     colors: List<Color>,
     modifier: Modifier = Modifier,
 ) {
@@ -246,13 +248,13 @@ internal fun ReportCategoryHorizontalChartSection(
 
     ReportWhiteSection(modifier = modifier) {
         Text(
-            text = "${maxItem?.category?.fullName ?: "-"}이 가장 많아요",
+            text = "${maxItem?.type?.displayName ?: "-"}이 가장 많아요",
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "카테고리 별 지정멘트",
+            text = "${maxItem?.type?.description}",
             style = LogitTheme.typography.body6_1,
             color = LogitTheme.colors.gray300
         )
@@ -301,6 +303,6 @@ internal fun ReportCategoryHorizontalChartSection(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        ReportChartLegend(labels = data.map { it.category.fullName }, colors = colors)
+        ReportChartLegend(labels = data.map { it.type.displayName }, colors = colors)
     }
 }

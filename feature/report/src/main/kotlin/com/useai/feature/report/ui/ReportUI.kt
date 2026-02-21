@@ -154,7 +154,7 @@ private fun ReportSuccessUI(
         item {
             ReportTypeVerticalChartSection(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.typeCounts.sortedByDescending { it.count }.take(6),
+                data = summary.categoryCounts.sortedByDescending { it.count }.take(6),
                 colors = chartColors
             )
         }
@@ -170,7 +170,7 @@ private fun ReportSuccessUI(
         item {
             ReportCategoryHorizontalChartSection(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.categoryCounts.sortedByDescending { it.count }.take(6),
+                data = summary.typeCounts.sortedByDescending { it.count }.take(6),
                 colors = chartColors
             )
         }
