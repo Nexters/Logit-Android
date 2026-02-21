@@ -27,6 +27,12 @@ internal class AccountRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun refreshAccessToken(): Result<String> {
+        return runCatching {
+            authRemoteDataSource.refreshAccessToken()
+        }
+    }
+
     override suspend fun clear(): Result<Unit> {
         return runCatching {
             logitPreferencesDataSource.clear()

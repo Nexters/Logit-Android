@@ -12,6 +12,10 @@ internal class AuthRemoteDataSourceImpl @Inject constructor(
         return authApi.requestGoogleLogin(request)
     }
 
+    override suspend fun refreshAccessToken(): String {
+        return authApi.refreshAccessToken()
+    }
+
     override suspend fun requestGoogleLogout() {
         return authApi.requestGoogleLogout()
     }

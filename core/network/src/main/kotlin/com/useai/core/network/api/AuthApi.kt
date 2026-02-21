@@ -11,6 +11,9 @@ interface AuthApi {
         @Body request: GoogleLoginRequest
     ): GoogleLoginResponse
 
+    @POST("/api/v1/auth/refresh/")
+    suspend fun refreshAccessToken(): String
+
     @POST("/api/v1/auth/logout/")
     suspend fun requestGoogleLogout()
 }
