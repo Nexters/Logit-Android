@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.logit.hilt)
     alias(libs.plugins.logit.circuit)
     alias(libs.plugins.logit.splashscreen)
+    alias(libs.plugins.logit.googleid)
 }
 
 dependencies {
