@@ -1,5 +1,6 @@
 package com.useai.feature.experience.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,14 @@ fun ExperienceDetailUI(
     state: ExperienceDetailScreen.State,
     modifier: Modifier = Modifier,
 ) {
+    BackHandler {
+        when (state) {
+            ExperienceDetailScreen.State.Loading -> Unit
+            is ExperienceDetailScreen.State.LoadFailed -> state.eventSink(ExperienceDetailScreen.Event.Back)
+            is ExperienceDetailScreen.State.Success -> state.eventSink(ExperienceDetailScreen.Event.Back)
+        }
+    }
+
     when (state) {
         ExperienceDetailScreen.State.Loading -> ExperienceLoadingUI(modifier = modifier)
         is ExperienceDetailScreen.State.LoadFailed -> {

@@ -11,21 +11,36 @@
     <!-- region UI -->
     <string name="home_experience_type_title_format">%s님의 경험 유형</string>
     <string name="home_experience_type_banner_desc_format">관련경험 %d개</string>
+    <string name="home_project_list_title">프로젝트 목록</string>
     <string name="home_empty_project_phrase">자기소개서를 생성해보세요</string>
     <string name="home_new_project">자기소개서 작성</string>
     <string name="home_project_list_item_title_format">%s %s</string>
-
-    <string name="projects_title">프로젝트 목록</string>
-    <string name="projects_count_format">%d개</string>
 
     <string name="update_letter">자기소개서 업데이트</string>
     <string name="placeholder_message_input">어떤 내용을 만들어볼까요?</string>
     <string name="question_number">Q%s</string>
     <string name="chatting">채팅</string>
     <string name="letter">자기소개서</string>
+    <string name="chat_edit">수정</string>
+    <string name="chat_delete">삭제</string>
+    <string name="chat_empty_message">경험을 선택하면 초안이 생성돼요</string>
+    <string name="chat_create_draft">초안 생성하기</string>
+    <string name="chat_letter_placeholder">자기소개서를 자유롭게 입력해보세요</string>
+    <string name="chat_edit_questions_title">자기소개서 문항 입력</string>
+    <string name="chat_edit_questions_desc">자기소개서의 문항을 입력해주세요</string>
+    <string name="chat_edit_questions_submit">문항 수정</string>
+    <string name="chat_edit_questions_add">추가하기</string>
+    <string name="chat_edit_questions_invalid">문항을 입력해주세요</string>
+    <string name="chat_edit_questions_success">문항 수정이 완료됐어요</string>
+    <string name="chat_edit_questions_failed">문항 수정에 실패했어요</string>
+    <string name="chat_edit_questions_min_count">최소 1개의 문항이 필요해요</string>
+    <string name="chat_edit_questions_max_count">문항은 최대 10개까지 추가할 수 있어요</string>
+    <string name="chat_edit_question_placeholder">%d번 문항</string>
+    <string name="chat_edit_count_placeholder">글자수</string>
     <string name="length_limit">%s/%s</string>
     <string name="select_experience">경험 선택</string>
     <string name="select_experience_explain">반영할 경험카드를 선택하세요 (최대 3개)</string>
+    <string name="select_experience_max_count_message">3개까지 선택가능해요</string>
     <string name="add_experience">추가하기</string>
     <string name="experience_score">%s점</string>
     <string name="select_experiences">%s개 경험선택</string>
@@ -111,6 +126,7 @@
     <string name="report_category_chart_subtitle">핵심 역량 분포를 반영한 강점 기반</string>
     <string name="report_tag_chart_subtitle">AI 생성 역량 태그 기반</string>
     <string name="report_total_count">경험 %d개</string>
+    <string name="projects_count_format">%d개</string>
 
     <!-- region Content Descriptions  -->
     <string name="content_description_send">전송</string>
@@ -120,6 +136,6 @@
 
     <string name="content_description_app_logo">로짓 로고</string>
     <string name="content_description_user_profile">사용자 프로필</string>
-    <string name="content_description_new_project">프로젝트 생성</string>
+    <string name="content_description_add_project">프로젝트 추가</string>
 </resources>
 

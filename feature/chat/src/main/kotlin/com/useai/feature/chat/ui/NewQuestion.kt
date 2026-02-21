@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -34,7 +35,7 @@ fun NewQuestion(
     }
 
     InputFormContainer(
-        modifier = modifier,
+        modifier = modifier.statusBarsPadding(),
         onClickBackButton = { state.eventSink(NewQuestionScreen.Event.Back) },
         bottomButtonText = stringResource(R.string.question_form_confirm),
         onClickBottomButton = { state.eventSink(NewQuestionScreen.Event.ConfirmClicked) },

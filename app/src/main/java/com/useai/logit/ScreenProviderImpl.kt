@@ -4,6 +4,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.navigation.ScreenProvider
 import com.useai.feature.account.AccountScreen
 import com.useai.feature.chat.NewQuestionScreen
+import com.useai.feature.chat.EditQuestionsScreen
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.home.HomeScreen
 import com.useai.feature.experience.ExperienceCreateScreen
@@ -36,6 +37,7 @@ class ScreenProviderImpl: ScreenProvider {
     override fun chatScreen(projectId: String): Screen = ChatScreen(projectId)
 
     override fun newQuestionScreen(projectId: String): Screen = NewQuestionScreen(projectId)
+    override fun editQuestionsScreen(projectId: String): Screen = EditQuestionsScreen(projectId)
 
     override fun experienceCreateScreen(): Screen = ExperienceCreateScreen
 

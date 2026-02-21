@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,7 +35,7 @@ fun Projects(
     state: ProjectsScreen.State,
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().systemBarsPadding(),
         contentPadding = PaddingValues(
             bottom = dimensionResource(R.dimen.screen_common_padding_bottom),
         )
@@ -43,13 +44,13 @@ fun Projects(
             AppHeader(
                 title = {
                     Text(
-                        text = stringResource(R.string.projects_title),
+                        text = stringResource(R.string.home_project_list_title),
                         style = LogitTheme.typography.body1,
                         color = LogitTheme.colors.black,
                     )
                 },
                 iconPainter = painterResource(R.drawable.ic_tab_add),
-                iconDescription = stringResource(R.string.content_description_new_project),
+                iconDescription = stringResource(R.string.content_description_add_project),
                 iconSize = 16.dp,
                 onIconClick = {
                     state.eventSink(ProjectsScreen.Event.NewProjectClicked)
