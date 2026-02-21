@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -14,6 +15,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
+import com.useai.core.model.account.UserProfile
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -24,7 +26,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data object AccountScreen : Screen {
     data class State(
-        val userName: String,
+        val userProfile: UserProfile,
         val reportNotificationEnabled: Boolean,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
@@ -44,11 +46,20 @@ class AccountPresenter @AssistedInject constructor(
 ) : Presenter<AccountScreen.State> {
     @Composable
     override fun present(): AccountScreen.State {
+        val userProfile by produceRetainedState(initialValue = UserProfile("", "")) {
+            accountRepository.getUser()
+                .onSuccess {
+                    value = UserProfile(it.fullName, it.profileImageUrl)
+                }
+                .onFailure {
+                    Log.e(TAG, "getUser failed: $it")
+                }
+        }
         var reportNotificationEnabled by rememberRetained { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
 
         return AccountScreen.State(
-            userName = "로짓", // TODO: Google 사용자 이름 가져오기
+            userProfile = userProfile,
             reportNotificationEnabled = reportNotificationEnabled,
         ) { event ->
             when (event) {

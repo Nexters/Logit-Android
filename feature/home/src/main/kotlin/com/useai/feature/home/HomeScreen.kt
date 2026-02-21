@@ -3,16 +3,16 @@ package com.useai.feature.home
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.data.repository.AccountRepository
 import com.useai.core.data.repository.ProjectRepository
+import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.ui.ExperienceBannerItem
@@ -26,7 +26,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data object HomeScreen : Screen {
     data class State(
-        val userName: String,
+        val userProfile: UserProfile,
         val bannerItems: List<ExperienceBannerItem>,
         val projects: List<ProjectListItem>,
         val eventSink: (Event) -> Unit = {},
@@ -41,12 +41,20 @@ data object HomeScreen : Screen {
 
 class HomePresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
+    private val accountRepository: AccountRepository,
     private val projectRepository: ProjectRepository,
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
-        // TODO: Google 사용자 이름으로 설정
-        val userName by rememberRetained { mutableStateOf("로짓") }
+        val userProfile by produceRetainedState(initialValue = UserProfile("", "")) {
+            accountRepository.getUser()
+                .onSuccess {
+                    value = UserProfile(it.fullName, it.profileImageUrl)
+                }
+                .onFailure {
+                    Log.e(TAG, "getUser failed: $it")
+                }
+        }
         val dummyBannerItems = listOf(
             ExperienceBannerItem(
                 experienceType = ExperienceType.Leadership,
@@ -65,7 +73,7 @@ class HomePresenter @AssistedInject constructor(
                 experienceCount = 30,
             ),
         )
-        val projects by produceState(initialValue = emptyList()) {
+        val projects by produceRetainedState(initialValue = emptyList()) {
             projectRepository.getProjects() // TODO: 페이징 사용, 화면 진입 시마다 요청하지 않도록 개선 필요
                 .onSuccess { value = it }
                 .onFailure {
@@ -75,7 +83,7 @@ class HomePresenter @AssistedInject constructor(
         val screenProvider = LocalScreenProvider.current
 
         return HomeScreen.State(
-            userName = userName,
+            userProfile = userProfile,
             bannerItems = dummyBannerItems,
             projects = projects
         ) { event ->

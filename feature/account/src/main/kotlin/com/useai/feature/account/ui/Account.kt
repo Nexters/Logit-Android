@@ -30,6 +30,7 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.appbar.PopUpTitle
 import com.useai.core.designsystem.component.toggle.LogitSwitch
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.model.account.UserProfile
 import com.useai.feature.account.AccountScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
@@ -69,7 +70,7 @@ fun Account(
                 ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // TODO: Google 프로필 이미지 표시
+                // TODO: AsyncImage로 Google 프로필 이미지 표시
                 Image(
                     painter = painterResource(R.drawable.ic_app_user),
                     contentDescription = stringResource(R.string.content_description_user_profile),
@@ -77,7 +78,7 @@ fun Account(
                 )
                 Spacer(Modifier.width(20.dp))
                 Text(
-                    text = state.userName,
+                    text = state.userProfile.userName,
                     style = LogitTheme.typography.body1,
                     color = LogitTheme.colors.gray400,
                 )
@@ -204,7 +205,7 @@ private fun SupportItem(
 private fun AccountPreview() {
     LogitTheme {
         Account(
-            state = AccountScreen.State("로짓", false)
+            state = AccountScreen.State(UserProfile("로짓", ""), false)
         )
     }
 }
