@@ -26,11 +26,11 @@ import com.useai.core.designsystem.component.LogitNavigationBarItem
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.component.snackbar.LogitSnackbarHost
 import com.useai.core.designsystem.theme.LogitTheme
-import com.useai.feature.chat.ChatScreen
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import com.useai.feature.newproject.NewProjectQuestionScreen
+import com.useai.feature.projects.ProjectsScreen
 import com.useai.feature.report.ReportScreen
 import com.useai.logit.RootScreen
 import com.useai.logit.navigation.TopLevelNavItem
@@ -48,7 +48,7 @@ fun Root(
     val screens = remember {
         listOf(
             HomeScreen,
-            ChatScreen(""),
+            ProjectsScreen,
             NewProjectBasicInfoScreen,
             ExperienceScreen,
             ReportScreen,

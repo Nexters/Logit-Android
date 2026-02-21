@@ -19,7 +19,7 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class AccountScreen : Screen {
+data object AccountScreen : Screen {
     data class State(
         val userName: String,
         val reportNotificationEnabled: Boolean,

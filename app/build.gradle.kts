@@ -9,6 +9,7 @@ plugins {
 dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.account)
+    implementation(projects.feature.projects)
     implementation(projects.feature.chat)
     implementation(projects.feature.newproject)
     implementation(projects.feature.experience)

@@ -2,6 +2,7 @@
 <resources>
     <dimen name="spacing_launcher_heading_vertical">8dp</dimen>
     <dimen name="screen_common_padding_horizontal">20dp</dimen>
+    <dimen name="screen_common_padding_bottom">20dp</dimen>
     <dimen name="app_header_user_profile_area_size">44dp</dimen>
     <dimen name="app_header_user_profile_image_size">35dp</dimen>
     <dimen name="spacing_form_vertical">12dp</dimen>
