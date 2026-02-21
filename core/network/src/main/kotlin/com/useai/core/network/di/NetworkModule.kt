@@ -1,6 +1,5 @@
 package com.useai.core.network.di
 
-import android.util.Log
 import com.launchdarkly.eventsource.ConnectStrategy
 import com.launchdarkly.eventsource.EventSource
 import com.launchdarkly.eventsource.background.BackgroundEventSource
@@ -9,7 +8,9 @@ import com.useai.core.common.qualifiers.BaseClient
 import com.useai.core.datastore.LogitPreferencesDataSource
 import com.useai.core.network.BuildConfig
 import com.useai.core.network.ChattingEventSourceFactory
+import com.useai.core.network.api.AuthApi
 import com.useai.core.network.error.RemoteErrorCallAdapterFactory
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +18,8 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -39,7 +40,7 @@ internal object NetworkModule {
     @ActivityRetainedScoped
     fun providesChattingEventSourceFactory(
         @AuthClient client: OkHttpClient
-    ) : ChattingEventSourceFactory {
+    ): ChattingEventSourceFactory {
         return ChattingEventSourceFactory { handler, request ->
             val requestJsonString = Json.encodeToString(request)
             BackgroundEventSource.Builder(
@@ -67,7 +68,7 @@ internal object NetworkModule {
     fun providesBaseRetrofit(
         @BaseClient client: OkHttpClient,
         json: Json
-    ) : Retrofit {
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
@@ -82,7 +83,7 @@ internal object NetworkModule {
     fun providesAuthRetrofit(
         @AuthClient client: OkHttpClient,
         json: Json
-    ) : Retrofit {
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
@@ -94,7 +95,7 @@ internal object NetworkModule {
     @Provides
     @ActivityRetainedScoped
     @BaseClient
-    fun providesBaseOkHttpClient() : OkHttpClient {
+    fun providesBaseOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .apply {
                 if (BuildConfig.DEBUG)
@@ -110,12 +111,56 @@ internal object NetworkModule {
     @AuthClient
     fun providesAuthOkHttpClient(
         @BaseClient baseClient: OkHttpClient,
-        authInterceptor: Interceptor
-    ) : OkHttpClient {
-        // TODO : Authenticator
+        authInterceptor: Interceptor,
+        authenticator: Authenticator
+    ): OkHttpClient {
         return baseClient.newBuilder()
             .addInterceptor(authInterceptor)
+            .authenticator(authenticator)
             .build()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun providesAuthenticator(
+        lazyApi: Lazy<AuthApi>,
+        logitPreferencesDataSource: LogitPreferencesDataSource
+    ): Authenticator = Authenticator { _, response ->
+        val currentToken = runBlocking { logitPreferencesDataSource.accessToken.firstOrNull() }
+
+        if (response.request.header("Authorization")?.substringAfter("Bearer ") != currentToken) {
+            return@Authenticator response.request.newBuilder()
+                .header("Authorization", "Bearer $currentToken")
+                .build()
+        }
+
+        synchronized(this) {
+            val newCurrentToken = runBlocking { logitPreferencesDataSource.accessToken.firstOrNull() }
+            if (currentToken != newCurrentToken) {
+                return@synchronized response.request.newBuilder()
+                    .header("Authorization", "Bearer $newCurrentToken")
+                    .build()
+            }
+
+            val newAccessToken = runBlocking {
+                try {
+                    lazyApi.get().refreshAccessToken()
+                } catch (_: Exception) {
+                    null
+                }
+            }
+
+            if (newAccessToken == null) {
+                runBlocking { logitPreferencesDataSource.clear() }
+                return@synchronized null
+            }
+
+            runBlocking { logitPreferencesDataSource.setAccessToken(newAccessToken) }
+
+            return@synchronized response.request.newBuilder()
+                .header("Authorization", "Bearer $newAccessToken")
+                .build()
+        }
     }
 
     @Provides
@@ -130,8 +175,6 @@ internal object NetworkModule {
             .apply {
                 if (accessToken != null) {
                     addHeader("Authorization", "Bearer $accessToken")
-                } else {
-                    Log.e("NetworkModule", "accessToken is null")
                 }
             }
             .build()
