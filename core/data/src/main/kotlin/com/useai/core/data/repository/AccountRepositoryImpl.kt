@@ -22,12 +22,14 @@ internal class AccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun setAccessToken(token: String): Result<Unit> {
-        logitPreferencesDataSource.setAccessToken(token)
-        return Result.success(Unit)
+        return runCatching {
+            logitPreferencesDataSource.setAccessToken(token)
+        }
     }
 
     override suspend fun clear(): Result<Unit> {
-        logitPreferencesDataSource.clear()
-        return Result.success(Unit)
+        return runCatching {
+            logitPreferencesDataSource.clear()
+        }
     }
 }
