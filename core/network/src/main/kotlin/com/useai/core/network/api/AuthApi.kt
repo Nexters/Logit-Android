@@ -10,4 +10,7 @@ interface AuthApi {
     suspend fun requestGoogleLogin(
         @Body request: GoogleLoginRequest
     ): GoogleLoginResponse
+
+    @POST("/api/v1/auth/logout/")
+    suspend fun requestGoogleLogout()
 }

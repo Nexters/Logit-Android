@@ -32,4 +32,10 @@ internal class AccountRepositoryImpl @Inject constructor(
             logitPreferencesDataSource.clear()
         }
     }
+
+    override suspend fun requestLogout(): Result<Unit> {
+        return runCatching {
+            authRemoteDataSource.requestGoogleLogout()
+        }
+    }
 }

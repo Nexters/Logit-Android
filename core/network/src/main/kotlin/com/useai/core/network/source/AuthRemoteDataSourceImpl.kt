@@ -11,4 +11,8 @@ internal class AuthRemoteDataSourceImpl @Inject constructor(
     override suspend fun requestGoogleLogin(request: GoogleLoginRequest): GoogleLoginResponse {
         return authApi.requestGoogleLogin(request)
     }
+
+    override suspend fun requestGoogleLogout() {
+        return authApi.requestGoogleLogout()
+    }
 }
