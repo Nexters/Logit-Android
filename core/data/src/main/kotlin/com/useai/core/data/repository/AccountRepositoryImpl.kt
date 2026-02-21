@@ -11,7 +11,7 @@ internal class AccountRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val logitPreferencesDataSource: LogitPreferencesDataSource,
 ) : AccountRepository {
-    override suspend fun requestGoogleLogin(idToken: String): Result<Login> {
+    override suspend fun requestLogin(idToken: String): Result<Login> {
         return runCatching {
             authRemoteDataSource.requestGoogleLogin(
                 GoogleLoginRequest(

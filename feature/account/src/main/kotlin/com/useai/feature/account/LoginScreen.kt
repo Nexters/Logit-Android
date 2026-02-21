@@ -78,7 +78,7 @@ class LoginPresenter @AssistedInject constructor(
                                 result = result,
                                 onSuccess = { googleIdTokenCredential ->
                                     scope.launch {
-                                        accountRepository.requestGoogleLogin(
+                                        accountRepository.requestLogin(
                                             idToken =  googleIdTokenCredential.idToken,
                                         ).onSuccess {
                                             scope.launch {
