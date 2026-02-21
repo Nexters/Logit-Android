@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +53,7 @@ import androidx.compose.foundation.layout.ime
 import com.slack.circuit.retained.rememberRetained
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.button.LogitPrimaryButton
-import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
+import com.useai.core.designsystem.component.snackbar.LogitSnackbarHost
 import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingContent
@@ -82,9 +83,9 @@ internal fun ChatChattingUI(
     }
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarHostState = LocalLogitSnackbarHostState.current
     val scope = rememberCoroutineScope()
     val maxExperienceSelectMessage = stringResource(R.string.select_experience_max_count_message)
+    val experienceBottomSheetSnackbarHostState = remember { SnackbarHostState() }
     val density = LocalDensity.current
     val imeBottom = WindowInsets.ime.getBottom(density)
     val isImeVisible = imeBottom > 0
@@ -174,7 +175,6 @@ internal fun ChatChattingUI(
             fadingAiMessageId = null
         }
     }
-
     if (state.showExperienceModal) {
         ModalBottomSheet(
             modifier = Modifier.fillMaxWidth(),
@@ -185,12 +185,13 @@ internal fun ChatChattingUI(
             },
             dragHandle = null
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState())
-                    .navigationBarsPadding()
-            ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .verticalScroll(rememberScrollState())
+                        .navigationBarsPadding()
+                ) {
                 Row(
                     modifier = Modifier.padding(top = 27.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -251,7 +252,8 @@ internal fun ChatChattingUI(
                                 temporarilySelectedExperiences.add(matchingExperience.experience.id)
                             } else {
                                 scope.launch {
-                                    snackbarHostState.showLogitSnackbar(
+                                    experienceBottomSheetSnackbarHostState.currentSnackbarData?.dismiss()
+                                    experienceBottomSheetSnackbarHostState.showLogitSnackbar(
                                         message = maxExperienceSelectMessage,
                                         iconResId = R.drawable.ic_alert,
                                     )
@@ -271,6 +273,14 @@ internal fun ChatChattingUI(
                         ))
                     },
                     modifier = Modifier.fillMaxWidth()
+                )
+                }
+
+                LogitSnackbarHost(
+                    hostState = experienceBottomSheetSnackbarHostState,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 20.dp, vertical = 88.dp)
                 )
             }
         }
