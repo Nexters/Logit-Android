@@ -1,5 +1,6 @@
 package com.useai.core.network.source
 
+import android.util.Log
 import com.launchdarkly.eventsource.MessageEvent
 import com.launchdarkly.eventsource.background.BackgroundEventHandler
 import com.useai.core.network.ChattingEventSourceFactory
@@ -24,6 +25,7 @@ internal class ChattingRemoteDataSourceImpl @Inject constructor(
         return callbackFlow {
             class ChatEventHandler : BackgroundEventHandler {
                 override fun onOpen() {
+                    Log.d("Chatting", "Steaming open")
                 }
 
                 override fun onClosed() {
@@ -34,6 +36,7 @@ internal class ChattingRemoteDataSourceImpl @Inject constructor(
                     event: String?,
                     messageEvent: MessageEvent?
                 ) {
+                    Log.d("Chatting", "Streaming ${messageEvent?.data}")
                     messageEvent?.data?.let { jsonString ->
                         val response = json.decodeFromString<ChattingStreamingResponse>(jsonString)
                         trySend(response)
@@ -45,6 +48,7 @@ internal class ChattingRemoteDataSourceImpl @Inject constructor(
                 }
 
                 override fun onError(t: Throwable?) {
+                    Log.d("Chatting", "Streaming ${t?.message}")
                     close()
                 }
             }

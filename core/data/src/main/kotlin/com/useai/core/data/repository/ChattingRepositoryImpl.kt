@@ -9,7 +9,7 @@ import com.useai.core.network.response.toChattingHistory
 import com.useai.core.network.response.toChattingStreaming
 import com.useai.core.network.source.ChattingRemoteDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 internal class ChattingRepositoryImpl @Inject constructor(
@@ -27,7 +27,7 @@ internal class ChattingRepositoryImpl @Inject constructor(
                 questionId = questionId,
                 experienceIds = experienceIds
             )
-        ).map { it.toChattingStreaming() }
+        ).mapNotNull { it.toChattingStreaming() }
     }
 
     override suspend fun getChatHistory(questionId: String): Result<ChattingHistory> {
