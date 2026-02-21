@@ -22,10 +22,12 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
 import com.useai.core.navigation.LocalScreenProvider
+import com.useai.core.navigation.ScreenProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.security.SecureRandom
@@ -58,60 +60,14 @@ class LoginPresenter @AssistedInject constructor(
             when (event) {
                 LoginScreen.Event.GoogleLoginClicked -> {
                     Log.d(TAG, "GoogleLoginClicked")
-
-                    val nonce = generateNonce()
-                    val signInWithGoogleOption: GetSignInWithGoogleOption = GetSignInWithGoogleOption.Builder(
-                        serverClientId = CLIENT_ID
-                    ).setNonce(nonce)
-                        .build()
-                    val request: GetCredentialRequest = GetCredentialRequest.Builder()
-                        .addCredentialOption(signInWithGoogleOption)
-                        .build()
-
                     scope.launch {
-                        try {
-                            val result = credentialManager.getCredential(
-                                request = request,
-                                context = context,
-                            )
-                            handleSignInWithGoogleOption(
-                                result = result,
-                                onSuccess = { googleIdTokenCredential ->
-                                    scope.launch {
-                                        accountRepository.requestLogin(
-                                            idToken =  googleIdTokenCredential.idToken,
-                                        ).onSuccess {
-                                            scope.launch {
-                                                accountRepository.setAccessToken(it.accessToken)
-                                                navigator.resetRoot(screenProvider.rootScreen())
-                                            }
-                                        }.onFailure {
-                                            Log.e(TAG, "Google login failed: $it")
-                                        }
-                                    }
-                                },
-                                onFailure = {
-                                    scope.launch {
-                                        signUp(
-                                            credentialManager = credentialManager,
-                                            context = context,
-                                            onSuccess = {
-                                                navigator.resetRoot(screenProvider.rootScreen())
-                                            },
-                                        )
-                                    }
-                                }
-                            )
-                        } catch (e: GetCredentialException) {
-                            Log.e(TAG, "GetCredentialException", e)
-                            signUp(
-                                credentialManager = credentialManager,
-                                context = context,
-                                onSuccess = {
-                                    navigator.resetRoot(screenProvider.rootScreen())
-                                },
-                            )
-                        }
+                        requestGoogleLogin(
+                            credentialManager = credentialManager,
+                            context = context,
+                            scope = scope,
+                            navigator = navigator,
+                            screenProvider = screenProvider,
+                        )
                     }
                 }
 
@@ -125,6 +81,82 @@ class LoginPresenter @AssistedInject constructor(
                     // TODO: 개인정보 처리방침 화면으로 이동
                 }
             }
+        }
+    }
+
+    private suspend fun requestGoogleLogin(
+        credentialManager: CredentialManager,
+        context: Context,
+        scope: CoroutineScope,
+        navigator: Navigator,
+        screenProvider: ScreenProvider,
+    ) {
+        val nonce = generateNonce()
+        val signInWithGoogleOption: GetSignInWithGoogleOption = GetSignInWithGoogleOption.Builder(
+            serverClientId = CLIENT_ID
+        ).setNonce(nonce)
+            .build()
+        val request: GetCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(signInWithGoogleOption)
+            .build()
+
+        try {
+            val result = credentialManager.getCredential(
+                request = request,
+                context = context,
+            )
+
+            handleSignInWithGoogleOption(
+                result = result,
+                onSuccess = { googleIdTokenCredential ->
+                    scope.launch {
+                        accountRepository.requestLogin(
+                            idToken = googleIdTokenCredential.idToken,
+                        ).onSuccess {
+                            scope.launch {
+                                accountRepository.setAccessToken(it.accessToken)
+                                navigator.resetRoot(screenProvider.rootScreen())
+                            }
+                        }.onFailure {
+                            Log.e(TAG, "Google login failed: $it")
+                        }
+                    }
+                },
+                onFailure = {
+                    scope.launch {
+                        signUp(
+                            credentialManager = credentialManager,
+                            context = context,
+                            onSuccess = { googleIdTokenCredential ->
+                                scope.launch {
+                                    accountRepository.requestLogin(
+                                        idToken = googleIdTokenCredential.idToken,
+                                    ).onSuccess {
+                                        accountRepository.setAccessToken(it.accessToken)
+                                        navigator.resetRoot(screenProvider.rootScreen())
+                                    }
+                                }
+                            },
+                        )
+                    }
+                }
+            )
+        } catch (e: GetCredentialException) {
+            Log.e(TAG, "GetCredentialException", e)
+            signUp(
+                credentialManager = credentialManager,
+                context = context,
+                onSuccess = { googleIdTokenCredential ->
+                    scope.launch {
+                        accountRepository.requestLogin(
+                            idToken = googleIdTokenCredential.idToken,
+                        ).onSuccess {
+                            accountRepository.setAccessToken(it.accessToken)
+                            navigator.resetRoot(screenProvider.rootScreen())
+                        }
+                    }
+                },
+            )
         }
     }
 
@@ -149,7 +181,6 @@ class LoginPresenter @AssistedInject constructor(
                     try {
                         val googleIdTokenCredential = GoogleIdTokenCredential
                             .createFrom(credential.data)
-                        Log.d(TAG, "googleIdTokenCredential: ${googleIdTokenCredential.idToken}")
                         onSuccess(googleIdTokenCredential)
                     } catch (e: GoogleIdTokenParsingException) {
                         Log.e(TAG, "Received an invalid google id token response", e)
@@ -211,6 +242,5 @@ class LoginPresenter @AssistedInject constructor(
     companion object {
         private val TAG = LoginPresenter::class.simpleName
         private const val CLIENT_ID = BuildConfig.GOOGLE_OAUTH_CLIENT_ID
-
     }
 }
