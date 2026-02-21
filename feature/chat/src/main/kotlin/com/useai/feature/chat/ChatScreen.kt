@@ -29,21 +29,31 @@ data class ChatScreen(val projectId: String): Screen {
             val showExperienceModal: Boolean = false,
             val eventSink: (Event) -> Unit
         ) : State
-        data object Loading : State
-        data object LoadFailed : State
+        data class Loading(
+            val eventSink: (Event) -> Unit,
+        ) : State
+
+        data class LoadFailed(
+            val eventSink: (Event) -> Unit,
+        ) : State
     }
 
     sealed interface Event : CircuitUiEvent {
         data class ChangeQuestion(val question: Question) : Event
         data class ChangeCategory(val category: ChatScreenCategory) : Event
+        data object RefreshData : Event
+        data class ApplyEditedQuestions(val questions: List<EditQuestionsScreen.EditedQuestionResult>) : Event
+        data object EditQuestions : Event
         data object AddQuestion : Event
         data object TryUploadExperience : Event
         data class CompleteSelectExperience(val experienceIds: List<String>) : Event
+        data class GenerateDraft(val experienceIds: List<String>) : Event
         data object DismissExperienceModal : Event
         data class InputMessage(val message: String) : Event
         data class SendMessage(val message: String) : Event
         data class CopyMessage(val message: String) : Event
         data class UpdateLetter(val letter: String) : Event
+        data object DeleteProject : Event
         data object ExpandOrShrinkHeader : Event
         data object NavigateBack : Event
     }
@@ -52,6 +62,7 @@ data class ChatScreen(val projectId: String): Screen {
 
 sealed interface ChattingStreamingStatus {
     data object Idle: ChattingStreamingStatus
+    data object Loading: ChattingStreamingStatus
     data class Streaming(val data: String): ChattingStreamingStatus
     data object Error: ChattingStreamingStatus
 }

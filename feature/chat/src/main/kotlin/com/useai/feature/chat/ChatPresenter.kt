@@ -3,13 +3,18 @@ package com.useai.feature.chat
 import android.content.ClipData
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.util.fastMap
+import com.slack.circuit.foundation.rememberAnsweringNavigator
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
@@ -31,9 +36,11 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
 class ChatPresenter @AssistedInject constructor(
@@ -54,8 +61,25 @@ class ChatPresenter @AssistedInject constructor(
         val scope = rememberStableCoroutineScope()
         val screenProvider = LocalScreenProvider.current
         val localClipboard = LocalClipboard.current
+        var editedQuestionsResult by rememberRetained {
+            mutableStateOf<EditQuestionsScreen.QuestionsEditedResult?>(null)
+        }
+        val editQuestionsNavigator = rememberAnsweringNavigator<EditQuestionsScreen.QuestionsEditedResult>(
+            fallbackNavigator = navigator,
+        ) {
+            editedQuestionsResult = it
+        }
 
-        val state by produceRetainedState<ChatScreen.State>(ChatScreen.State.Loading) {
+        val loadingOrFailedEventSink: (ChatScreen.Event) -> Unit = { event ->
+            when (event) {
+                ChatScreen.Event.NavigateBack -> navigator.pop()
+                else -> Unit
+            }
+        }
+
+        val state by produceRetainedState<ChatScreen.State>(
+            ChatScreen.State.Loading(eventSink = loadingOrFailedEventSink)
+        ) {
             val projectDetailDeferred = async {
                 projectRepository.getProject(screen.projectId).onFailure {
                     Log.e(TAG, "getProject failed: $it")
@@ -65,7 +89,7 @@ class ChatPresenter @AssistedInject constructor(
             questionRepository.getQuestions(screen.projectId).onSuccess { initialQuestions ->
                 if (initialQuestions.isEmpty()) {
                     Log.e(TAG, "initialQuestions is empty")
-                    reduce { ChatScreen.State.LoadFailed }
+                    reduce { ChatScreen.State.LoadFailed(eventSink = loadingOrFailedEventSink) }
                     return@produceRetainedState
                 }
 
@@ -75,7 +99,7 @@ class ChatPresenter @AssistedInject constructor(
                             this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
                         }.onFailure {
                             Log.e(TAG, "getMatchingExperiences failed: $it")
-                            reduce { ChatScreen.State.LoadFailed }
+                            reduce { ChatScreen.State.LoadFailed(eventSink = loadingOrFailedEventSink) }
                         }
                     }
                 }.awaitAll()
@@ -86,7 +110,7 @@ class ChatPresenter @AssistedInject constructor(
                             chattingHistories[question] = chattingHistory
                         }.onFailure {
                             Log.e(TAG, "getChatHistory failed: $it")
-                            reduce { ChatScreen.State.LoadFailed }
+                            reduce { ChatScreen.State.LoadFailed(eventSink = loadingOrFailedEventSink) }
                         }
                     }
                 }.awaitAll()
@@ -95,7 +119,7 @@ class ChatPresenter @AssistedInject constructor(
                 if (projectDetail == null) {
                     Log.d(TAG, "projectDetail is null")
                     reduce {
-                        ChatScreen.State.LoadFailed
+                        ChatScreen.State.LoadFailed(eventSink = loadingOrFailedEventSink)
                     }
                 }
 
@@ -115,6 +139,123 @@ class ChatPresenter @AssistedInject constructor(
                             isHeaderUIExpanded = false
                         ) { event ->
                             when(event) {
+                                is ChatScreen.Event.ApplyEditedQuestions -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        val oldHistoriesById = chattingHistories.entries.associate { (question, history) ->
+                                            question.id to history
+                                        }
+                                        val oldMatchingById = matchingExperiencesList.entries.associate { (question, matching) ->
+                                            question.id to matching
+                                        }
+
+                                        val updatedQuestions = event.questions.map {
+                                            Question(
+                                                id = it.id,
+                                                title = it.title,
+                                                maxLength = it.maxLength,
+                                                letter = it.letter
+                                            )
+                                        }
+
+                                        val remappedHistories = hashMapOf<Question, ChattingHistory>()
+                                        val remappedMatching = hashMapOf<Question, List<MatchingExperience>>()
+                                        updatedQuestions.forEach { question ->
+                                            oldHistoriesById[question.id]?.let { history ->
+                                                remappedHistories[question] = history.copy(questionTitle = question.title)
+                                            }
+                                            oldMatchingById[question.id]?.let { matching ->
+                                                remappedMatching[question] = matching
+                                            }
+                                        }
+                                        chattingHistories.clear()
+                                        chattingHistories.putAll(remappedHistories)
+                                        matchingExperiencesList.clear()
+                                        matchingExperiencesList.putAll(remappedMatching)
+
+                                        val fallbackQuestion = updatedQuestions.firstOrNull() ?: return@runOn
+                                        val selectedQuestion = updatedQuestions.firstOrNull { it.id == currentQuestion.id }
+                                            ?: fallbackQuestion
+                                        val selectedHistory = remappedHistories[selectedQuestion] ?: chattingHistory
+                                        val selectedMatching = remappedMatching[selectedQuestion] ?: matchingExperiences
+
+                                        reduce {
+                                            copy(
+                                                questions = updatedQuestions,
+                                                currentQuestion = selectedQuestion,
+                                                chattingHistory = selectedHistory,
+                                                matchingExperiences = selectedMatching
+                                            )
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.RefreshData -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        val selectedQuestionId = currentQuestion.id
+                                        scope.launch {
+                                            questionRepository.getQuestions(screen.projectId).onSuccess { latestQuestions ->
+                                                if (latestQuestions.isEmpty()) return@onSuccess
+
+                                                var hasError = false
+                                                val latestMatching = hashMapOf<Question, List<MatchingExperience>>()
+                                                val latestHistories = hashMapOf<Question, ChattingHistory>()
+
+                                                latestQuestions.fastMap { question ->
+                                                    async {
+                                                        experienceRepository.getMatchingExperiences(question.id)
+                                                            .onSuccess { matching ->
+                                                                latestMatching[question] = matching
+                                                            }
+                                                            .onFailure {
+                                                                hasError = true
+                                                                Log.e(TAG, "refresh getMatchingExperiences failed: $it")
+                                                            }
+                                                    }
+                                                }.awaitAll()
+
+                                                if (hasError) return@onSuccess
+
+                                                latestQuestions.fastMap { question ->
+                                                    async {
+                                                        chattingRepository.getChatHistory(question.id)
+                                                            .onSuccess { history ->
+                                                                latestHistories[question] = history
+                                                            }
+                                                            .onFailure {
+                                                                hasError = true
+                                                                Log.e(TAG, "refresh getChatHistory failed: $it")
+                                                            }
+                                                    }
+                                                }.awaitAll()
+
+                                                if (hasError) return@onSuccess
+
+                                                chattingHistories.clear()
+                                                chattingHistories.putAll(latestHistories)
+                                                matchingExperiencesList.clear()
+                                                matchingExperiencesList.putAll(latestMatching)
+
+                                                val nextQuestion = latestQuestions.firstOrNull { it.id == selectedQuestionId }
+                                                    ?: latestQuestions.first()
+                                                val nextHistory = latestHistories[nextQuestion] ?: return@onSuccess
+                                                val nextMatching = latestMatching[nextQuestion] ?: return@onSuccess
+
+                                                reduce {
+                                                    copy(
+                                                        questions = latestQuestions,
+                                                        currentQuestion = nextQuestion,
+                                                        chattingHistory = nextHistory,
+                                                        matchingExperiences = nextMatching
+                                                    )
+                                                }
+                                            }.onFailure {
+                                                Log.e(TAG, "refresh getQuestions failed: $it")
+                                            }
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.EditQuestions -> {
+                                    editQuestionsNavigator.goTo(screenProvider.editQuestionsScreen(screen.projectId))
+                                }
                                 is ChatScreen.Event.AddQuestion -> {
                                     navigator.goTo(screenProvider.newQuestionScreen(screen.projectId))
                                 }
@@ -152,6 +293,7 @@ class ChatPresenter @AssistedInject constructor(
                                                 value.runOn<ChatScreen.State.Success> {
                                                     reduce {
                                                         copy(
+                                                            streamingStatus = ChattingStreamingStatus.Loading,
                                                             userInput = "",
                                                             chattingHistory = chattingHistory.copy(
                                                                 chattings = chattingHistory.chattings + ChattingContent.User(
@@ -229,6 +371,19 @@ class ChatPresenter @AssistedInject constructor(
                                         }
                                     }
                                 }
+                                is ChatScreen.Event.DeleteProject -> {
+                                    scope.launch {
+                                        projectRepository.deleteProject(screen.projectId)
+                                            .onSuccess {
+                                                withContext(Dispatchers.Main.immediate) {
+                                                    navigator.pop()
+                                                }
+                                            }
+                                            .onFailure {
+                                                Log.e(TAG, "deleteProject failed: $it")
+                                            }
+                                    }
+                                }
                                 is ChatScreen.Event.InputMessage -> {
                                     value.runOn<ChatScreen.State.Success> {
                                         reduce {
@@ -246,6 +401,85 @@ class ChatPresenter @AssistedInject constructor(
                                                 showExperienceModal = false,
                                                 chattingHistory = updatedChatHistory
                                             )
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.GenerateDraft -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        val currentChatHistory = chattingHistories[currentQuestion]
+                                        val updatedChatHistory =
+                                            currentChatHistory?.copy(experienceIds = event.experienceIds.toSet())
+                                                ?: chattingHistory.copy(experienceIds = event.experienceIds.toSet())
+                                        chattingHistories[currentQuestion] = updatedChatHistory
+
+                                        reduce {
+                                            copy(
+                                                showExperienceModal = false,
+                                                chattingHistory = updatedChatHistory
+                                            )
+                                        }
+
+                                        scope.launch {
+                                            chattingRepository.startChattingStream(
+                                                questionId = currentQuestion.id,
+                                                sendingMessage = DRAFT_GENERATION_MESSAGE,
+                                                experienceIds = event.experienceIds
+                                            ).onStart {
+                                                value.runOn<ChatScreen.State.Success> {
+                                                    reduce {
+                                                        copy(
+                                                            streamingStatus = ChattingStreamingStatus.Loading,
+                                                            userInput = "",
+                                                            chattingHistory = updatedChatHistory.copy(
+                                                                chattings = updatedChatHistory.chattings + ChattingContent.User(
+                                                                    id = LocalDateTime.now().toString(),
+                                                                    message = DRAFT_GENERATION_MESSAGE,
+                                                                    createdAt = LocalDateTime.now()
+                                                                )
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            }.catch {
+                                                value.runOn<ChatScreen.State.Success> {
+                                                    reduce {
+                                                        copy(streamingStatus = ChattingStreamingStatus.Error)
+                                                    }
+                                                }
+                                            }.collect { streaming ->
+                                                when (streaming) {
+                                                    is ChattingStreaming.Streaming -> {
+                                                        value.runOn<ChatScreen.State.Success> {
+                                                            reduce {
+                                                                copy(
+                                                                    streamingStatus = ChattingStreamingStatus.Streaming(
+                                                                        streamingChatStringBuilder.append(streaming.data).toString()
+                                                                    )
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+
+                                                    is ChattingStreaming.Done -> {
+                                                        value.runOn<ChatScreen.State.Success> {
+                                                            reduce {
+                                                                copy(
+                                                                    streamingStatus = ChattingStreamingStatus.Idle,
+                                                                    chattingHistory = chattingHistory.copy(
+                                                                        chattings = chattingHistory.chattings + ChattingContent.AI(
+                                                                            id = streaming.chatId,
+                                                                            message = streamingChatStringBuilder.toString(),
+                                                                            createdAt = LocalDateTime.now(),
+                                                                            isLetter = streaming.isDraft
+                                                                        )
+                                                                    )
+                                                                )
+                                                            }
+                                                        }
+                                                        streamingChatStringBuilder.clear()
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -279,7 +513,18 @@ class ChatPresenter @AssistedInject constructor(
                 }
             }.onFailure {
                 Log.e(TAG, "getQuestions failed: $it")
-                reduce { ChatScreen.State.LoadFailed }
+                reduce { ChatScreen.State.LoadFailed(eventSink = loadingOrFailedEventSink) }
+            }
+        }
+
+        LaunchedEffect(editedQuestionsResult) {
+            val result = editedQuestionsResult
+            if (result != null) {
+                state.runOn<ChatScreen.State.Success> {
+                    eventSink(ChatScreen.Event.ApplyEditedQuestions(result.questions))
+                    eventSink(ChatScreen.Event.RefreshData)
+                }
+                editedQuestionsResult = null
             }
         }
 
@@ -301,5 +546,6 @@ class ChatPresenter @AssistedInject constructor(
 
     companion object {
         private val TAG = ChatPresenter::class.simpleName
+        private const val DRAFT_GENERATION_MESSAGE = "초안 작성해줘"
     }
 }
