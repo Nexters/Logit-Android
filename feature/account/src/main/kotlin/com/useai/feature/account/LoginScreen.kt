@@ -20,6 +20,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.data.repository.AccountRepository
 import com.useai.core.navigation.LocalScreenProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -44,6 +45,7 @@ data object LoginScreen : Screen {
 
 class LoginPresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
+    private val accountRepository: AccountRepository,
 ) : Presenter<LoginScreen.State> {
     @Composable
     override fun present(): LoginScreen.State {
@@ -74,8 +76,19 @@ class LoginPresenter @AssistedInject constructor(
                             )
                             handleSignInWithGoogleOption(
                                 result = result,
-                                onSuccess = {
-                                    navigator.resetRoot(screenProvider.rootScreen())
+                                onSuccess = { googleIdTokenCredential ->
+                                    scope.launch {
+                                        accountRepository.requestGoogleLogin(
+                                            idToken =  googleIdTokenCredential.idToken,
+                                        ).onSuccess {
+                                            scope.launch {
+                                                accountRepository.setAccessToken(it.accessToken)
+                                                navigator.resetRoot(screenProvider.rootScreen())
+                                            }
+                                        }.onFailure {
+                                            Log.e(TAG, "Google login failed: $it")
+                                        }
+                                    }
                                 },
                                 onFailure = {
                                     scope.launch {
@@ -127,7 +140,7 @@ class LoginPresenter @AssistedInject constructor(
 
     private fun handleSignInWithGoogleOption(
         result: GetCredentialResponse,
-        onSuccess: () -> Unit,
+        onSuccess: (GoogleIdTokenCredential) -> Unit,
         onFailure: () -> Unit,
     ) {
         when (val credential = result.credential) {
@@ -137,7 +150,7 @@ class LoginPresenter @AssistedInject constructor(
                         val googleIdTokenCredential = GoogleIdTokenCredential
                             .createFrom(credential.data)
                         Log.d(TAG, "googleIdTokenCredential: ${googleIdTokenCredential.idToken}")
-                        onSuccess()
+                        onSuccess(googleIdTokenCredential)
                     } catch (e: GoogleIdTokenParsingException) {
                         Log.e(TAG, "Received an invalid google id token response", e)
                         onFailure()
@@ -158,7 +171,7 @@ class LoginPresenter @AssistedInject constructor(
     private suspend fun signUp(
         credentialManager: CredentialManager,
         context: Context,
-        onSuccess: () -> Unit,
+        onSuccess: (GoogleIdTokenCredential) -> Unit,
     ) {
         val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
@@ -175,8 +188,12 @@ class LoginPresenter @AssistedInject constructor(
             )
             handleSignInWithGoogleOption(
                 result = result,
-                onSuccess = onSuccess,
-                onFailure = { Log.e(TAG, "Sign up failed") }
+                onSuccess = { googleIdTokenCredential ->
+                    onSuccess(googleIdTokenCredential)
+                },
+                onFailure = {
+                    Log.e(TAG, "Sign up failed")
+                }
             )
         } catch (e: GetCredentialException) {
             Log.e(TAG, "GetCredentialException", e)

@@ -18,6 +18,7 @@ dependencies {
     api(projects.core.modelError)
     api(projects.core.common)
     api(projects.core.model)
+    api(projects.core.datastore)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlin.serialization)

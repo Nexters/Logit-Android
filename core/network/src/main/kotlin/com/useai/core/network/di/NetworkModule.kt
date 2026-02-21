@@ -1,10 +1,12 @@
 package com.useai.core.network.di
 
+import android.util.Log
 import com.launchdarkly.eventsource.ConnectStrategy
 import com.launchdarkly.eventsource.EventSource
 import com.launchdarkly.eventsource.background.BackgroundEventSource
 import com.useai.core.common.qualifiers.AuthClient
 import com.useai.core.common.qualifiers.BaseClient
+import com.useai.core.datastore.LogitPreferencesDataSource
 import com.useai.core.network.BuildConfig
 import com.useai.core.network.ChattingEventSourceFactory
 import com.useai.core.network.error.RemoteErrorCallAdapterFactory
@@ -13,6 +15,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -115,10 +120,20 @@ internal object NetworkModule {
 
     @Provides
     @ActivityRetainedScoped
-    fun providesAuthInterceptor(): Interceptor = Interceptor { chain: Interceptor.Chain ->
-        val accessToken = BuildConfig.TEST_USER_ACCESS_TOKEN
+    fun providesAuthInterceptor(
+        logitPreferencesDataSource: LogitPreferencesDataSource,
+    ): Interceptor = Interceptor { chain: Interceptor.Chain ->
+        val accessToken = runBlocking {
+            logitPreferencesDataSource.accessToken.firstOrNull()
+        }
         val newRequest: Request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer $accessToken")
+            .apply {
+                if (accessToken != null) {
+                    addHeader("Authorization", "Bearer $accessToken")
+                } else {
+                    Log.e("NetworkModule", "accessToken is null")
+                }
+            }
             .build()
         chain.proceed(newRequest)
     }

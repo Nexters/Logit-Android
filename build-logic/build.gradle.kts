@@ -46,5 +46,9 @@ gradlePlugin {
             id = "com.useai.plugin.googleid"
             implementationClass = "plugins.GoogleIdPlugin"
         }
+        register("datastorePlugin") {
+            id = "com.useai.plugin.datastore"
+            implementationClass = "plugins.DataStorePlugin"
+        }
     }
 }
