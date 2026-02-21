@@ -12,6 +12,8 @@ import com.useai.core.network.source.QuestionRemoteDataSource
 import com.useai.core.network.source.QuestionRemoteDataSourceImpl
 import com.useai.core.network.source.ReportRemoteDataSource
 import com.useai.core.network.source.ReportRemoteDataSourceImpl
+import com.useai.core.network.source.UsersRemoteDataSource
+import com.useai.core.network.source.UsersRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -23,9 +25,15 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 internal interface DataSourceModule {
     @Binds
     @ActivityRetainedScoped
-    fun bindAuthRemoteDataSource(
+    fun bindsAuthRemoteDataSource(
         authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
     ): AuthRemoteDataSource
+
+    @Binds
+    @ActivityRetainedScoped
+    fun bindsUsersRemoteDataSource(
+        usersRemoteDataSourceImpl: UsersRemoteDataSourceImpl
+    ): UsersRemoteDataSource
 
     @Binds
     @ActivityRetainedScoped
