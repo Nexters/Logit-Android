@@ -6,3 +6,9 @@ plugins {
 android {
     namespace = "com.useai.core.datastore"
 }
+
+dependencies {
+    api(projects.core.common)
+
+    implementation(libs.androidx.datastore.preferences)
+}

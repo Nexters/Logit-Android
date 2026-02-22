@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
@@ -80,7 +83,7 @@ fun Login(
             Spacer(Modifier.weight(1f))
             Button(
                 onClick = {
-                    // TODO: Google 로그인
+                    state.eventSink(LoginScreen.Event.GoogleLoginClicked)
                 },
                 modifier = Modifier
                     .height(52.dp)
@@ -88,9 +91,9 @@ fun Login(
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonColors(
                     containerColor = LogitTheme.colors.white,
-                    contentColor = LogitTheme.colors.white,
+                    contentColor = LogitTheme.colors.black,
                     disabledContainerColor = LogitTheme.colors.white,
-                    disabledContentColor = LogitTheme.colors.white,
+                    disabledContentColor = LogitTheme.colors.gray70,
                 ),
                 border = BorderStroke(1.dp, LogitTheme.colors.gray100),
                 contentPadding = PaddingValues(
@@ -98,12 +101,25 @@ fun Login(
                     horizontal = 22.dp,
                 ),
             ) {
-                // TODO: Google 로그인 아이콘
-                Text(
-                    text = "Google로 시작하기",
-                    style = LogitTheme.typography.body6_1,
-                    color = LogitTheme.colors.black,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_google),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "Google로 시작하기",
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center,
+                        style = LogitTheme.typography.body6_1,
+                        color = LogitTheme.colors.black,
+                    )
+                    Spacer(Modifier.width(32.dp))
+                }
             }
             Spacer(Modifier.height(38.dp))
             Text(

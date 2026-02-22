@@ -42,5 +42,9 @@ gradlePlugin {
             id = "com.useai.plugin.splashscreen"
             implementationClass = "plugins.SplashscreenPlugin"
         }
+        register("googleidPlugin") {
+            id = "com.useai.plugin.googleid"
+            implementationClass = "plugins.GoogleIdPlugin"
+        }
     }
 }

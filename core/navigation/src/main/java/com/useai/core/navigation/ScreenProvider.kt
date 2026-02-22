@@ -3,6 +3,7 @@ package com.useai.core.navigation
 import com.slack.circuit.runtime.screen.Screen
 
 interface ScreenProvider {
+    fun rootScreen(): Screen
     fun homeScreen(): Screen
     fun accountScreen(): Screen
     fun projectsScreen(): Screen

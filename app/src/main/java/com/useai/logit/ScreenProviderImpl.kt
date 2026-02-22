@@ -14,6 +14,8 @@ import com.useai.feature.newproject.NewProjectQuestionScreen
 import com.useai.feature.projects.ProjectsScreen
 
 class ScreenProviderImpl: ScreenProvider {
+    override fun rootScreen(): Screen = RootScreen
+
     override fun homeScreen(): Screen = HomeScreen
 
     override fun accountScreen(): Screen = AccountScreen

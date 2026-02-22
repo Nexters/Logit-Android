@@ -22,7 +22,7 @@ import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.ui.AppHeader
 import com.useai.core.ui.project.EmptyProjectList
-import com.useai.core.ui.project.ProjectList
+import com.useai.core.ui.project.projectList
 import com.useai.feature.projects.ProjectsScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import java.time.LocalDate
@@ -78,21 +78,21 @@ fun Projects(
             }
         }
 
-        item {
-            if (state.projects.isEmpty()) {
+        if (state.projects.isEmpty()) {
+            item {
                 EmptyProjectList(
                     onClickCreateProject = {
                         state.eventSink(ProjectsScreen.Event.NewProjectClicked)
                     }
                 )
-            } else {
-                this@LazyColumn.ProjectList(
-                    projects = state.projects,
-                    onClickProject = {
-                        state.eventSink(ProjectsScreen.Event.ProjectClicked(it))
-                    },
-                )
             }
+        } else {
+            this@LazyColumn.projectList(
+                projects = state.projects,
+                onClickProject = {
+                    state.eventSink(ProjectsScreen.Event.ProjectClicked(it))
+                },
+            )
         }
     }
 }

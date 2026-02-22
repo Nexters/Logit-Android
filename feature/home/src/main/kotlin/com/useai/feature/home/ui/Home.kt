@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.ui.AppHeader
 import com.useai.core.ui.ExperienceBannerItem
@@ -30,7 +30,7 @@ import com.useai.core.ui.ExperienceType
 import com.useai.core.ui.LogitExperienceBanner
 import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.project.EmptyProjectList
-import com.useai.core.ui.project.ProjectList
+import com.useai.core.ui.project.projectList
 import com.useai.feature.home.HomeScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import java.time.LocalDate
@@ -59,6 +59,7 @@ fun Home(
                             .width(85.dp),
                     )
                 },
+                // TODO: coil 사용해서 URL 로딩
                 iconPainter = painterResource(R.drawable.ic_app_user),
                 iconDescription = stringResource(R.string.content_description_user_profile),
                 iconSize = dimensionResource(R.dimen.app_header_user_profile_image_size),
@@ -79,7 +80,7 @@ fun Home(
                     ),
             ) {
                 LogitFormTitle(
-                    title = stringResource(R.string.home_experience_type_title_format, state.userName),
+                    title = stringResource(R.string.home_experience_type_title_format, state.userProfile.userName),
                 )
                 Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
                 LogitExperienceBanner(state.bannerItems)
@@ -91,21 +92,21 @@ fun Home(
             }
         }
 
-        item {
-            if (state.projects.isEmpty()) {
+        if (state.projects.isEmpty()) {
+            item {
                 EmptyProjectList(
                     onClickCreateProject = {
                         state.eventSink(HomeScreen.Event.NewProjectClicked)
                     },
                 )
-            } else {
-                this@LazyColumn.ProjectList(
-                    projects = state.projects,
-                    onClickProject = { projectId ->
-                        state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
-                    }
-                )
             }
+        } else {
+            projectList(
+                projects = state.projects,
+                onClickProject = { projectId ->
+                    state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
+                }
+            )
         }
     }
 }
@@ -120,7 +121,7 @@ private fun HomeWithEmptyProjectPreview() {
             Home(
                 modifier = Modifier.padding(paddingValues),
                 state = HomeScreen.State(
-                    userName = "로짓",
+                    userProfile = UserProfile("로짓", ""),
                     bannerItems = listOf(
                         ExperienceBannerItem(
                             experienceType = ExperienceType.Leadership,
@@ -158,7 +159,7 @@ private fun HomePreview() {
                     .fillMaxSize()
                     .padding(paddingValues),
                 state = HomeScreen.State(
-                    userName = "로짓",
+                    userProfile = UserProfile("로짓", ""),
                     bannerItems = listOf(
                         ExperienceBannerItem(
                             experienceType = ExperienceType.Leadership,

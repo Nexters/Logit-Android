@@ -1,11 +1,13 @@
 package com.useai.core.network.di
 
 import com.useai.core.common.qualifiers.AuthClient
+import com.useai.core.network.api.AuthApi
 import com.useai.core.network.api.ChattingApi
 import com.useai.core.network.api.ExperienceApi
 import com.useai.core.network.api.ProjectApi
 import com.useai.core.network.api.QuestionApi
 import com.useai.core.network.api.ReportApi
+import com.useai.core.network.api.UsersApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +19,22 @@ import retrofit2.create
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 internal object ApiModule {
+    @Provides
+    @ActivityRetainedScoped
+    fun providesAuthApi(
+        @AuthClient retrofit: Retrofit
+    ) : AuthApi {
+        return retrofit.create<AuthApi>()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun providesUsersApi(
+        @AuthClient retrofit: Retrofit
+    ) : UsersApi {
+        return retrofit.create<UsersApi>()
+    }
+
     @Provides
     @ActivityRetainedScoped
     fun providesChattingApi(
