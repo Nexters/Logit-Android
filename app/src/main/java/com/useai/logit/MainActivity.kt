@@ -48,7 +48,6 @@ class MainActivity : ComponentActivity() {
                             navigator = navigator,
                             backStack = backStack,
                             decoration = NavigatorDefaults.EmptyDecoration,
-                            // decoration = GestureNavigationDecoration(onBackInvoked = navigator::pop)
                         )
                     }
                 }
