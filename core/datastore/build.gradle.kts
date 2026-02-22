@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.logit.android.library.common)
     alias(libs.plugins.logit.hilt)
-    alias(libs.plugins.logit.datastore)
 }
 
 android {
@@ -10,4 +9,6 @@ android {
 
 dependencies {
     api(projects.core.common)
+
+    implementation(libs.androidx.datastore.preferences)
 }
