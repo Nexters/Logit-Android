@@ -9,6 +9,6 @@ android {
 
 dependencies {
     api(projects.core.model)
-    api(projects.core.datastore)
+    implementation(projects.core.datastore)
     implementation(projects.core.network)
 }
