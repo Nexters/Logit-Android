@@ -28,8 +28,7 @@ import com.useai.core.model.project.ProjectListItem
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Composable
-fun LazyListScope.ProjectList(
+fun LazyListScope.projectList(
     projects: List<ProjectListItem>,
     onClickProject: (String) -> Unit,
 ) {
@@ -103,43 +102,31 @@ private fun ProjectListPreview() {
         LazyColumn(
             modifier = Modifier.background(LogitTheme.colors.white)
         ) {
-            item {
-                this@LazyColumn.ProjectList(
-                    projects = listOf(
-                        ProjectListItem(
-                            id = "1",
-                            company = "카카오페이",
-                            jobPosition = "디자인 어시스턴트 어쩌구 저쩌구 어쩌구 저쩌구",
-                            dueDate = LocalDate.of(2026, 1, 7),
-                            questionId = "",
-                            totalQuestions = 0,
-                            completedQuestions = 0,
-                            updatedAt = LocalDateTime.now()
-                        ),
-                        ProjectListItem(
-                            id = "2",
-                            company = "네이버",
-                            jobPosition = "프론트엔드 개발",
-                            dueDate = LocalDate.of(2026, 1, 7),
-                            questionId = "",
-                            totalQuestions = 0,
-                            completedQuestions = 0,
-                            updatedAt = LocalDateTime.now()
-                        ),
-                        ProjectListItem(
-                            id = "3",
-                            company = "토스",
-                            jobPosition = "iOS 개발",
-                            dueDate = LocalDate.of(2026, 1, 7),
-                            questionId = "",
-                            totalQuestions = 0,
-                            completedQuestions = 0,
-                            updatedAt = LocalDateTime.now()
-                        ),
+            projectList(
+                projects = listOf(
+                    ProjectListItem(
+                        id = "1",
+                        company = "카카오페이",
+                        jobPosition = "디자인 어시스턴트",
+                        dueDate = LocalDate.of(2026, 1, 7),
+                        questionId = "",
+                        totalQuestions = 0,
+                        completedQuestions = 0,
+                        updatedAt = LocalDateTime.now()
                     ),
-                    onClickProject = {},
-                )
-            }
+                    ProjectListItem(
+                        id = "2",
+                        company = "네이버",
+                        jobPosition = "프론트엔드 개발",
+                        dueDate = LocalDate.of(2026, 1, 7),
+                        questionId = "",
+                        totalQuestions = 0,
+                        completedQuestions = 0,
+                        updatedAt = LocalDateTime.now()
+                    ),
+                ),
+                onClickProject = {},
+            )
         }
     }
 }

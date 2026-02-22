@@ -30,7 +30,7 @@ import com.useai.core.ui.ExperienceType
 import com.useai.core.ui.LogitExperienceBanner
 import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.project.EmptyProjectList
-import com.useai.core.ui.project.ProjectList
+import com.useai.core.ui.project.projectList
 import com.useai.feature.home.HomeScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import java.time.LocalDate
@@ -92,21 +92,21 @@ fun Home(
             }
         }
 
-        item {
-            if (state.projects.isEmpty()) {
+        if (state.projects.isEmpty()) {
+            item {
                 EmptyProjectList(
                     onClickCreateProject = {
                         state.eventSink(HomeScreen.Event.NewProjectClicked)
                     },
                 )
-            } else {
-                this@LazyColumn.ProjectList(
-                    projects = state.projects,
-                    onClickProject = { projectId ->
-                        state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
-                    }
-                )
             }
+        } else {
+            projectList(
+                projects = state.projects,
+                onClickProject = { projectId ->
+                    state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
+                }
+            )
         }
     }
 }
