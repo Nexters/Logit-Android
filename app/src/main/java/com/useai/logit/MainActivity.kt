@@ -12,6 +12,7 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.NavigatorDefaults
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.theme.LogitTheme
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
                         NavigableCircuitContent(
                             navigator = navigator,
                             backStack = backStack,
-                            // decoration = GestureNavigationDecoration(onBackInvoked = navigator::pop)
+                            decoration = NavigatorDefaults.EmptyDecoration,
                         )
                     }
                 }

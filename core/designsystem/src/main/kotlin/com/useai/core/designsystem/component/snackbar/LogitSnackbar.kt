@@ -66,7 +66,7 @@ private fun LogitSnackbarInternal(
     Surface(
         modifier = modifier,
         color = LogitTheme.colors.primary400,
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(14.dp)
     ) {
         Row(
             modifier = Modifier

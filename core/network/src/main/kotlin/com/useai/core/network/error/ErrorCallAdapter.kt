@@ -36,7 +36,13 @@ internal class RemoteErrorCallAdapterFactory(
                     call.enqueue(object : Callback<R> {
                         override fun onResponse(call: Call<R>, response: Response<R>) {
                             if (response.isSuccessful) {
-                                if (response.body() != null)
+                                val isEmptyBodyAllowed =
+                                    response.code() == 204 ||
+                                        response.code() == 205 ||
+                                        responseType == Unit::class.java ||
+                                        responseType == Void::class.java
+
+                                if (response.body() != null || isEmptyBodyAllowed)
                                     callback.onResponse(call, response)
                                 else {
                                     callback.onFailure(

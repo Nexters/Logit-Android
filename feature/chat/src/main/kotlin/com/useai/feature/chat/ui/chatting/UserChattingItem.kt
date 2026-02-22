@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.material3.Text
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.useai.core.designsystem.component.text.LogitMarkdownText
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.ChattingContent
 import java.time.LocalDateTime
@@ -34,8 +34,9 @@ internal fun UserChattingItem(
     Column(
         modifier = modifier
     ) {
-        LogitMarkdownText(
-            markdown = chatting.message,
+        Text(
+            text = chatting.message,
+            style = LogitTheme.typography.body7_3.copy(color = LogitTheme.colors.gray400),
             modifier = Modifier.drawWithCache {
                 val outline = shape.createOutline(size, layoutDirection, this)
 

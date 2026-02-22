@@ -1,10 +1,8 @@
 package com.useai.logit.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.NavigatorDefaults
 import com.slack.circuit.runtime.ExperimentalCircuitApi
 import com.useai.core.designsystem.component.LogitNavigationBar
 import com.useai.core.designsystem.component.LogitNavigationBarItem
@@ -73,8 +72,8 @@ fun Root(
         bottomBar = {
             AnimatedVisibility(
                 visible = shouldShowBottomBar,
-                enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
-                exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+                enter = EnterTransition.None,
+                exit = ExitTransition.None
             ) {
                 LogitNavigationBar {
                     screens.forEach { screen ->
@@ -108,6 +107,7 @@ fun Root(
         NavigableCircuitContent(
             navigator = rootUiState.navigator,
             backStack = rootUiState.backStack,
+            decoration = NavigatorDefaults.EmptyDecoration,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)

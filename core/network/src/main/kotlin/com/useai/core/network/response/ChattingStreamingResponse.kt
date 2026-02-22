@@ -13,13 +13,16 @@ data class ChattingStreamingResponse(
     @SerialName("remaining_chats") val remainingChats: Int? = null
 )
 
-fun ChattingStreamingResponse.toChattingStreaming() : ChattingStreaming {
+fun ChattingStreamingResponse.toChattingStreaming() : ChattingStreaming? {
     return when (type) {
         "content" -> {
             ChattingStreaming.Streaming(data.orEmpty())
         }
         "done" -> {
             ChattingStreaming.Done(chatId.orEmpty(), isDraft ?: false)
+        }
+        "ping" -> {
+            null
         }
         else -> {
             throw IllegalArgumentException("Unknown type: $type")

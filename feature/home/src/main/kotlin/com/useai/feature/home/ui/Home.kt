@@ -85,7 +85,7 @@ fun Home(
                 LogitExperienceBanner(state.bannerItems)
                 Spacer(Modifier.height(43.dp))
                 LogitFormTitle(
-                    title = stringResource(R.string.projects_title),
+                    title = stringResource(R.string.home_project_list_title),
                 )
                 Spacer(Modifier.height(16.dp))
             }
