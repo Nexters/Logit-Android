@@ -86,9 +86,11 @@ fun EditQuestions(
                 state.questions.forEachIndexed { index, question ->
                     val isQuestionError = state.showValidationErrors && question.title.isBlank()
                     val isCountError = state.showValidationErrors && question.maxLength <= 0
+                    val canDelete = state.questions.size >= 2
 
                     QuestionEditRow(
                         index = index,
+                        canDelete = canDelete,
                         question = question,
                         isQuestionError = isQuestionError,
                         isCountError = isCountError,
@@ -119,6 +121,7 @@ fun EditQuestions(
 @Composable
 private fun QuestionEditRow(
     index: Int,
+    canDelete: Boolean,
     question: EditQuestionsScreen.EditableQuestion,
     isQuestionError: Boolean,
     isCountError: Boolean,
@@ -159,7 +162,7 @@ private fun QuestionEditRow(
                 .width(78.dp)
         )
 
-        if (index > 0) {
+        if (canDelete) {
             Spacer(modifier = Modifier.width(8.dp))
             DeleteQuestionButton(
                 onClick = onDelete,

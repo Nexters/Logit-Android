@@ -1,6 +1,11 @@
 package com.useai.feature.newproject.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -16,13 +21,12 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFormContainer
 import com.useai.core.ui.LogitDialog
-import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.LogitInputField
 import com.useai.core.ui.LogitStepper
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 @CircuitInject(NewProjectBasicInfoScreen::class, ActivityRetainedComponent::class)
 fun NewProjectBasicInfo(
@@ -58,62 +62,90 @@ fun NewProjectBasicInfo(
             state.eventSink(NewProjectBasicInfoScreen.Event.Next)
         },
         bottomButtonEnabled = isButtonEnabled,
+        contentScrollEnabled = false,
     ) {
-        LogitStepper(
-            currentStep = "1",
-            totalStep = "2"
-        )
-        Spacer(
-            modifier = Modifier.height(13.dp)
-        )
-        LogitFormTitle(
-            title = stringResource(R.string.project_form_title_1),
-            desc = stringResource(R.string.project_form_desc_1),
-        )
-        Spacer(
-            modifier = Modifier.height(41.dp)
-        )
-        LogitInputField(
-            label = stringResource(R.string.project_field_company_name_label),
-            isRequired = true,
-            maxLength = 100,
-            input = state.companyName,
-            onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnCompanyNameChange(it)) },
-            placeHolder = stringResource(R.string.project_field_company_name_placeholder),
-        )
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
-        )
-        LogitInputField(
-            label = stringResource(R.string.project_field_job_name_label),
-            isRequired = true,
-            maxLength = 100,
-            input = state.jobName,
-            onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobNameChange(it)) },
-            placeHolder = stringResource(R.string.project_field_job_name_placeholder),
-        )
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
-        )
-        LogitInputField(
-            label = stringResource(R.string.project_field_job_desc_label),
-            isRequired = true,
-            maxLength = 3000,
-            input = state.jobDesc,
-            onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobDescChange(it)) },
-            placeHolder = stringResource(R.string.project_field_job_desc_placeholder),
-        )
-        Spacer(
-            modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
-        )
-        LogitInputField(
-            label = stringResource(R.string.project_field_talent_label),
-            isRequired = false,
-            maxLength = 1000,
-            input = state.talent,
-            onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnTalentChange(it)) },
-            placeHolder = stringResource(R.string.project_field_talent_placeholder),
-        )
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            stickyHeader {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(LogitTheme.colors.white)
+                ) {
+                    LogitStepper(
+                        currentStep = "1",
+                        totalStep = "2"
+                    )
+                    Spacer(
+                        modifier = Modifier.height(13.dp)
+                    )
+                    NewProjectSectionHeader(
+                        title = stringResource(R.string.project_form_title_1),
+                        desc = stringResource(R.string.project_form_desc_1),
+                        onClickLoadExample = {
+                            state.eventSink(NewProjectBasicInfoScreen.Event.LoadExample)
+                        }
+                    )
+                    Spacer(
+                        modifier = Modifier.height(41.dp)
+                    )
+                }
+            }
+
+            item {
+                LogitInputField(
+                    label = stringResource(R.string.project_field_company_name_label),
+                    isRequired = true,
+                    maxLength = 100,
+                    input = state.companyName,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnCompanyNameChange(it)) },
+                    placeHolder = stringResource(R.string.project_field_company_name_placeholder),
+                )
+                Spacer(
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
+                )
+            }
+
+            item {
+                LogitInputField(
+                    label = stringResource(R.string.project_field_job_name_label),
+                    isRequired = true,
+                    maxLength = 100,
+                    input = state.jobName,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobNameChange(it)) },
+                    placeHolder = stringResource(R.string.project_field_job_name_placeholder),
+                )
+                Spacer(
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
+                )
+            }
+
+            item {
+                LogitInputField(
+                    label = stringResource(R.string.project_field_job_desc_label),
+                    isRequired = true,
+                    maxLength = 3000,
+                    input = state.jobDesc,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnJobDescChange(it)) },
+                    placeHolder = stringResource(R.string.project_field_job_desc_placeholder),
+                )
+                Spacer(
+                    modifier = Modifier.height(dimensionResource(R.dimen.spacing_between_fields))
+                )
+            }
+
+            item {
+                LogitInputField(
+                    label = stringResource(R.string.project_field_talent_label),
+                    isRequired = false,
+                    maxLength = 1000,
+                    input = state.talent,
+                    onInputChange = { state.eventSink(NewProjectBasicInfoScreen.Event.OnTalentChange(it)) },
+                    placeHolder = stringResource(R.string.project_field_talent_placeholder),
+                )
+            }
+        }
     }
 }
 

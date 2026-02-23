@@ -97,6 +97,7 @@
     <string name="next">다음으로</string>
     <string name="project_form_title_1">자기소개서 작성</string>
     <string name="project_form_desc_1">지원하는 기업의 정보를 알려주세요</string>
+    <string name="project_form_load_example">예시 불러오기</string>
     <string name="project_field_company_name_label">기업명</string>
     <string name="project_field_company_name_placeholder">예) 로짓 컴퍼니</string>
     <string name="project_field_job_name_label">직무명</string>
