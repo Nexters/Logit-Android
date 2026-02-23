@@ -61,6 +61,8 @@ data class ChatScreen(val projectId: String): Screen {
         data class SendMessage(val message: String) : Event
         data class CopyMessage(val message: String) : Event
         data class UpdateLetter(val letter: String) : Event
+        data class SaveLetter(val letter: String) : Event
+        data object CompleteQuestion : Event
         data object TryDeleteProject : Event
         data object DismissDeleteDialog : Event
         data object ConfirmDeleteProject : Event

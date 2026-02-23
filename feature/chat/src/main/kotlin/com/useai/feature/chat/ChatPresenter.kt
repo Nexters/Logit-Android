@@ -398,10 +398,59 @@ class ChatPresenter @AssistedInject constructor(
                                 }
                                 is ChatScreen.Event.UpdateLetter -> {
                                     value.runOn<ChatScreen.State.Success> {
+                                        val updatedQuestion = currentQuestion.copy(letter = event.letter)
+                                        val updatedHistories = hashMapOf<Question, ChattingHistory>()
+                                        chattingHistories.forEach { (question, history) ->
+                                            updatedHistories[if (question.id == updatedQuestion.id) updatedQuestion else question] = history
+                                        }
+                                        val updatedMatchingExperiences = hashMapOf<Question, List<MatchingExperience>>()
+                                        matchingExperiencesList.forEach { (question, matching) ->
+                                            updatedMatchingExperiences[if (question.id == updatedQuestion.id) updatedQuestion else question] = matching
+                                        }
+                                        chattingHistories.clear()
+                                        chattingHistories.putAll(updatedHistories)
+                                        matchingExperiencesList.clear()
+                                        matchingExperiencesList.putAll(updatedMatchingExperiences)
+                                        reduce {
+                                            copy(
+                                                currentQuestion = updatedQuestion,
+                                                questions = questions.map {
+                                                    if (it.id == updatedQuestion.id) updatedQuestion else it
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.SaveLetter -> {
+                                    value.runOn<ChatScreen.State.Success> {
                                         scope.launch {
+                                            val savingQuestion = currentQuestion.copy(letter = event.letter)
                                             questionRepository.updateQuestion(
                                                 projectId = screen.projectId,
-                                                question = currentQuestion.copy(letter = event.letter)
+                                                question = savingQuestion
+                                            ).onSuccess { question ->
+                                                this@ChatPresenter.chattingHistories[question] = chattingHistory
+                                                this@ChatPresenter.chattingHistories.remove(currentQuestion)
+                                                this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
+                                                this@ChatPresenter.matchingExperiencesList.remove(currentQuestion)
+                                                reduce {
+                                                    copy(
+                                                        currentQuestion = question,
+                                                        questions = questions.map {
+                                                            if (it.id == question.id) question else it
+                                                        },
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.CompleteQuestion -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        scope.launch {
+                                            questionRepository.completeQuestion(
+                                                projectId = screen.projectId,
+                                                questionId = currentQuestion.id
                                             ).onSuccess { question ->
                                                 this@ChatPresenter.chattingHistories[question] = chattingHistory
                                                 this@ChatPresenter.chattingHistories.remove(currentQuestion)

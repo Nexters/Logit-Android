@@ -33,6 +33,10 @@ internal class QuestionRemoteDataSourceImpl @Inject constructor(
         return questionApi.updateQuestion(projectId, questionId, request)
     }
 
+    override suspend fun completeQuestion(projectId: String, questionId: String): QuestionResponse {
+        return questionApi.completeQuestion(projectId, questionId)
+    }
+
     override suspend fun deleteQuestion(projectId: String, questionId: String) {
         questionApi.deleteQuestion(projectId, questionId)
     }

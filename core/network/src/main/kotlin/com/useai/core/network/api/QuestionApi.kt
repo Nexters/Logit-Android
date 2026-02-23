@@ -36,6 +36,12 @@ interface QuestionApi {
         @Body request: UpdateQuestionRequest
     ) : QuestionResponse
 
+    @PATCH("api/v1/projects/{project_id}/questions/{questions_id}/complete")
+    suspend fun completeQuestion(
+        @Path("project_id") projectId: String,
+        @Path("questions_id") questionId: String
+    ) : QuestionResponse
+
     @DELETE("api/v1/projects/{project_id}/questions/{questions_id}")
     suspend fun deleteQuestion(
         @Path("project_id") projectId: String,

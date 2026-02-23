@@ -32,7 +32,9 @@
     <string name="project_library_delete_question_dialog_confirm">삭제하기</string>
     <string name="chat_empty_message">경험을 선택하면 초안이 생성돼요</string>
     <string name="chat_create_draft">초안 생성하기</string>
-    <string name="chat_letter_placeholder">자기소개서를 자유롭게 입력해보세요</string>
+    <string name="chat_letter_placeholder">아직 작성된 자기소개서가 없어요.\n경험을 선택하고 초안을 생성해보세요.</string>
+    <string name="chat_letter_save">저장하기</string>
+    <string name="chat_letter_complete">작성완료</string>
     <string name="chat_edit_questions_title">자기소개서 문항 입력</string>
     <string name="chat_edit_questions_desc">자기소개서의 문항을 입력해주세요</string>
     <string name="chat_edit_questions_submit">문항 수정</string>
@@ -42,6 +44,7 @@
     <string name="chat_edit_questions_failed">문항 수정에 실패했어요</string>
     <string name="chat_edit_questions_min_count">최소 1개의 문항이 필요해요</string>
     <string name="chat_edit_questions_max_count">문항은 최대 10개까지 추가할 수 있어요</string>
+    <string name="chat_letter_max_length_message">글자 수 제한에 도달했어요</string>
     <string name="chat_edit_question_placeholder">%d번 문항</string>
     <string name="chat_edit_count_placeholder">글자수</string>
     <string name="length_limit">%s/%s</string>

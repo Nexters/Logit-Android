@@ -27,7 +27,13 @@ fun ExperienceCreateUI(
         onClickBackButton = {
             state.eventSink(ExperienceCreateScreen.Event.Back)
         },
-        bottomButtonText = stringResource(R.string.next),
+        bottomButtonText = stringResource(
+            if (state.currentStep == ExperienceCreateStep.STAR) {
+                R.string.experience_register
+            } else {
+                R.string.next
+            }
+        ),
         onClickBottomButton = {
             state.eventSink(ExperienceCreateScreen.Event.Next)
         },
