@@ -7,6 +7,17 @@ plugins {
     alias(libs.plugins.logit.googleid)
 }
 
+android {
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+}
+
 dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.account)
