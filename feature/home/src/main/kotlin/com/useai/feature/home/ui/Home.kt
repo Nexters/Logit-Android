@@ -80,7 +80,7 @@ fun Home(
                     ),
             ) {
                 LogitFormTitle(
-                    title = stringResource(R.string.home_experience_type_title_format, state.userProfile.userName),
+                    title = stringResource(R.string.home_experience_type_title_format),
                 )
                 Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
                 LogitExperienceBanner(state.bannerItems)
@@ -122,24 +122,7 @@ private fun HomeWithEmptyProjectPreview() {
                 modifier = Modifier.padding(paddingValues),
                 state = HomeScreen.State(
                     userProfile = UserProfile("로짓", ""),
-                    bannerItems = listOf(
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Leadership,
-                            experienceCount = 7,
-                        ),
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Expertise,
-                            experienceCount = 1,
-                        ),
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Analysis,
-                            experienceCount = 3,
-                        ),
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Creativity,
-                            experienceCount = 30,
-                        ),
-                    ),
+                    bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
                     projects = emptyList(),
                 ),
             )
@@ -160,24 +143,7 @@ private fun HomePreview() {
                     .padding(paddingValues),
                 state = HomeScreen.State(
                     userProfile = UserProfile("로짓", ""),
-                    bannerItems = listOf(
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Leadership,
-                            experienceCount = 7,
-                        ),
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Expertise,
-                            experienceCount = 1,
-                        ),
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Analysis,
-                            experienceCount = 3,
-                        ),
-                        ExperienceBannerItem(
-                            experienceType = ExperienceType.Creativity,
-                            experienceCount = 30,
-                        ),
-                    ),
+                    bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
                     projects = listOf(
                         ProjectListItem(
                             id = "1",

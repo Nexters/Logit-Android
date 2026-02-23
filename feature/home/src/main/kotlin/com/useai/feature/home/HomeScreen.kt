@@ -55,24 +55,6 @@ class HomePresenter @AssistedInject constructor(
                     Log.e(TAG, "getUser failed: $it")
                 }
         }
-        val dummyBannerItems = listOf(
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Leadership,
-                experienceCount = 7,
-            ),
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Expertise,
-                experienceCount = 1,
-            ),
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Analysis,
-                experienceCount = 3,
-            ),
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Creativity,
-                experienceCount = 30,
-            ),
-        )
         val projects by produceRetainedState(initialValue = emptyList()) {
             projectRepository.getProjects() // TODO: 페이징 사용, 화면 진입 시마다 요청하지 않도록 개선 필요
                 .onSuccess { value = it }
@@ -84,7 +66,7 @@ class HomePresenter @AssistedInject constructor(
 
         return HomeScreen.State(
             userProfile = userProfile,
-            bannerItems = dummyBannerItems,
+            bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
             projects = projects
         ) { event ->
             when (event) {
