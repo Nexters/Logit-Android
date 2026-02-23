@@ -64,10 +64,21 @@ class ChatPresenter @AssistedInject constructor(
         var editedQuestionsResult by rememberRetained {
             mutableStateOf<EditQuestionsScreen.QuestionsEditedResult?>(null)
         }
+        var createdQuestionResult by rememberRetained {
+            mutableStateOf<NewQuestionScreen.QuestionCreatedResult?>(null)
+        }
+        var pendingCreatedQuestionId by rememberRetained {
+            mutableStateOf<String?>(null)
+        }
         val editQuestionsNavigator = rememberAnsweringNavigator<EditQuestionsScreen.QuestionsEditedResult>(
             fallbackNavigator = navigator,
         ) {
             editedQuestionsResult = it
+        }
+        val newQuestionNavigator = rememberAnsweringNavigator<NewQuestionScreen.QuestionCreatedResult>(
+            fallbackNavigator = navigator,
+        ) {
+            createdQuestionResult = it
         }
 
         val loadingOrFailedEventSink: (ChatScreen.Event) -> Unit = { event ->
@@ -124,7 +135,10 @@ class ChatPresenter @AssistedInject constructor(
                 }
 
                 if (value !is ChatScreen.State.LoadFailed) {
-                    val initialQuestion = initialQuestions.first()
+                    val currentState = value as? ChatScreen.State.Success
+                    val initialQuestionId = pendingCreatedQuestionId ?: currentState?.currentQuestion?.id
+                    val initialQuestion = initialQuestions.firstOrNull { it.id == initialQuestionId }
+                        ?: initialQuestions.first()
 
                     reduce {
                         ChatScreen.State.Success(
@@ -173,8 +187,9 @@ class ChatPresenter @AssistedInject constructor(
                                         matchingExperiencesList.putAll(remappedMatching)
 
                                         val fallbackQuestion = updatedQuestions.firstOrNull() ?: return@runOn
-                                        val selectedQuestion = updatedQuestions.firstOrNull { it.id == currentQuestion.id }
-                                            ?: fallbackQuestion
+                                        val selectedQuestion = updatedQuestions.firstOrNull {
+                                            it.id == currentQuestion.id
+                                        } ?: fallbackQuestion
                                         val selectedHistory = remappedHistories[selectedQuestion] ?: chattingHistory
                                         val selectedMatching = remappedMatching[selectedQuestion] ?: matchingExperiences
 
@@ -188,9 +203,36 @@ class ChatPresenter @AssistedInject constructor(
                                         }
                                     }
                                 }
+                                is ChatScreen.Event.AddCreatedQuestion -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        if (questions.none { it.id == event.question.id }) {
+                                            val createdQuestionHistory = chattingHistory.copy(
+                                                chattings = emptyList(),
+                                                experienceIds = emptySet(),
+                                                questionId = event.question.id,
+                                                questionTitle = event.question.title,
+                                                nextCursor = null,
+                                                hasMore = false,
+                                                remainingChats = 0,
+                                            )
+                                            chattingHistories[event.question] = createdQuestionHistory
+                                            matchingExperiencesList[event.question] = emptyList()
+                                            reduce {
+                                                copy(
+                                                    questions = questions + event.question,
+                                                    currentQuestion = event.question,
+                                                    chattingHistory = createdQuestionHistory,
+                                                    matchingExperiences = emptyList(),
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                                 is ChatScreen.Event.RefreshData -> {
                                     value.runOn<ChatScreen.State.Success> {
-                                        val selectedQuestionId = currentQuestion.id
+                                        val preferredQuestionId = pendingCreatedQuestionId
+                                            ?: event.preferredQuestionId
+                                            ?: currentQuestion.id
                                         scope.launch {
                                             questionRepository.getQuestions(screen.projectId).onSuccess { latestQuestions ->
                                                 if (latestQuestions.isEmpty()) return@onSuccess
@@ -234,10 +276,15 @@ class ChatPresenter @AssistedInject constructor(
                                                 matchingExperiencesList.clear()
                                                 matchingExperiencesList.putAll(latestMatching)
 
-                                                val nextQuestion = latestQuestions.firstOrNull { it.id == selectedQuestionId }
-                                                    ?: latestQuestions.first()
+                                                val nextQuestion = latestQuestions.firstOrNull { it.id == preferredQuestionId }
+                                                    ?: latestQuestions.firstOrNull { it.id == currentQuestion.id }
+                                                    ?: return@onSuccess
                                                 val nextHistory = latestHistories[nextQuestion] ?: return@onSuccess
                                                 val nextMatching = latestMatching[nextQuestion] ?: return@onSuccess
+
+                                                if (pendingCreatedQuestionId == nextQuestion.id) {
+                                                    pendingCreatedQuestionId = null
+                                                }
 
                                                 reduce {
                                                     copy(
@@ -257,7 +304,7 @@ class ChatPresenter @AssistedInject constructor(
                                     editQuestionsNavigator.goTo(screenProvider.editQuestionsScreen(screen.projectId))
                                 }
                                 is ChatScreen.Event.AddQuestion -> {
-                                    navigator.goTo(screenProvider.newQuestionScreen(screen.projectId))
+                                    newQuestionNavigator.goTo(screenProvider.newQuestionScreen(screen.projectId))
                                 }
                                 is ChatScreen.Event.ChangeCategory -> {
                                     value.runOn<ChatScreen.State.Success> {
@@ -268,6 +315,7 @@ class ChatPresenter @AssistedInject constructor(
                                 }
                                 is ChatScreen.Event.ChangeQuestion -> {
                                     value.runOn<ChatScreen.State.Success> {
+                                        pendingCreatedQuestionId = null
                                         reduce {
                                             copy(
                                                 currentQuestion = event.question,
@@ -522,9 +570,26 @@ class ChatPresenter @AssistedInject constructor(
             if (result != null) {
                 state.runOn<ChatScreen.State.Success> {
                     eventSink(ChatScreen.Event.ApplyEditedQuestions(result.questions))
-                    eventSink(ChatScreen.Event.RefreshData)
+                    eventSink(ChatScreen.Event.RefreshData())
                 }
                 editedQuestionsResult = null
+            }
+        }
+        LaunchedEffect(createdQuestionResult) {
+            val result = createdQuestionResult
+            if (result != null) {
+                state.runOn<ChatScreen.State.Success> {
+                    val createdQuestion = Question(
+                        id = result.questionId,
+                        title = result.title,
+                        maxLength = result.maxLength,
+                        letter = result.letter,
+                    )
+                    pendingCreatedQuestionId = result.questionId
+                    eventSink(ChatScreen.Event.AddCreatedQuestion(createdQuestion))
+                    eventSink(ChatScreen.Event.RefreshData(preferredQuestionId = result.questionId))
+                }
+                createdQuestionResult = null
             }
         }
 

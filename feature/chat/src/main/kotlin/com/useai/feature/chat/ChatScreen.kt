@@ -41,7 +41,8 @@ data class ChatScreen(val projectId: String): Screen {
     sealed interface Event : CircuitUiEvent {
         data class ChangeQuestion(val question: Question) : Event
         data class ChangeCategory(val category: ChatScreenCategory) : Event
-        data object RefreshData : Event
+        data class RefreshData(val preferredQuestionId: String? = null) : Event
+        data class AddCreatedQuestion(val question: Question) : Event
         data class ApplyEditedQuestions(val questions: List<EditQuestionsScreen.EditedQuestionResult>) : Event
         data object EditQuestions : Event
         data object AddQuestion : Event

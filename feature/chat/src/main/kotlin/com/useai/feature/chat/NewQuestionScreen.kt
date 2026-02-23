@@ -13,6 +13,7 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.QuestionRepository
 import com.useai.core.model.project.ProjectQuestionParam
@@ -25,9 +26,18 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NewQuestionScreen(val projectId: String) : Screen {
+    @Parcelize
+    data class QuestionCreatedResult(
+        val questionId: String,
+        val title: String,
+        val maxLength: Int,
+        val letter: String,
+    ) : PopResult
+
     data class State(
         val question: String,
         val maxLength: Int,
+        val isSubmitting: Boolean,
         val isButtonEnabled: Boolean,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
@@ -49,12 +59,14 @@ class NewQuestionPresenter @AssistedInject constructor(
     override fun present(): NewQuestionScreen.State {
         var question by rememberRetained { mutableStateOf("") }
         var maxLength by rememberRetained { mutableIntStateOf(0) }
+        var isSubmitting by rememberRetained { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
 
         return NewQuestionScreen.State(
             question = question,
             maxLength = maxLength,
-            isButtonEnabled = question.isNotBlank() && maxLength > 0,
+            isSubmitting = isSubmitting,
+            isButtonEnabled = !isSubmitting && question.isNotBlank() && maxLength > 0,
         ) { event ->
             when (event) {
                 NewQuestionScreen.Event.Back -> {
@@ -70,17 +82,27 @@ class NewQuestionPresenter @AssistedInject constructor(
                 }
 
                 NewQuestionScreen.Event.ConfirmClicked -> {
+                    if (isSubmitting || question.isBlank() || maxLength <= 0) return@State
                     scope.launch {
+                        isSubmitting = true
                         questionRepository.createQuestion(
                             projectId = screen.projectId,
                             question = ProjectQuestionParam(
                                 question = question,
                                 maxLength = maxLength,
                             )
-                        ).onSuccess {
-                            navigator.pop()
+                        ).onSuccess { createdQuestionId ->
+                            navigator.pop(
+                                NewQuestionScreen.QuestionCreatedResult(
+                                    questionId = createdQuestionId,
+                                    title = question.trim(),
+                                    maxLength = maxLength,
+                                    letter = "",
+                                )
+                            )
                         }.onFailure {
                             Log.e(TAG, "createQuestion failed: $it")
+                            isSubmitting = false
                         }
                     }
                 }
