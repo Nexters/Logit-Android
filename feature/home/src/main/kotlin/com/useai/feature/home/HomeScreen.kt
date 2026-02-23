@@ -2,12 +2,21 @@ package com.useai.feature.home
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
@@ -21,6 +30,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -46,6 +56,8 @@ class HomePresenter @AssistedInject constructor(
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
+        val scope = rememberStableCoroutineScope()
+        val lifecycleOwner = LocalLifecycleOwner.current
         val userProfile by produceRetainedState(initialValue = UserProfile("", "")) {
             accountRepository.getUser()
                 .onSuccess {
@@ -55,14 +67,32 @@ class HomePresenter @AssistedInject constructor(
                     Log.e(TAG, "getUser failed: $it")
                 }
         }
-        val projects by produceRetainedState(initialValue = emptyList()) {
-            projectRepository.getProjects() // TODO: 페이징 사용, 화면 진입 시마다 요청하지 않도록 개선 필요
-                .onSuccess { value = it }
-                .onFailure {
-                    Log.e(TAG, "getProjects failed: $it")
-                }
-        }
+        var projects by rememberRetained { mutableStateOf<List<ProjectListItem>>(emptyList()) }
         val screenProvider = LocalScreenProvider.current
+
+        val fetchProjects = remember {
+            {
+                scope.launch {
+                    projectRepository.getProjects() // TODO: paging
+                        .onSuccess { projects = it }
+                        .onFailure {
+                            Log.e(TAG, "getProjects failed: $it")
+                        }
+                }
+            }
+        }
+
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    fetchProjects()
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
 
         return HomeScreen.State(
             userProfile = userProfile,
@@ -75,9 +105,7 @@ class HomePresenter @AssistedInject constructor(
                 )
 
                 is HomeScreen.Event.ProjectClicked -> navigator.goTo(
-                    screenProvider.chatScreen(
-                        event.projectId
-                    )
+                    screenProvider.chatScreen(event.projectId)
                 )
 
                 HomeScreen.Event.AccountClicked -> navigator.goTo(
