@@ -11,6 +11,7 @@ import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceDetailScreen
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import com.useai.feature.newproject.NewProjectQuestionScreen
+import com.useai.feature.projects.ProjectLibraryScreen
 import com.useai.feature.projects.ProjectsScreen
 
 class ScreenProviderImpl: ScreenProvider {
@@ -21,6 +22,8 @@ class ScreenProviderImpl: ScreenProvider {
     override fun accountScreen(): Screen = AccountScreen
 
     override fun projectsScreen(): Screen = ProjectsScreen
+
+    override fun projectLibraryScreen(projectId: String): Screen = ProjectLibraryScreen(projectId)
 
     override fun newProjectBasicInfoScreen(): Screen = NewProjectBasicInfoScreen
 

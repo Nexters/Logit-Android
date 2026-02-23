@@ -7,6 +7,7 @@ interface ScreenProvider {
     fun homeScreen(): Screen
     fun accountScreen(): Screen
     fun projectsScreen(): Screen
+    fun projectLibraryScreen(projectId: String): Screen
     fun newProjectBasicInfoScreen(): Screen
     fun newProjectQuestionScreen(
         companyName: String,
