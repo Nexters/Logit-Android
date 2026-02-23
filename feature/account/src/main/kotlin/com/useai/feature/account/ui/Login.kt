@@ -49,12 +49,12 @@ fun Login(
 ) {
     Scaffold(
         modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+            .fillMaxSize(),
         containerColor = LogitTheme.colors.white,
     ) { paddingValues ->
         Column(
             modifier = Modifier
+                .statusBarsPadding()
                 .padding(paddingValues)
                 .padding(
                     horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
