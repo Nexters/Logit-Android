@@ -16,7 +16,7 @@
     <string name="home_new_project">자기소개서 작성</string>
     <string name="home_project_list_item_title_format">%s %s</string>
 
-    <string name="update_letter">자기소개서 업데이트</string>
+    <string name="update_letter">자기소개서 업데이트</string>ㅊ
     <string name="placeholder_message_input">어떤 내용을 만들어볼까요?</string>
     <string name="question_number">Q%s</string>
     <string name="chatting">채팅</string>

@@ -4,13 +4,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,21 +16,30 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFieldLabel
 import com.useai.core.ui.LogitInputField
+import com.useai.core.ui.LogitStepper
 import com.useai.feature.experience.ExperienceCreateDefaults
 import com.useai.feature.experience.ExperienceCreateScreen
+import com.useai.feature.experience.ExperienceCreateStep
 
 @Composable
 internal fun ExperienceCreateBasicInfoStep(
     state: ExperienceCreateScreen.State,
 ) {
     Column {
+        LogitStepper(
+            currentStep = ExperienceCreateStep.BASIC_INFO.step.toString(),
+            totalStep = ExperienceCreateStep.BASIC_INFO.total.toString(),
+        )
+
+        Spacer(modifier = Modifier.padding(top = 13.dp))
+
         ExperienceCreateSectionHeader(
             title = stringResource(R.string.experience_create_step1_title),
             description = stringResource(R.string.experience_create_step1_desc),
             onClickLoadExample = { state.eventSink(ExperienceCreateScreen.Event.LoadExample) }
         )
 
-        Spacer(modifier = Modifier.padding(top = 51.dp))
+        Spacer(modifier = Modifier.padding(top = 36.dp))
 
         LogitInputField(
             label = stringResource(R.string.experience_create_title_label),
@@ -51,30 +57,12 @@ internal fun ExperienceCreateBasicInfoStep(
             isRequired = true,
         )
         Spacer(modifier = Modifier.padding(top = 10.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ExperienceDateInputField(
-                value = state.startDate,
-                onValueChange = { state.eventSink(ExperienceCreateScreen.Event.ChangeStartDate(it)) },
-                placeholder = "YYYY. MM. DD",
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "~",
-                style = LogitTheme.typography.body5_4,
-                color = LogitTheme.colors.gray200,
-            )
-            ExperienceDateInputField(
-                value = state.endDate,
-                onValueChange = { state.eventSink(ExperienceCreateScreen.Event.ChangeEndDate(it)) },
-                placeholder = "YYYY. MM. DD",
-                modifier = Modifier.weight(1f),
-                enabled = !state.isInProgress
-            )
-        }
+        ExperienceDateInputField(
+            value = state.startDate,
+            onValueChange = { state.eventSink(ExperienceCreateScreen.Event.ChangeStartDate(it)) },
+            placeholder = "YYYY. MM. DD",
+            modifier = Modifier.fillMaxWidth()
+        )
 
         ProgressCheckBox(
             checked = state.isInProgress,

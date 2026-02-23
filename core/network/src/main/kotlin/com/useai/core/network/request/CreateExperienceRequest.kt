@@ -5,12 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreateExperienceRequest(
-    @SerialName("category") val category: String,
-    @SerialName("date") val date: String,
+    @SerialName("title") val title: String,
     @SerialName("experience_type") val experienceType: String,
+    @SerialName("format_type") val formatType: String,
+    @SerialName("start_date") val startDate: String,
+    @SerialName("end_date") val endDate: String? = null,
+    @SerialName("tags") val tags: String,
     @SerialName("situation") val situation: String,
     @SerialName("task") val task: String,
     @SerialName("action") val action: String,
     @SerialName("result") val result: String,
-    @SerialName("title") val title: String
 )

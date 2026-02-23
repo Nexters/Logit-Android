@@ -14,9 +14,7 @@ import com.useai.core.data.repository.ExperienceRepository
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
-import com.useai.core.model.experience.ExperienceCategory
 import com.useai.core.model.experience.ExperienceParam
-import com.useai.core.ui.fullName
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -42,14 +40,12 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         var currentStep by rememberRetained { mutableStateOf(ExperienceCreateStep.BASIC_INFO) }
         var title by rememberRetained { mutableStateOf("") }
         var startDate by rememberRetained { mutableStateOf("") }
-        var endDate by rememberRetained { mutableStateOf("") }
         var isInProgress by rememberRetained { mutableStateOf(false) }
         var selectedExperienceType by rememberRetained { mutableStateOf<String?>(null) }
         var situation by rememberRetained { mutableStateOf("") }
         var task by rememberRetained { mutableStateOf("") }
         var action by rememberRetained { mutableStateOf("") }
         var result by rememberRetained { mutableStateOf("") }
-        var selectedCategory by rememberRetained { mutableStateOf<ExperienceCategory?>(null) }
         var isSubmitting by rememberRetained { mutableStateOf(false) }
 
         val eventSink: (ExperienceCreateScreen.Event) -> Unit = { event ->
@@ -67,8 +63,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                         ExperienceCreateStep.BASIC_INFO -> {
                             title = ExperienceCreateDefaults.sampleTitle
                             startDate = "2022. 04. 06"
-                            endDate = "2022. 04. 06"
-                            isInProgress = false
+                            isInProgress = true
                             selectedExperienceType = ExperienceCreateDefaults.experienceTypes.first()
                         }
 
@@ -78,17 +73,13 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                             action = ExperienceCreateDefaults.sampleAction
                             result = ExperienceCreateDefaults.sampleResult
                         }
-
-                        ExperienceCreateStep.CATEGORY -> {
-                            selectedCategory = ExperienceCategory.CUSTOMER_VALUE_ORIENTATION
-                        }
                     }
                 }
 
                 ExperienceCreateScreen.Event.Next -> {
                     when (currentStep) {
                         ExperienceCreateStep.BASIC_INFO -> {
-                            if (isBasicInfoValid(title, startDate, endDate, isInProgress, selectedExperienceType)) {
+                            if (isBasicInfoValid(title, startDate, selectedExperienceType)) {
                                 currentStep = ExperienceCreateStep.STAR
                             } else {
                                 scope.launch {
@@ -101,20 +92,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                         }
 
                         ExperienceCreateStep.STAR -> {
-                            if (isStarValid(situation, task, action, result)) {
-                                currentStep = ExperienceCreateStep.CATEGORY
-                            } else {
-                                scope.launch {
-                                    snackbarHostState.showLogitSnackbar(
-                                        message = invalidInputMessage,
-                                        iconResId = R.drawable.ic_experience_default
-                                    )
-                                }
-                            }
-                        }
-
-                        ExperienceCreateStep.CATEGORY -> {
-                            if (isSubmitting || selectedCategory == null) {
+                            if (isSubmitting) {
                                 scope.launch {
                                     snackbarHostState.showLogitSnackbar(
                                         message = invalidInputMessage,
@@ -122,9 +100,14 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                     )
                                 }
                             } else {
-                                val selected = requireNotNull(selectedCategory)
                                 val parsedStartDate = parseDate(startDate)
-                                if (parsedStartDate == null || selectedExperienceType == null) {
+                                val parsedEndDate = if (isInProgress) null else parsedStartDate
+                                if (
+                                    !isStarValid(situation, task, action, result) ||
+                                    parsedStartDate == null ||
+                                    selectedExperienceType == null ||
+                                    (!isInProgress && parsedEndDate == null)
+                                ) {
                                     scope.launch {
                                         snackbarHostState.showLogitSnackbar(
                                             message = invalidInputMessage,
@@ -136,18 +119,24 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                     scope.launch {
                                         experienceRepository.createExperience(
                                             ExperienceParam(
-                                            situation = situation.trim(),
-                                            task = task.trim(),
-                                            action = action.trim(),
-                                            result = result.trim(),
-                                            category = selected.fullName,
-                                            date = parsedStartDate,
-                                            experienceType = selectedExperienceType.orEmpty(),
-                                            title = title.trim()
-                                        )
+                                                title = title.trim(),
+                                                experienceType = selectedExperienceType.orEmpty(),
+                                                formatType = FORMAT_TYPE_STAR,
+                                                startDate = parsedStartDate,
+                                                endDate = parsedEndDate,
+                                                tags = "",
+                                                situation = situation.trim(),
+                                                task = task.trim(),
+                                                action = action.trim(),
+                                                result = result.trim()
+                                            )
                                         ).onSuccess { created ->
                                             isSubmitting = false
-                                            navigator.goTo(ExperienceDetailScreen(created.id))
+                                            navigator.pop(
+                                                ExperienceCreateScreen.ExperienceCreatedResult(
+                                                    experienceId = created.id
+                                                )
+                                            )
                                         }.onFailure {
                                             isSubmitting = false
                                             snackbarHostState.showLogitSnackbar(
@@ -164,18 +153,13 @@ class ExperienceCreatePresenter @AssistedInject constructor(
 
                 is ExperienceCreateScreen.Event.ChangeTitle -> title = event.value
                 is ExperienceCreateScreen.Event.ChangeStartDate -> startDate = event.value
-                is ExperienceCreateScreen.Event.ChangeEndDate -> endDate = event.value
-                ExperienceCreateScreen.Event.ToggleInProgress -> {
-                    isInProgress = !isInProgress
-                    if (isInProgress) endDate = ""
-                }
+                ExperienceCreateScreen.Event.ToggleInProgress -> isInProgress = !isInProgress
 
                 is ExperienceCreateScreen.Event.SelectExperienceType -> selectedExperienceType = event.value
                 is ExperienceCreateScreen.Event.ChangeSituation -> situation = event.value
                 is ExperienceCreateScreen.Event.ChangeTask -> task = event.value
                 is ExperienceCreateScreen.Event.ChangeAction -> action = event.value
                 is ExperienceCreateScreen.Event.ChangeResult -> result = event.value
-                is ExperienceCreateScreen.Event.SelectCategory -> selectedCategory = event.value
             }
         }
 
@@ -183,14 +167,12 @@ class ExperienceCreatePresenter @AssistedInject constructor(
             currentStep = currentStep,
             title = title,
             startDate = startDate,
-            endDate = endDate,
             isInProgress = isInProgress,
             selectedExperienceType = selectedExperienceType,
             situation = situation,
             task = task,
             action = action,
             result = result,
-            selectedCategory = selectedCategory,
             isSubmitting = isSubmitting,
             eventSink = eventSink
         )
@@ -207,13 +189,9 @@ class ExperienceCreatePresenter @AssistedInject constructor(
     private fun isBasicInfoValid(
         title: String,
         startDate: String,
-        endDate: String,
-        isInProgress: Boolean,
         selectedExperienceType: String?,
     ): Boolean {
-        val hasValidDate = parseDate(startDate) != null &&
-            (isInProgress || parseDate(endDate) != null)
-        return title.isNotBlank() && hasValidDate && selectedExperienceType != null
+        return title.isNotBlank() && parseDate(startDate) != null && selectedExperienceType != null
     }
 
     private fun isStarValid(
@@ -239,11 +217,11 @@ class ExperienceCreatePresenter @AssistedInject constructor(
     private fun ExperienceCreateStep.previous(): ExperienceCreateStep = when (this) {
         ExperienceCreateStep.BASIC_INFO -> ExperienceCreateStep.BASIC_INFO
         ExperienceCreateStep.STAR -> ExperienceCreateStep.BASIC_INFO
-        ExperienceCreateStep.CATEGORY -> ExperienceCreateStep.STAR
     }
 
     companion object {
         private const val MIN_STAR_LENGTH = 50
+        private const val FORMAT_TYPE_STAR = "STAR"
         private val DATE_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy. MM. dd", Locale.KOREA)
     }
 }

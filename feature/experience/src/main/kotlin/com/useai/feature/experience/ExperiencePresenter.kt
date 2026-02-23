@@ -2,6 +2,7 @@ package com.useai.feature.experience
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import com.slack.circuit.foundation.rememberAnsweringNavigator
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.Navigator
@@ -24,6 +25,11 @@ class ExperiencePresenter @AssistedInject constructor(
     override fun present(): ExperienceScreen.State {
         val scope = rememberStableCoroutineScope()
         val screenProvider = LocalScreenProvider.current
+        val createExperienceNavigator = rememberAnsweringNavigator<ExperienceCreateScreen.ExperienceCreatedResult>(
+            fallbackNavigator = navigator
+        ) { result ->
+            navigator.goTo(screenProvider.experienceDetailScreen(result.experienceId))
+        }
 
         val state by produceRetainedState<ExperienceScreen.State>(ExperienceScreen.State.Loading) {
             lateinit var fetchExperiences: suspend () -> Unit
@@ -38,11 +44,11 @@ class ExperiencePresenter @AssistedInject constructor(
                     }
 
                     ExperienceScreen.Event.ClickAddExperience -> {
-                        navigator.goTo(screenProvider.experienceCreateScreen())
+                        createExperienceNavigator.goTo(screenProvider.experienceCreateScreen())
                     }
 
                     ExperienceScreen.Event.ClickRegisterExperience -> {
-                        navigator.goTo(screenProvider.experienceCreateScreen())
+                        createExperienceNavigator.goTo(screenProvider.experienceCreateScreen())
                     }
 
                     is ExperienceScreen.Event.ClickExperienceCard -> {
