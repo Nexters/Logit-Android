@@ -315,7 +315,7 @@ internal fun ChatChattingUI(
                     state.eventSink(ChatScreen.Event.EditQuestions)
                 },
                 onQuestionDelete = {
-                    state.eventSink(ChatScreen.Event.DeleteProject)
+                    state.eventSink(ChatScreen.Event.TryDeleteProject)
                 },
                 onBack = {
                     state.eventSink(ChatScreen.Event.NavigateBack)

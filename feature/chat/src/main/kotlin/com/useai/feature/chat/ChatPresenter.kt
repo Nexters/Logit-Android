@@ -419,12 +419,35 @@ class ChatPresenter @AssistedInject constructor(
                                         }
                                     }
                                 }
-                                is ChatScreen.Event.DeleteProject -> {
+                                is ChatScreen.Event.TryDeleteProject -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        reduce {
+                                            copy(showDeleteDialog = true)
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.DismissDeleteDialog -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        reduce {
+                                            copy(showDeleteDialog = false)
+                                        }
+                                    }
+                                }
+                                is ChatScreen.Event.ConfirmDeleteProject -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        reduce {
+                                            copy(showDeleteDialog = false)
+                                        }
+                                    }
                                     scope.launch {
                                         projectRepository.deleteProject(screen.projectId)
                                             .onSuccess {
                                                 withContext(Dispatchers.Main.immediate) {
-                                                    navigator.pop()
+                                                    navigator.pop(
+                                                        result = ChatScreen.ProjectDeletedResult(
+                                                            projectId = screen.projectId
+                                                        )
+                                                    )
                                                 }
                                             }
                                             .onFailure {

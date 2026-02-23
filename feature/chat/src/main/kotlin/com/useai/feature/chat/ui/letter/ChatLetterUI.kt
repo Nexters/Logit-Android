@@ -89,7 +89,7 @@ internal fun ChatLetterUI(
                 },
                 onQuestionDelete = {
                     commitLetterIfChanged()
-                    state.eventSink(ChatScreen.Event.DeleteProject)
+                    state.eventSink(ChatScreen.Event.TryDeleteProject)
                 },
                 onBack = {
                     commitLetterIfChanged()
