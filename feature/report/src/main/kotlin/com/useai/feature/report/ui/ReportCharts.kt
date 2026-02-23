@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
@@ -48,6 +49,15 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
+
+private val reportChartValueColors = listOf(
+    Color(0xFF008B84),
+    Color(0xFF409AB6),
+    Color(0xFF6A77D7),
+    Color(0xFF8160C4),
+    Color(0xFFA45CB9),
+    Color(0xFFB84B8C),
+)
 
 @Composable
 internal fun ReportTypeVerticalChartSection(
@@ -90,6 +100,7 @@ internal fun ReportTypeVerticalChartSection(
         ) {
             data.forEachIndexed { index, item ->
                 val color = colors[index % colors.size]
+                val valueColor = reportChartValueColors[index % reportChartValueColors.size]
                 val barRatio = item.count.toFloat() / max.toFloat()
                 val animatedRatio = barRatio * progress
                 val animatedCount = (item.count * progress).roundToInt()
@@ -101,7 +112,7 @@ internal fun ReportTypeVerticalChartSection(
                     Text(
                         text = animatedCount.toString(),
                         style = LogitTheme.typography.body9_2,
-                        color = color
+                        color = valueColor
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
@@ -109,7 +120,7 @@ internal fun ReportTypeVerticalChartSection(
                             .width(20.dp)
                             .height(((130f * animatedRatio) + 18f).dp)
                             .clip(RoundedCornerShape(9.dp))
-                            .background(color.copy(alpha = 0.55f))
+                            .background(color)
                     )
                 }
             }
@@ -145,7 +156,10 @@ internal fun ReportTagDonutChartSection(
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "{각 해시태그 별 전문성을 강조하는 지정 멘트}",
+            text = stringResource(
+                id = (maxItem?.tag ?: "").reportTagDescriptionRes(),
+                maxItem?.tag ?: "-"
+            ),
             style = LogitTheme.typography.body6_1,
             color = LogitTheme.colors.gray300
         )
@@ -182,10 +196,11 @@ internal fun ReportTagDonutChartSection(
                     val drawSweep = (visibleSegmentSweep - visualGap - (2f * capAngle)).coerceAtLeast(0f)
                     val drawStart = startAngle + (visualGap / 2f) + capAngle
                     val color = colors[index % colors.size]
+                    val valueColor = reportChartValueColors[index % reportChartValueColors.size]
 
                     if (drawSweep > 0f) {
                         drawArc(
-                            color = color.copy(alpha = 0.55f),
+                            color = color,
                             startAngle = drawStart,
                             sweepAngle = drawSweep,
                             useCenter = false,
@@ -201,7 +216,7 @@ internal fun ReportTagDonutChartSection(
                         val textX = center.x + (labelRadius * cos(rad)).toFloat()
                         val textCenterY = center.y + (labelRadius * sin(rad)).toFloat()
                         val textBaselineY = textCenterY - ((textPaint.ascent() + textPaint.descent()) / 2f)
-                        textPaint.color = color.toArgb()
+                        textPaint.color = valueColor.toArgb()
                         drawContext.canvas.nativeCanvas.drawText(item.count.toString(), textX, textBaselineY, textPaint)
                     }
 
@@ -248,7 +263,7 @@ internal fun ReportCategoryHorizontalChartSection(
 
     ReportWhiteSection(modifier = modifier) {
         Text(
-            text = "${maxItem?.type?.displayName ?: "-"}이 가장 많아요",
+            text = "${maxItem?.type?.displayName ?: "-"} 경험이 가장 많아요",
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
@@ -267,6 +282,7 @@ internal fun ReportCategoryHorizontalChartSection(
         ) {
             data.fastForEachIndexed { index, item ->
                 val color = colors[index % colors.size]
+                val valueColor = reportChartValueColors[index % reportChartValueColors.size]
                 val ratio = item.count.toFloat() / max.toFloat()
                 val animatedRatio = ratio * progress
                 val animatedCount = (item.count * progress).roundToInt()
@@ -280,7 +296,7 @@ internal fun ReportCategoryHorizontalChartSection(
                         modifier = Modifier.width(25.dp),
                         textAlign = TextAlign.End,
                         style = LogitTheme.typography.body9_2,
-                        color = color
+                        color = valueColor
                     )
                     Spacer(modifier = Modifier.width(15.dp))
                     Box(
@@ -288,14 +304,14 @@ internal fun ReportCategoryHorizontalChartSection(
                             .weight(1f)
                             .height(14.dp)
                             .clip(RoundedCornerShape(11.dp))
-                            .background(LogitTheme.colors.gray70)
+                            .background(Color(0xFFF5F7FA))
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth(animatedRatio)
                                 .height(22.dp)
                                 .clip(RoundedCornerShape(11.dp))
-                                .background(color.copy(alpha = 0.55f))
+                                .background(color)
                         )
                     }
                 }

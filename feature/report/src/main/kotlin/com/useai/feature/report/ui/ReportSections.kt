@@ -23,10 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.ExperienceCategory
 import com.useai.core.model.report.ExperienceSummary
@@ -51,6 +49,7 @@ internal fun ReportProfileIntroCard(
 @Composable
 internal fun ReportTopInsightCard(
     title: String,
+    description: String,
     chips: List<ExperienceCategory>,
     modifier: Modifier = Modifier,
 ) {
@@ -59,9 +58,14 @@ internal fun ReportTopInsightCard(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = stringResource(R.string.report_insight_title, title),
+            text = title,
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
+        )
+        Text(
+            text = description,
+            style = LogitTheme.typography.body6_1,
+            color = LogitTheme.colors.gray300
         )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),

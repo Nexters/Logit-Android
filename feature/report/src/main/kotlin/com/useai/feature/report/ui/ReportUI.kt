@@ -25,7 +25,6 @@ import com.useai.core.model.report.ExperienceReportType
 import com.useai.core.model.report.ExperienceSummary
 import com.useai.core.model.report.ExperienceTagCount
 import com.useai.core.model.report.ExperienceTypeCount
-import com.useai.core.ui.fullName
 import com.useai.feature.report.ReportScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
@@ -50,6 +49,7 @@ fun ReportUI(
         is ReportScreen.State.Success -> {
             ReportSuccessUI(
                 modifier = modifier,
+                userName = state.userName,
                 summary = state.summary
             )
         }
@@ -100,23 +100,26 @@ private fun ReportLoadFailed(
 
 @Composable
 private fun ReportSuccessUI(
+    userName: String,
     summary: ExperienceSummary,
     modifier: Modifier = Modifier,
 ) {
     val chartColors = listOf(
-        LogitTheme.colors.icon1,
-        LogitTheme.colors.icon2,
-        LogitTheme.colors.icon4,
-        LogitTheme.colors.icon6,
-        androidx.compose.ui.graphics.Color(0xFFD39BE8),
-        androidx.compose.ui.graphics.Color(0xFFE3B0CF),
+        androidx.compose.ui.graphics.Color(0xFFBFEFEC),
+        androidx.compose.ui.graphics.Color(0xFFC5ECF8),
+        androidx.compose.ui.graphics.Color(0xFFDDE1FF),
+        androidx.compose.ui.graphics.Color(0xFFE4DAF8),
+        androidx.compose.ui.graphics.Color(0xFFEDD8F3),
+        androidx.compose.ui.graphics.Color(0xFFF4D8E9),
     )
 
     val topCategory = summary.categoryCounts.maxByOrNull { it.count }
+    val displayName = userName.ifBlank { stringResource(R.string.report_default_user_name) }
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .background(LogitTheme.colors.gray20),
         contentPadding = PaddingValues(bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -126,12 +129,11 @@ private fun ReportSuccessUI(
                 modifier = Modifier
                     .fillParentMaxWidth()
                     .background(LogitTheme.colors.white)
-                    .statusBarsPadding()
                     .padding(vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.report_profile_title),
+                    text = stringResource(R.string.report_profile_title_with_user, displayName),
                     style = LogitTheme.typography.body1,
                     color = LogitTheme.colors.black,
                     modifier = Modifier.padding(horizontal = 20.dp)
@@ -143,7 +145,10 @@ private fun ReportSuccessUI(
                     )
                 ReportTopInsightCard(
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    title = topCategory?.category?.fullName ?: stringResource(R.string.report_default_top_category),
+                    title = stringResource(R.string.report_top_insight_title_with_user, displayName),
+                    description = stringResource(
+                        topCategory?.category.reportTopInsightDescriptionResOrDefault()
+                    ),
                     chips = summary.categoryCounts
                         .sortedByDescending { it.count }
                         .map { it.category }
@@ -154,7 +159,7 @@ private fun ReportSuccessUI(
         item {
             ReportTypeVerticalChartSection(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.categoryCounts.sortedByDescending { it.count }.take(6),
+                data = summary.categoryCounts.toVerticalChartData(maxSize = 6),
                 colors = chartColors
             )
         }
@@ -162,7 +167,7 @@ private fun ReportSuccessUI(
         item {
             ReportTagDonutChartSection(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.tagCounts.sortedByDescending { it.count }.take(6),
+                data = summary.tagCounts.toDonutChartData(maxSize = 6),
                 colors = chartColors
             )
         }
@@ -170,7 +175,7 @@ private fun ReportSuccessUI(
         item {
             ReportCategoryHorizontalChartSection(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.typeCounts.sortedByDescending { it.count }.take(6),
+                data = summary.typeCounts.toHorizontalChartData(maxSize = 6),
                 colors = chartColors
             )
         }
@@ -185,6 +190,7 @@ private fun ReportUIPreview() {
             ReportUI(
                 modifier = Modifier.padding(padding),
                 state = ReportScreen.State.Success(
+                    userName = "로짓",
                     summary = ExperienceSummary(
                         typeCounts = listOf(
                             ExperienceTypeCount(ExperienceReportType.INTERN, 6),

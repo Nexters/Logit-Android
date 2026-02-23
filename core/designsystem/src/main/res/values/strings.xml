@@ -125,14 +125,29 @@
     <string name="report_loading">리포트를 불러오는 중…</string>
     <string name="report_load_failed">리포트를 불러오지 못했어요</string>
     <string name="report_retry">다시 시도</string>
-    <string name="report_profile_title">로짓의 프로파일</string>
-    <string name="report_intro_text">도구와 기술 스택을 농축하게 활용한 기술적 전문성</string>
-    <string name="report_default_top_category">기술적 전문성</string>
+    <string name="report_profile_title_with_user">%1$s님의 프로파일</string>
+    <string name="report_top_insight_title_with_user">%1$s님의 강점들을 모아봤어요</string>
+    <string name="report_default_user_name">사용자</string>
+    <string name="report_top_insight_desc_proactive_execution">직접 문제를 정의하고 움직이는 \'행동파 리더\'의 면모가 돋보여요.</string>
+    <string name="report_top_insight_desc_technical_expertise">자신만의 탄탄한 기술 스택과 전공 지식을 실무에 녹여내는 \'스페셜리스트\'입니다.</string>
+    <string name="report_top_insight_desc_logical_analysis">근거와 데이터를 바탕으로 설득하는 \'전략가\' 타입의 경험이 많으시네요.</string>
+    <string name="report_top_insight_desc_creative_problem_solving">고정관념을 깨는 새로운 시각으로 남다른 대안을 제시하는 \'아이디어 뱅크\'의 자질이 충분합니다.</string>
+    <string name="report_top_insight_desc_collaborative_communication">팀원들 사이의 갈등을 조율하고 시너지를 만들어내는 \'최고의 커뮤니케이터\'예요.</string>
+    <string name="report_top_insight_desc_tenacious_responsibility">어려운 상황에서도 목표를 놓지 않고 끝내 결과를 만들어내는 \'책임감 있는 파트너\'의 면모가 돋보여요.</string>
+    <string name="report_top_insight_desc_flexible_adaptability">변화하는 환경에 기민하게 대처하며 빠르게 성장하는 \'성장형 인재\'의 강점이 두드러집니다.</string>
+    <string name="report_top_insight_desc_customer_value_orientation">사용자의 관점에서 깊게 고민하고 불편함을 해결하는 \'공감형 기획자\'시군요.</string>
+    <string name="report_top_insight_desc_default">경험 분포를 바탕으로 강점이 두드러지는 영역을 분석했어요.</string>
     <string name="report_insight_title">%s이 가장 두드러져요</string>
     <string name="report_type_chart_subtitle">경험 유형별 개수 기반</string>
     <string name="report_category_chart_subtitle">핵심 역량 분포를 반영한 강점 기반</string>
     <string name="report_tag_chart_subtitle">AI 생성 역량 태그 기반</string>
     <string name="report_total_count">경험 %d개</string>
+    <string name="report_tag_desc_common">업무의 기초가 되는 %1$s 역량이 탄탄하게 갖춰져 있습니다.</string>
+    <string name="report_tag_desc_it_tech">%1$s 기술을 바탕으로 복잡한 문제를 해결하는 기술 전문가입니다.</string>
+    <string name="report_tag_desc_design_art">%1$s를 통해 사용자 중심의 가치를 시각적으로 구현하는 디자이너입니다.</string>
+    <string name="report_tag_desc_planning_business">%1$s 역량을 발휘하여 비즈니스 모델과 서비스의 방향을 결정하는 기획자입니다.</string>
+    <string name="report_tag_desc_marketing_sales">%1$s 지표를 기반으로 고객의 마음을 사로잡고 성과를 만들어내는 마케터입니다.</string>
+    <string name="report_tag_desc_operations_support">%1$s 활동을 통해 서비스 안정성을 높이고 조직의 성장을 돕는 조율자입니다.</string>
     <string name="projects_count_format">%d개</string>
 
     <!-- region Content Descriptions  -->

@@ -10,6 +10,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.useai.core.data.repository.AccountRepository
 import com.useai.core.data.repository.ReportRepository
 import com.useai.core.model.report.ExperienceSummary
 import com.useai.core.ui.reduce
@@ -24,6 +25,7 @@ import kotlinx.parcelize.Parcelize
 data object ReportScreen : Screen {
     sealed interface State : CircuitUiState {
         data class Success(
+            val userName: String,
             val summary: ExperienceSummary,
             val eventSink: (Event) -> Unit,
         ) : State
@@ -42,6 +44,7 @@ data object ReportScreen : Screen {
 
 class ReportPresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
+    private val accountRepository: AccountRepository,
     private val reportRepository: ReportRepository,
 ) : Presenter<ReportScreen.State> {
     @Composable
@@ -64,8 +67,14 @@ class ReportPresenter @AssistedInject constructor(
             fetchSummary = {
                 reportRepository.getExperienceSummary()
                     .onSuccess { summary ->
+                        val userName = accountRepository.getUser()
+                            .getOrNull()
+                            ?.fullName
+                            ?.trim()
+                            .orEmpty()
                         reduce {
                             ReportScreen.State.Success(
+                                userName = userName,
                                 summary = summary,
                                 eventSink = eventSink
                             )
