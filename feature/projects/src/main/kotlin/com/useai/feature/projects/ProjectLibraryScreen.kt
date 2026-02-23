@@ -41,6 +41,7 @@ data class ProjectLibraryScreen(val projectId: String) : Screen {
             val questions: List<Question>,
             val selectedQuestionId: String,
             val isMenuExpanded: Boolean,
+            val showDeleteDialog: Boolean,
             val eventSink: (Event) -> Unit,
         ) : State
     }
@@ -51,7 +52,9 @@ data class ProjectLibraryScreen(val projectId: String) : Screen {
         data object ToggleMenu : Event
         data object DismissMenu : Event
         data object EditProject : Event
-        data object DeleteProject : Event
+        data object TryDeleteQuestion : Event
+        data object DismissDeleteDialog : Event
+        data object ConfirmDeleteQuestion : Event
     }
 }
 
@@ -94,6 +97,7 @@ class ProjectLibraryPresenter @AssistedInject constructor(
                     questions = questions,
                     selectedQuestionId = questions.first().id,
                     isMenuExpanded = false,
+                    showDeleteDialog = false,
                     eventSink = eventSink@{ event ->
                         when (event) {
                             ProjectLibraryScreen.Event.Back -> navigator.pop()
@@ -118,13 +122,50 @@ class ProjectLibraryPresenter @AssistedInject constructor(
                                 shouldRefreshAfterEdit = true
                                 navigator.goTo(screenProvider.editQuestionsScreen(screen.projectId))
                             }
-                            ProjectLibraryScreen.Event.DeleteProject -> {
+                            ProjectLibraryScreen.Event.TryDeleteQuestion -> {
                                 val current = state as? ProjectLibraryScreen.State.Success ?: return@eventSink
-                                state = current.copy(isMenuExpanded = false)
+                                state = current.copy(
+                                    isMenuExpanded = false,
+                                    showDeleteDialog = true,
+                                )
+                            }
+                            ProjectLibraryScreen.Event.DismissDeleteDialog -> {
+                                val current = state as? ProjectLibraryScreen.State.Success ?: return@eventSink
+                                state = current.copy(showDeleteDialog = false)
+                            }
+                            ProjectLibraryScreen.Event.ConfirmDeleteQuestion -> {
+                                val current = state as? ProjectLibraryScreen.State.Success ?: return@eventSink
+                                state = current.copy(showDeleteDialog = false)
+
+                                if (current.questions.size <= 1) {
+                                    Log.w(TAG, "skip delete selected question: at least one question is required")
+                                    return@eventSink
+                                }
+
                                 scope.launch {
-                                    projectRepository.deleteProject(screen.projectId)
-                                        .onSuccess { navigator.pop() }
-                                        .onFailure { Log.e(TAG, "delete project failed: $it") }
+                                    questionRepository.deleteQuestion(
+                                        projectId = screen.projectId,
+                                        questionId = current.selectedQuestionId
+                                    ).onSuccess {
+                                        questionRepository.getQuestions(screen.projectId)
+                                            .onSuccess { latestQuestions ->
+                                                if (latestQuestions.isEmpty()) return@onSuccess
+                                                val selectedQuestionId = latestQuestions.first().id
+                                                val latestState =
+                                                    state as? ProjectLibraryScreen.State.Success ?: return@onSuccess
+                                                state = latestState.copy(
+                                                    questions = latestQuestions,
+                                                    selectedQuestionId = selectedQuestionId,
+                                                    isMenuExpanded = false,
+                                                    showDeleteDialog = false,
+                                                )
+                                            }
+                                            .onFailure {
+                                                Log.e(TAG, "refresh questions failed after delete: $it")
+                                            }
+                                    }.onFailure {
+                                        Log.e(TAG, "delete question failed: $it")
+                                    }
                                 }
                             }
                         }
@@ -149,6 +190,7 @@ class ProjectLibraryPresenter @AssistedInject constructor(
                         state = current.copy(
                             questions = latestQuestions,
                             selectedQuestionId = selectedQuestionId,
+                            showDeleteDialog = false,
                         )
                     }
                     shouldRefreshAfterEdit = false

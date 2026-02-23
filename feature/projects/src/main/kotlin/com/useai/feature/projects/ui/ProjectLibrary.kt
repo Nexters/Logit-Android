@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.LogitDialog
 import com.useai.feature.projects.ProjectLibraryScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.coroutines.launch
@@ -97,6 +98,18 @@ fun ProjectLibrary(
         }
 
         is ProjectLibraryScreen.State.Success -> {
+            if (state.showDeleteDialog) {
+                LogitDialog(
+                    onDismissRequest = { state.eventSink(ProjectLibraryScreen.Event.DismissDeleteDialog) },
+                    title = stringResource(R.string.project_library_delete_question_dialog_text),
+                    description = stringResource(R.string.project_library_delete_question_dialog_description),
+                    confirmText = stringResource(R.string.project_library_delete_question_dialog_confirm),
+                    onConfirm = { state.eventSink(ProjectLibraryScreen.Event.ConfirmDeleteQuestion) },
+                    cancelText = stringResource(R.string.project_library_delete_question_dialog_cancel),
+                    onCancel = { state.eventSink(ProjectLibraryScreen.Event.DismissDeleteDialog) }
+                )
+            }
+
             val listState = rememberLazyListState()
             val scope = rememberCoroutineScope()
             val selectedIndex = state.questions.indexOfFirst { it.id == state.selectedQuestionId }
@@ -155,7 +168,7 @@ fun ProjectLibrary(
                             )
                             DropdownMenuItem(
                                 text = { Text(text = stringResource(R.string.chat_delete)) },
-                                onClick = { state.eventSink(ProjectLibraryScreen.Event.DeleteProject) },
+                                onClick = { state.eventSink(ProjectLibraryScreen.Event.TryDeleteQuestion) },
                                 leadingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_trash),

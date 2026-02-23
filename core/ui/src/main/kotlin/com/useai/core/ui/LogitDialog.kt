@@ -34,6 +34,7 @@ fun LogitDialog(
     onDismissRequest: () -> Unit,
     title: String,
     modifier: Modifier = Modifier,
+    description: String? = null,
     confirmText: String,
     onConfirm: () -> Unit,
     cancelText: String,
@@ -67,6 +68,15 @@ fun LogitDialog(
                 color = LogitTheme.colors.black,
                 textAlign = TextAlign.Center
             )
+            if (!description.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = description,
+                    style = LogitTheme.typography.body6_1,
+                    color = LogitTheme.colors.gray200,
+                    textAlign = TextAlign.Center
+                )
+            }
             Spacer(Modifier.height(dimensionResource(R.dimen.spacing_dialog_vertical)))
             Row(
                 modifier = Modifier.fillMaxWidth()

@@ -26,6 +26,10 @@
     <string name="chat_delete_project_dialog_text">이 프로젝트를 삭제하시겠어요?</string>
     <string name="chat_delete_project_dialog_cancel">취소</string>
     <string name="chat_delete_project_dialog_confirm">삭제하기</string>
+    <string name="project_library_delete_question_dialog_text">문항을 삭제하시겠어요?</string>
+    <string name="project_library_delete_question_dialog_description">문항 삭제 시 자소서도 함께 삭제됩니다!</string>
+    <string name="project_library_delete_question_dialog_cancel">취소하기</string>
+    <string name="project_library_delete_question_dialog_confirm">삭제하기</string>
     <string name="chat_empty_message">경험을 선택하면 초안이 생성돼요</string>
     <string name="chat_create_draft">초안 생성하기</string>
     <string name="chat_letter_placeholder">자기소개서를 자유롭게 입력해보세요</string>
