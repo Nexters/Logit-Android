@@ -1,5 +1,6 @@
-package com.useai.feature.projects.ui
+﻿package com.useai.feature.projects.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,65 +35,66 @@ fun Projects(
     modifier: Modifier = Modifier,
     state: ProjectsScreen.State,
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize().systemBarsPadding(),
-        contentPadding = PaddingValues(
-            bottom = dimensionResource(R.dimen.screen_common_padding_bottom),
-        )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
     ) {
-        item {
-            AppHeader(
-                title = {
-                    Text(
-                        text = stringResource(R.string.home_project_list_title),
-                        style = LogitTheme.typography.body1,
-                        color = LogitTheme.colors.black,
-                    )
-                },
-                iconPainter = painterResource(R.drawable.ic_tab_add),
-                iconDescription = stringResource(R.string.content_description_add_project),
-                iconSize = 16.dp,
-                onIconClick = {
-                    state.eventSink(ProjectsScreen.Event.NewProjectClicked)
-                },
-                paddingValues = PaddingValues(
-                    start = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                ),
-            )
-        }
-
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                        vertical = 6.dp
-                    ),
-            ) {
+        AppHeader(
+            title = {
                 Text(
-                    text = stringResource(R.string.projects_count_format, state.projects.size),
-                    style = LogitTheme.typography.body8_1,
-                    color = LogitTheme.colors.gray200,
+                    text = stringResource(R.string.home_project_list_title),
+                    style = LogitTheme.typography.body1,
+                    color = LogitTheme.colors.black,
                 )
-            }
+            },
+            iconPainter = painterResource(R.drawable.ic_tab_add),
+            iconDescription = stringResource(R.string.content_description_add_project),
+            iconSize = 16.dp,
+            onIconClick = {
+                state.eventSink(ProjectsScreen.Event.NewProjectClicked)
+            },
+            paddingValues = PaddingValues(
+                start = dimensionResource(R.dimen.screen_common_padding_horizontal),
+            ),
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                    vertical = 6.dp
+                ),
+        ) {
+            Text(
+                text = stringResource(R.string.projects_count_format, state.projects.size),
+                style = LogitTheme.typography.body8_1,
+                color = LogitTheme.colors.gray200,
+            )
         }
 
         if (state.projects.isEmpty()) {
-            item {
-                EmptyProjectList(
-                    onClickCreateProject = {
-                        state.eventSink(ProjectsScreen.Event.NewProjectClicked)
-                    }
+            EmptyProjectList(
+                modifier = Modifier.weight(1f),
+                onClickCreateProject = {
+                    state.eventSink(ProjectsScreen.Event.NewProjectClicked)
+                }
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(
+                    bottom = dimensionResource(R.dimen.screen_common_padding_bottom),
+                )
+            ) {
+                this@LazyColumn.projectList(
+                    projects = state.projects,
+                    onClickProject = {
+                        state.eventSink(ProjectsScreen.Event.ProjectClicked(it))
+                    },
                 )
             }
-        } else {
-            this@LazyColumn.projectList(
-                projects = state.projects,
-                onClickProject = {
-                    state.eventSink(ProjectsScreen.Event.ProjectClicked(it))
-                },
-            )
         }
     }
 }
@@ -110,8 +112,8 @@ private fun ProjectsPreview() {
                     projects = listOf(
                         ProjectListItem(
                             id = "1",
-                            company = "카카오페이",
-                            jobPosition = "디자인 어시스턴트 어쩌구 저쩌구 어쩌구 저쩌구",
+                            company = "KakaoPay",
+                            jobPosition = "Designer Assistant",
                             dueDate = LocalDate.of(2026, 1, 7),
                             questionId = "",
                             totalQuestions = 0,
@@ -120,8 +122,8 @@ private fun ProjectsPreview() {
                         ),
                         ProjectListItem(
                             id = "2",
-                            company = "네이버",
-                            jobPosition = "프론트엔드 개발",
+                            company = "Naver",
+                            jobPosition = "Frontend Developer",
                             dueDate = LocalDate.of(2026, 1, 7),
                             questionId = "",
                             totalQuestions = 0,
@@ -130,8 +132,8 @@ private fun ProjectsPreview() {
                         ),
                         ProjectListItem(
                             id = "3",
-                            company = "토스",
-                            jobPosition = "iOS 개발",
+                            company = "Toss",
+                            jobPosition = "iOS Developer",
                             dueDate = LocalDate.of(2026, 1, 7),
                             questionId = "",
                             totalQuestions = 0,
