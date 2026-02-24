@@ -5,6 +5,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -15,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.NavigatorDefaults
@@ -66,7 +69,13 @@ fun Root(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         snackbarHost = {
-            LogitSnackbarHost(hostState = snackbarHostState)
+            LogitSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .imePadding()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+            )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
