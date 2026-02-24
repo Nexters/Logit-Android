@@ -33,14 +33,21 @@ import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.project.ProjectListItem
+import com.useai.core.ui.LogitDropdownMenu
+import com.useai.core.ui.LogitDropdownMenuItem
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 fun LazyListScope.projectList(
     projects: List<ProjectListItem>,
     onClickProject: (String) -> Unit,
+    openedProjectMenuId: String?,
+    isDeleting: Boolean,
+    onClickProjectMore: (String) -> Unit,
+    onDismissProjectMenu: () -> Unit,
+    onClickEditProject: (String) -> Unit,
+    onClickDeleteProject: (String) -> Unit,
 ) {
     itemsIndexed(
         items = projects,
@@ -49,8 +56,20 @@ fun LazyListScope.projectList(
         ProjectItem(
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)),
             project = project,
+            isMenuExpanded = openedProjectMenuId == project.id,
+            isDeleting = isDeleting,
             onClick = {
                 onClickProject(project.id)
+            },
+            onClickMore = {
+                onClickProjectMore(project.id)
+            },
+            onDismissMenu = onDismissProjectMenu,
+            onClickEdit = {
+                onClickEditProject(project.id)
+            },
+            onClickDelete = {
+                onClickDeleteProject(project.id)
             },
         )
         if (index < projects.lastIndex) {
@@ -69,9 +88,15 @@ fun LazyListScope.projectList(
 private fun ProjectItem(
     modifier: Modifier = Modifier,
     project: ProjectListItem,
+    isMenuExpanded: Boolean,
+    isDeleting: Boolean,
     onClick: () -> Unit,
+    onClickMore: () -> Unit,
+    onDismissMenu: () -> Unit,
+    onClickEdit: () -> Unit,
+    onClickDelete: () -> Unit,
 ) {
-    val dueStatus = project.resolveDueStatus()
+    val dueStatus = project.resolveProjectDueStatus()
     val isCompleted = project.isCompleted()
 
     Row(
@@ -98,7 +123,7 @@ private fun ProjectItem(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                DueStatusChip(status = dueStatus)
+                ProjectDueStatusChip(status = dueStatus)
                 if (dueStatus.showDueDate) {
                     Spacer(Modifier.width(10.dp))
                     Text(
@@ -133,35 +158,29 @@ private fun ProjectItem(
 
         ActionStatusIcon(isCompleted = isCompleted)
         Spacer(Modifier.width(8.dp))
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
-            contentDescription = null,
-            tint = LogitTheme.colors.gray400,
-            modifier = Modifier
-                .padding(8.dp)
-        )
-    }
-}
-
-@Composable
-private fun DueStatusChip(
-    status: ProjectDueStatus,
-) {
-    Box(
-        modifier = Modifier
-            .widthIn(min = 70.dp)
-            .background(
-                color = if (status.isClosed) LogitTheme.colors.gray20 else LogitTheme.colors.primary20,
-                shape = RoundedCornerShape(8.dp)
+        Box {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
+                contentDescription = null,
+                tint = LogitTheme.colors.gray400,
+                modifier = Modifier
+                    .padding(start = 8.dp, top = 8.dp, bottom = 8.dp, end = 0.dp)
+                    .clickable(onClick = onClickMore)
             )
-            .padding(horizontal = 10.dp, vertical = 3.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = status.label,
-            style = LogitTheme.typography.body5_2,
-            color = if (status.isClosed) LogitTheme.colors.gray200 else LogitTheme.colors.primary200,
-        )
+            LogitDropdownMenu(
+                expanded = isMenuExpanded,
+                onDismissRequest = onDismissMenu,
+                modifier = Modifier.widthIn(min = 132.dp),
+            ) {
+                LogitDropdownMenuItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.chat_delete),
+                    icon = ImageVector.vectorResource(R.drawable.ic_trash_drop),
+                    enabled = !isDeleting,
+                    onClick = onClickDelete
+                )
+            }
+        }
     }
 }
 
@@ -170,65 +189,17 @@ private fun ActionStatusIcon(
     isCompleted: Boolean,
 ) {
     Icon(
-        imageVector = if (isCompleted) ImageVector.vectorResource(R.drawable.ic_check) else ImageVector.vectorResource(R.drawable.ic_pen),
+        imageVector = if (isCompleted) ImageVector.vectorResource(R.drawable.ic_check_green) else ImageVector.vectorResource(R.drawable.ic_pen),
         contentDescription = null,
-        tint = if (isCompleted) CompletedIconTint else LogitTheme.colors.secondary100,
-        modifier = Modifier.size(24.dp)
-    )
-}
-
-private fun ProjectListItem.resolveDueStatus(today: LocalDate = LocalDate.now()): ProjectDueStatus {
-    if (dueDate.year >= ALWAYS_OPEN_YEAR_THRESHOLD) {
-        return ProjectDueStatus.AlwaysOpen
-    }
-    if (dueDate.isBefore(today)) {
-        return ProjectDueStatus.Closed
-    }
-    if (dueDate.isEqual(today)) {
-        return ProjectDueStatus.DDay
-    }
-    return ProjectDueStatus.Dn(
-        remainingDays = ChronoUnit.DAYS.between(today, dueDate)
+        tint = Color.Unspecified,
+        modifier = Modifier.size(34.dp)
     )
 }
 
 private fun ProjectListItem.isCompleted(): Boolean = totalQuestions > 0 && completedQuestions >= totalQuestions
 
-private sealed interface ProjectDueStatus {
-    val label: String
-    val isClosed: Boolean
-    val showDueDate: Boolean
-
-    data object DDay : ProjectDueStatus {
-        override val label: String = "D-Day"
-        override val isClosed: Boolean = false
-        override val showDueDate: Boolean = true
-    }
-
-    data class Dn(
-        val remainingDays: Long,
-    ) : ProjectDueStatus {
-        override val label: String = "D-$remainingDays"
-        override val isClosed: Boolean = false
-        override val showDueDate: Boolean = true
-    }
-
-    data object AlwaysOpen : ProjectDueStatus {
-        override val label: String = "상시"
-        override val isClosed: Boolean = false
-        override val showDueDate: Boolean = false
-    }
-
-    data object Closed : ProjectDueStatus {
-        override val label: String = "마감"
-        override val isClosed: Boolean = true
-        override val showDueDate: Boolean = true
-    }
-}
-
 private val DUE_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 private val CompletedIconTint = Color(0xFF20C05C)
-private const val ALWAYS_OPEN_YEAR_THRESHOLD = 9000
 
 @Preview
 @Composable
@@ -281,7 +252,17 @@ private fun ProjectListPreview() {
                     ),
                 ),
                 onClickProject = {},
+                openedProjectMenuId = null,
+                isDeleting = false,
+                onClickProjectMore = {},
+                onDismissProjectMenu = {},
+                onClickEditProject = {},
+                onClickDeleteProject = {},
             )
         }
     }
 }
+
+
+
+
