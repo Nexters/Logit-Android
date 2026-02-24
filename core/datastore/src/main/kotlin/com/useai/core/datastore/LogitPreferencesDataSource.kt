@@ -14,9 +14,18 @@ class LogitPreferencesDataSource @Inject constructor(
     private val accessTokenKey = stringPreferencesKey("access_token")
     val accessToken: Flow<String?> = dataStore.data.map { it[accessTokenKey] }
 
+    private val refreshTokenKey = stringPreferencesKey("refresh_token")
+    val refreshToken: Flow<String?> = dataStore.data.map { it[refreshTokenKey] }
+
     suspend fun setAccessToken(token: String) {
         dataStore.edit {
             it[accessTokenKey] = token
+        }
+    }
+
+    suspend fun setRefreshToken(token: String) {
+        dataStore.edit {
+            it[refreshTokenKey] = token
         }
     }
 

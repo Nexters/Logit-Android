@@ -1,6 +1,7 @@
 package com.useai.core.network.di
 
 import com.useai.core.common.qualifiers.AuthClient
+import com.useai.core.common.qualifiers.RefreshClient
 import com.useai.core.network.api.AuthApi
 import com.useai.core.network.api.ChattingApi
 import com.useai.core.network.api.ExperienceApi
@@ -21,8 +22,18 @@ import retrofit2.create
 internal object ApiModule {
     @Provides
     @ActivityRetainedScoped
+    @AuthClient
     fun providesAuthApi(
         @AuthClient retrofit: Retrofit
+    ) : AuthApi {
+        return retrofit.create<AuthApi>()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    @RefreshClient
+    fun providesRefreshAuthApi(
+        @RefreshClient retrofit: Retrofit
     ) : AuthApi {
         return retrofit.create<AuthApi>()
     }
