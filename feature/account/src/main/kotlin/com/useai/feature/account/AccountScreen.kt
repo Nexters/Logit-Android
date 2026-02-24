@@ -94,7 +94,16 @@ class AccountPresenter @AssistedInject constructor(
                 }
 
                 AccountScreen.Event.Withdraw -> {
-                    // TODO: 회원탈퇴
+                    scope.launch {
+                        accountRepository.deleteUser()
+                            .onSuccess {
+                                accountRepository.clear()
+                                navigator.resetRoot(LoginScreen)
+                            }
+                            .onFailure {
+                                Log.e(TAG, "Withdraw failed: $it")
+                            }
+                    }
                 }
             }
         }
