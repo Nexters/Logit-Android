@@ -29,6 +29,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -120,12 +122,25 @@ internal fun ChatLetterUI(
                         Row(
                             modifier = Modifier
                                 .height(25.dp)
+                                .clip(RoundedCornerShape(8.dp))
                                 .border(
                                     width = 1.dp,
-                                    color = LogitTheme.colors.gray100,
+                                    color = if (state.currentQuestion.isCompleted) {
+                                        LogitTheme.colors.primary100
+                                    } else {
+                                        LogitTheme.colors.gray100
+                                    },
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .clickable {
+                                .background(
+                                    color = if (state.currentQuestion.isCompleted) {
+                                        LogitTheme.colors.primary50
+                                    } else {
+                                        LogitTheme.colors.white
+                                    },
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .clickable(enabled = !state.currentQuestion.isCompleted) {
                                     state.eventSink(ChatScreen.Event.CompleteQuestion)
                                 }
                                 .padding(start = 8.dp, end = 10.dp, top = 4.dp, bottom = 4.dp),
@@ -133,15 +148,25 @@ internal fun ChatLetterUI(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                                imageVector = ImageVector.vectorResource(
+                                    if (state.currentQuestion.isCompleted) {
+                                        R.drawable.ic_subtract_blue
+                                    } else {
+                                        R.drawable.ic_subtract_gray
+                                    }
+                                ),
                                 contentDescription = null,
-                                tint = LogitTheme.colors.gray200,
+                                tint = Color.Unspecified,
                                 modifier = Modifier.size(12.dp)
                             )
                             androidx.compose.material3.Text(
                                 text = completeButtonText,
                                 style = LogitTheme.typography.body9_1,
-                                color = LogitTheme.colors.gray200
+                                color = if (state.currentQuestion.isCompleted) {
+                                    LogitTheme.colors.primary200
+                                } else {
+                                    LogitTheme.colors.gray200
+                                }
                             )
                         }
                     }
@@ -162,7 +187,7 @@ internal fun ChatLetterUI(
                     state.eventSink(ChatScreen.Event.EditQuestions)
                 },
                 onQuestionDelete = {
-                    state.eventSink(ChatScreen.Event.TryDeleteProject)
+                    state.eventSink(ChatScreen.Event.ConfirmDeleteProject)
                 },
                 onBack = {
                     state.eventSink(ChatScreen.Event.NavigateBack)

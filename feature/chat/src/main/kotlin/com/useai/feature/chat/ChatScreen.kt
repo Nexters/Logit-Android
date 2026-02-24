@@ -54,6 +54,7 @@ data class ChatScreen(val projectId: String): Screen {
         data object EditQuestions : Event
         data object AddQuestion : Event
         data object TryUploadExperience : Event
+        data object ClickAddExperience : Event
         data class CompleteSelectExperience(val experienceIds: List<String>) : Event
         data class GenerateDraft(val experienceIds: List<String>) : Event
         data object DismissExperienceModal : Event

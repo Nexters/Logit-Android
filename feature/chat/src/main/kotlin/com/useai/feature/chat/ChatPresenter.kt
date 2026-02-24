@@ -104,7 +104,7 @@ class ChatPresenter @AssistedInject constructor(
                     return@produceRetainedState
                 }
 
-                initialQuestions.fastMap { question ->
+                val matchingExperiencesDeferred = initialQuestions.fastMap { question ->
                     async {
                         experienceRepository.getMatchingExperiences(question.id).onSuccess { matchingExperiences ->
                             this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
@@ -113,9 +113,9 @@ class ChatPresenter @AssistedInject constructor(
                             reduce { ChatScreen.State.LoadFailed(eventSink = loadingOrFailedEventSink) }
                         }
                     }
-                }.awaitAll()
+                }
 
-                initialQuestions.fastMap { question ->
+                val chattingHistoriesDeferred = initialQuestions.fastMap { question ->
                     async {
                         chattingRepository.getChatHistory(question.id).onSuccess { chattingHistory ->
                             chattingHistories[question] = chattingHistory
@@ -124,7 +124,10 @@ class ChatPresenter @AssistedInject constructor(
                             reduce { ChatScreen.State.LoadFailed(eventSink = loadingOrFailedEventSink) }
                         }
                     }
-                }.awaitAll()
+                }
+
+                matchingExperiencesDeferred.awaitAll()
+                chattingHistoriesDeferred.awaitAll()
 
                 val projectDetail = projectDetailDeferred.await()
                 if (projectDetail == null) {
@@ -149,7 +152,7 @@ class ChatPresenter @AssistedInject constructor(
                             matchingExperiences = requireNotNull(matchingExperiencesList[initialQuestion]),
                             streamingStatus = ChattingStreamingStatus.Idle,
                             userInput = "",
-                            currentCategory = ChatScreenCategory.CHATTING,
+                            currentCategory = currentState?.currentCategory ?: ChatScreenCategory.CHATTING,
                             isHeaderUIExpanded = false
                         ) { event ->
                             when(event) {
@@ -451,16 +454,30 @@ class ChatPresenter @AssistedInject constructor(
                                             questionRepository.completeQuestion(
                                                 projectId = screen.projectId,
                                                 questionId = currentQuestion.id
-                                            ).onSuccess { question ->
-                                                this@ChatPresenter.chattingHistories[question] = chattingHistory
-                                                this@ChatPresenter.chattingHistories.remove(currentQuestion)
-                                                this@ChatPresenter.matchingExperiencesList[question] = matchingExperiences
-                                                this@ChatPresenter.matchingExperiencesList.remove(currentQuestion)
+                                            ).onSuccess {
+                                                val completedQuestion = currentQuestion.copy(isCompleted = true)
+                                                val updatedHistories = hashMapOf<Question, ChattingHistory>()
+                                                chattingHistories.forEach { (question, history) ->
+                                                    updatedHistories[
+                                                        if (question.id == completedQuestion.id) completedQuestion else question
+                                                    ] = history
+                                                }
+                                                val updatedMatchingExperiences = hashMapOf<Question, List<MatchingExperience>>()
+                                                matchingExperiencesList.forEach { (question, matching) ->
+                                                    updatedMatchingExperiences[
+                                                        if (question.id == completedQuestion.id) completedQuestion else question
+                                                    ] = matching
+                                                }
+                                                chattingHistories.clear()
+                                                chattingHistories.putAll(updatedHistories)
+                                                matchingExperiencesList.clear()
+                                                matchingExperiencesList.putAll(updatedMatchingExperiences)
+
                                                 reduce {
                                                     copy(
-                                                        currentQuestion = question,
+                                                        currentQuestion = completedQuestion,
                                                         questions = questions.map {
-                                                            if (it.id == question.id) question else it
+                                                            if (it.id == completedQuestion.id) completedQuestion else it
                                                         },
                                                     )
                                                 }
@@ -609,6 +626,14 @@ class ChatPresenter @AssistedInject constructor(
                                             copy(showExperienceModal = true)
                                         }
                                     }
+                                }
+                                is ChatScreen.Event.ClickAddExperience -> {
+                                    value.runOn<ChatScreen.State.Success> {
+                                        reduce {
+                                            copy(showExperienceModal = false)
+                                        }
+                                    }
+                                    navigator.goTo(screenProvider.experienceCreateScreen())
                                 }
                                 is ChatScreen.Event.DismissExperienceModal -> {
                                     value.runOn<ChatScreen.State.Success> {
