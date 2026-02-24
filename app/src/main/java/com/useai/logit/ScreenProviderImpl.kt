@@ -13,6 +13,7 @@ import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import com.useai.feature.newproject.NewProjectQuestionScreen
 import com.useai.feature.projects.ProjectLibraryScreen
 import com.useai.feature.projects.ProjectsScreen
+import java.time.LocalDate
 
 class ScreenProviderImpl: ScreenProvider {
     override fun rootScreen(): Screen = RootScreen
@@ -31,12 +32,14 @@ class ScreenProviderImpl: ScreenProvider {
         companyName: String,
         jobName: String,
         jobDesc: String,
-        talent: String
+        talent: String,
+        dueDate: LocalDate,
     ): Screen = NewProjectQuestionScreen(
         companyName = companyName,
         jobName = jobName,
         jobDesc = jobDesc,
         talent = talent,
+        dueDate = dueDate,
     )
 
     override fun chatScreen(projectId: String): Screen = ChatScreen(projectId)

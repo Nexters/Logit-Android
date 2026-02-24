@@ -31,6 +31,7 @@ data class NewProjectQuestionScreen(
     val jobName: String,
     val jobDesc: String,
     val talent: String,
+    val dueDate: LocalDate,
 ) : Screen {
     data class State(
         val questions: List<ProjectQuestionParam>,
@@ -102,7 +103,7 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
                             projectParam = ProjectParam(
                                 company = basicInfo.companyName,
                                 companyTalent = basicInfo.talent,
-                                dueDate = LocalDate.of(2024, 12, 31), // TODO: due date 입력 폼 사양 미확정
+                                dueDate = basicInfo.dueDate,
                                 jobPosition = basicInfo.jobName,
                                 recruitNotice = basicInfo.jobDesc,
                                 questions = projectQuestions

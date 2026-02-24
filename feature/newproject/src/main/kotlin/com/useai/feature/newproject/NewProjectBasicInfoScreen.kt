@@ -17,6 +17,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDate
 
 @Parcelize
 data object NewProjectBasicInfoScreen : Screen {
@@ -25,6 +26,8 @@ data object NewProjectBasicInfoScreen : Screen {
         val jobName: String,
         val jobDesc: String,
         val talent: String,
+        val dueDate: LocalDate?,
+        val isAlwaysOpen: Boolean,
         val showExitDialog: Boolean,
         val eventSink: (Event) -> Unit,
     ) : CircuitUiState
@@ -36,6 +39,8 @@ data object NewProjectBasicInfoScreen : Screen {
         data class OnJobNameChange(val job: String) : Event
         data class OnJobDescChange(val desc: String) : Event
         data class OnTalentChange(val talent: String) : Event
+        data class OnDueDateChange(val date: LocalDate?) : Event
+        data class OnAlwaysOpenChange(val isChecked: Boolean) : Event
         data object Next : Event
         data object DismissExitDialog : Event
         data object ConfirmExit : Event
@@ -51,6 +56,8 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
         var jobName by rememberRetained { mutableStateOf("") }
         var jobDesc by rememberRetained { mutableStateOf("") }
         var talent by rememberRetained { mutableStateOf("") }
+        var dueDate by rememberRetained { mutableStateOf<LocalDate?>(null) }
+        var isAlwaysOpen by rememberRetained { mutableStateOf(false) }
         var showExitDialog by rememberRetained { mutableStateOf(false) }
         val screenProvider = LocalScreenProvider.current
 
@@ -59,6 +66,8 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
             jobName = jobName,
             jobDesc = jobDesc,
             talent = talent,
+            dueDate = dueDate,
+            isAlwaysOpen = isAlwaysOpen,
             showExitDialog = showExitDialog,
         ) { event ->
             when (event) {
@@ -68,19 +77,32 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
                     jobName = SAMPLE_JOB_NAME
                     jobDesc = SAMPLE_JOB_DESC
                     talent = SAMPLE_COMPANY_TALENT
+                    dueDate = LocalDate.now().plusDays(14)
+                    isAlwaysOpen = false
                 }
                 is NewProjectBasicInfoScreen.Event.OnCompanyNameChange -> companyName = event.name
                 is NewProjectBasicInfoScreen.Event.OnJobNameChange -> jobName = event.job
                 is NewProjectBasicInfoScreen.Event.OnJobDescChange -> jobDesc = event.desc
                 is NewProjectBasicInfoScreen.Event.OnTalentChange -> talent = event.talent
+                is NewProjectBasicInfoScreen.Event.OnDueDateChange -> dueDate = event.date
+                is NewProjectBasicInfoScreen.Event.OnAlwaysOpenChange -> {
+                    isAlwaysOpen = event.isChecked
+                    if (event.isChecked) {
+                        dueDate = null
+                    }
+                }
                 is NewProjectBasicInfoScreen.Event.Next -> {
-                    val newProjectQuestionScreen = screenProvider.newProjectQuestionScreen(
-                        companyName = companyName,
-                        jobName = jobName,
-                        jobDesc = jobDesc,
-                        talent = talent,
-                    )
-                    navigator.goTo(newProjectQuestionScreen)
+                    if (isAlwaysOpen || dueDate != null) {
+                        val resolvedDueDate = if (isAlwaysOpen) LocalDate.MAX else dueDate!!
+                        val newProjectQuestionScreen = screenProvider.newProjectQuestionScreen(
+                            companyName = companyName,
+                            jobName = jobName,
+                            jobDesc = jobDesc,
+                            talent = talent,
+                            dueDate = resolvedDueDate,
+                        )
+                        navigator.goTo(newProjectQuestionScreen)
+                    }
                 }
                 is NewProjectBasicInfoScreen.Event.DismissExitDialog -> showExitDialog = false
                 is NewProjectBasicInfoScreen.Event.ConfirmExit -> {

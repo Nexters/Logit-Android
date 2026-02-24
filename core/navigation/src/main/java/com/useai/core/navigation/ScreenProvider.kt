@@ -1,6 +1,7 @@
 package com.useai.core.navigation
 
 import com.slack.circuit.runtime.screen.Screen
+import java.time.LocalDate
 
 interface ScreenProvider {
     fun rootScreen(): Screen
@@ -13,7 +14,8 @@ interface ScreenProvider {
         companyName: String,
         jobName: String,
         jobDesc: String,
-        talent: String
+        talent: String,
+        dueDate: LocalDate,
     ): Screen
     fun chatScreen(projectId: String): Screen
     fun newQuestionScreen(projectId: String): Screen

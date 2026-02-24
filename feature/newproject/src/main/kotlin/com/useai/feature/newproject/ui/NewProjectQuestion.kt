@@ -160,6 +160,9 @@ private fun NewQuestion(
                 .weight(1f),
             placeholder = placeHolder,
             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
+            singleLine = true,
+            maxLines = 1,
+            minLines = 1,
         )
         Spacer(Modifier.width(12.dp))
         LetterCountInput(
