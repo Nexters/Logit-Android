@@ -17,5 +17,6 @@ fun QuestionResponse.toQuestion() = Question(
     id = id,
     title = title,
     maxLength = maxLength ?: 0,
-    letter = letter.orEmpty()
+    letter = letter.orEmpty(),
+    isCompleted = isCompleted,
 )
