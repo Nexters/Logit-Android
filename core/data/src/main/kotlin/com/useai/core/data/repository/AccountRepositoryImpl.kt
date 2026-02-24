@@ -8,6 +8,7 @@ import com.useai.core.network.request.UpdateUserRequest
 import com.useai.core.network.response.toUser
 import com.useai.core.network.source.AuthRemoteDataSource
 import com.useai.core.network.source.UsersRemoteDataSource
+import kotlinx.coroutines.flow.firstOrNull
 import toLogin
 import javax.inject.Inject
 
@@ -16,6 +17,10 @@ internal class AccountRepositoryImpl @Inject constructor(
     private val logitPreferencesDataSource: LogitPreferencesDataSource,
     private val usersRemoteDataSource: UsersRemoteDataSource,
 ) : AccountRepository {
+    override suspend fun getAccessToken(): String? {
+        return logitPreferencesDataSource.accessToken.firstOrNull()
+    }
+
     override suspend fun requestLogin(idToken: String): Result<Login> {
         return runCatching {
             authRemoteDataSource.requestGoogleLogin(
