@@ -112,12 +112,14 @@ class LoginPresenter @AssistedInject constructor(
                     scope.launch {
                         accountRepository.requestLogin(
                             idToken = googleIdTokenCredential.idToken,
-                        ).onSuccess {
+                        ).onSuccess { loginResult ->
                             scope.launch {
-                                accountRepository.setAccessToken(it.accessToken)
+                                Log.d(TAG, "Google login success: $loginResult")
+                                accountRepository.setAccessToken(loginResult.accessToken)
+                                accountRepository.setRefreshToken(loginResult.refreshToken)
                                 navigator.resetRoot(screenProvider.rootScreen())
                             }
-                        }.onFailure {
+                        }.onFailure { 
                             Log.e(TAG, "Google login failed: $it")
                         }
                     }
@@ -131,8 +133,10 @@ class LoginPresenter @AssistedInject constructor(
                                 scope.launch {
                                     accountRepository.requestLogin(
                                         idToken = googleIdTokenCredential.idToken,
-                                    ).onSuccess {
-                                        accountRepository.setAccessToken(it.accessToken)
+                                    ).onSuccess { loginResult ->
+                                        Log.d(TAG, "Google login success: $loginResult")
+                                        accountRepository.setAccessToken(loginResult.accessToken)
+                                        accountRepository.setRefreshToken(loginResult.refreshToken)
                                         navigator.resetRoot(screenProvider.rootScreen())
                                     }
                                 }
@@ -150,8 +154,10 @@ class LoginPresenter @AssistedInject constructor(
                     scope.launch {
                         accountRepository.requestLogin(
                             idToken = googleIdTokenCredential.idToken,
-                        ).onSuccess {
-                            accountRepository.setAccessToken(it.accessToken)
+                        ).onSuccess { loginResult ->
+                            Log.d(TAG, "Google login success: $loginResult")
+                            accountRepository.setAccessToken(loginResult.accessToken)
+                            accountRepository.setRefreshToken(loginResult.refreshToken)
                             navigator.resetRoot(screenProvider.rootScreen())
                         }
                     }

@@ -4,11 +4,13 @@ import com.useai.core.model.account.Login
 import com.useai.core.model.account.User
 
 interface AccountRepository {
+    suspend fun getAccessToken(): String?
+
     suspend fun requestLogin(idToken: String): Result<Login>
 
     suspend fun setAccessToken(token: String): Result<Unit>
 
-    suspend fun refreshAccessToken(): Result<String>
+    suspend fun setRefreshToken(token: String): Result<Unit>
 
     suspend fun getUser(): Result<User>
 
