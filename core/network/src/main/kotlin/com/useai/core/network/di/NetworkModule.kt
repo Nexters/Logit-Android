@@ -1,10 +1,12 @@
 package com.useai.core.network.di
 
+import android.util.Log
 import com.launchdarkly.eventsource.ConnectStrategy
 import com.launchdarkly.eventsource.EventSource
 import com.launchdarkly.eventsource.background.BackgroundEventSource
 import com.useai.core.common.qualifiers.AuthClient
 import com.useai.core.common.qualifiers.BaseClient
+import com.useai.core.common.qualifiers.RefreshClient
 import com.useai.core.datastore.LogitPreferencesDataSource
 import com.useai.core.network.BuildConfig
 import com.useai.core.network.ChattingEventSourceFactory
@@ -94,6 +96,21 @@ internal object NetworkModule {
 
     @Provides
     @ActivityRetainedScoped
+    @RefreshClient
+    fun providesRefreshRetrofit(
+        @RefreshClient client: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(client)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addCallAdapterFactory(RemoteErrorCallAdapterFactory(json))
+            .build()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
     @BaseClient
     fun providesBaseOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
@@ -122,41 +139,68 @@ internal object NetworkModule {
 
     @Provides
     @ActivityRetainedScoped
+    @RefreshClient
+    fun providesRefreshOkHttpClient(
+        @BaseClient baseClient: OkHttpClient
+    ): OkHttpClient {
+        return baseClient.newBuilder().build()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
     fun providesAuthenticator(
-        lazyApi: Lazy<AuthApi>,
+        @RefreshClient lazyApi: Lazy<AuthApi>,
         logitPreferencesDataSource: LogitPreferencesDataSource
     ): Authenticator = Authenticator { _, response ->
-        val currentToken = runBlocking { logitPreferencesDataSource.accessToken.firstOrNull() }
+        // 1. 현재 저장된 Access Token을 가져옴
+        val currentAccessToken = runBlocking { logitPreferencesDataSource.accessToken.firstOrNull() }
 
-        if (response.request.header("Authorization")?.substringAfter("Bearer ") != currentToken) {
+        // 2. 요청에 사용된 토큰이 현재 저장된 토큰과 다르면, 이미 다른 곳에서 갱신된 것임
+        if (response.request.header("Authorization")?.substringAfter("Bearer ") != currentAccessToken) {
             return@Authenticator response.request.newBuilder()
-                .header("Authorization", "Bearer $currentToken")
+                .header("Authorization", "Bearer $currentAccessToken")
                 .build()
         }
 
         synchronized(this) {
-            val newCurrentToken = runBlocking { logitPreferencesDataSource.accessToken.firstOrNull() }
-            if (currentToken != newCurrentToken) {
+            // 3. 다시 한 번 토큰을 확인 (임계 영역 내에서 최신 상태 보장)
+            val updatedAccessToken = runBlocking { logitPreferencesDataSource.accessToken.firstOrNull() }
+            if (currentAccessToken != updatedAccessToken) {
                 return@synchronized response.request.newBuilder()
-                    .header("Authorization", "Bearer $newCurrentToken")
+                    .header("Authorization", "Bearer $updatedAccessToken")
                     .build()
             }
 
+            // 4. Refresh Token 가져오기
+            val refreshToken = runBlocking { logitPreferencesDataSource.refreshToken.firstOrNull() }
+            if (refreshToken == null) {
+                runBlocking { logitPreferencesDataSource.clear() }
+                return@synchronized null
+            }
+
+            // 5. 토큰 갱신 요청
             val newAccessToken = runBlocking {
                 try {
-                    lazyApi.get().refreshAccessToken()
-                } catch (_: Exception) {
+                    Log.d("Auth", "Attempting to refresh token...")
+                    lazyApi.get().refreshAccessToken(
+                        "Bearer $refreshToken",
+                    )
+                } catch (e: Exception) {
+                    Log.e("Auth", "Refresh token failed: ${e.message}", e)
                     null
                 }
             }
 
+            // 6. 결과 처리
             if (newAccessToken == null) {
                 runBlocking { logitPreferencesDataSource.clear() }
                 return@synchronized null
             }
 
+            Log.d("Auth", "Token refreshed successfully")
             runBlocking { logitPreferencesDataSource.setAccessToken(newAccessToken) }
 
+            // 7. 새 토큰으로 기존 요청 재시도
             return@synchronized response.request.newBuilder()
                 .header("Authorization", "Bearer $newAccessToken")
                 .build()
@@ -171,12 +215,15 @@ internal object NetworkModule {
         val accessToken = runBlocking {
             logitPreferencesDataSource.accessToken.firstOrNull()
         }
-        val newRequest: Request = chain.request().newBuilder()
-            .apply {
-                if (accessToken != null) {
-                    addHeader("Authorization", "Bearer $accessToken")
-                }
-            }
+        val request = chain.request()
+
+        // 이미 Authorization 헤더가 있거나 토큰이 없는 경우 그대로 진행
+        if (request.header("Authorization") != null || accessToken == null) {
+            return@Interceptor chain.proceed(request)
+        }
+
+        val newRequest: Request = request.newBuilder()
+            .header("Authorization", "Bearer $accessToken")
             .build()
         chain.proceed(newRequest)
     }

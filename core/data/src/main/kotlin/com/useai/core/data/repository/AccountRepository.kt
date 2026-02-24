@@ -8,7 +8,7 @@ interface AccountRepository {
 
     suspend fun setAccessToken(token: String): Result<Unit>
 
-    suspend fun refreshAccessToken(): Result<String>
+    suspend fun setRefreshToken(token: String): Result<Unit>
 
     suspend fun getUser(): Result<User>
 

@@ -32,9 +32,9 @@ internal class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshAccessToken(): Result<String> {
+    override suspend fun setRefreshToken(token: String): Result<Unit> {
         return runCatching {
-            authRemoteDataSource.refreshAccessToken()
+            logitPreferencesDataSource.setRefreshToken(token)
         }
     }
 
