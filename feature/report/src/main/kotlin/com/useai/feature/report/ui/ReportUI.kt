@@ -25,6 +25,7 @@ import com.useai.core.model.report.ExperienceReportType
 import com.useai.core.model.report.ExperienceSummary
 import com.useai.core.model.report.ExperienceTagCount
 import com.useai.core.model.report.ExperienceTypeCount
+import com.useai.core.ui.LogitPageLoadingView
 import com.useai.feature.report.ReportScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
@@ -60,18 +61,9 @@ fun ReportUI(
 private fun ReportLoading(
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.report_loading),
-            style = LogitTheme.typography.body6_2,
-            color = LogitTheme.colors.gray300
-        )
-    }
+    LogitPageLoadingView(
+        modifier = modifier.fillMaxSize().statusBarsPadding()
+    )
 }
 
 @Composable
@@ -120,6 +112,7 @@ private fun ReportSuccessUI(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding()
+            .padding(top = 12.dp)
             .background(LogitTheme.colors.gray20),
         contentPadding = PaddingValues(bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)

@@ -39,12 +39,18 @@ data object HomeScreen : Screen {
         val userProfile: UserProfile,
         val bannerItems: List<ExperienceBannerItem>,
         val projects: List<ProjectListItem>,
+        val openedProjectMenuId: String?,
+        val isDeletingProject: Boolean,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
 
     sealed interface Event : CircuitUiEvent {
         data object NewProjectClicked : Event
         data class ProjectClicked(val projectId: String) : Event
+        data class ProjectMoreClicked(val projectId: String) : Event
+        data object DismissProjectMenu : Event
+        data class EditProjectClicked(val projectId: String) : Event
+        data class DeleteProjectClicked(val projectId: String) : Event
         data object AccountClicked : Event
     }
 }
@@ -68,17 +74,21 @@ class HomePresenter @AssistedInject constructor(
                 }
         }
         var projects by rememberRetained { mutableStateOf<List<ProjectListItem>>(emptyList()) }
+        var openedProjectMenuId by rememberRetained { mutableStateOf<String?>(null) }
+        var isDeletingProject by rememberRetained { mutableStateOf(false) }
         val screenProvider = LocalScreenProvider.current
 
-        val fetchProjects = remember {
-            {
-                scope.launch {
-                    projectRepository.getProjects() // TODO: paging
-                        .onSuccess { projects = it }
-                        .onFailure {
-                            Log.e(TAG, "getProjects failed: $it")
-                        }
-                }
+        fun fetchProjects() {
+            scope.launch {
+                projectRepository.getProjects() // TODO: paging
+                    .onSuccess {
+                        projects = it
+                        openedProjectMenuId = null
+                        isDeletingProject = false
+                    }
+                    .onFailure {
+                        Log.e(TAG, "getProjects failed: $it")
+                    }
             }
         }
 
@@ -97,7 +107,9 @@ class HomePresenter @AssistedInject constructor(
         return HomeScreen.State(
             userProfile = userProfile,
             bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
-            projects = projects
+            projects = projects,
+            openedProjectMenuId = openedProjectMenuId,
+            isDeletingProject = isDeletingProject,
         ) { event ->
             when (event) {
                 HomeScreen.Event.NewProjectClicked -> navigator.goTo(
@@ -107,6 +119,36 @@ class HomePresenter @AssistedInject constructor(
                 is HomeScreen.Event.ProjectClicked -> navigator.goTo(
                     screenProvider.chatScreen(event.projectId)
                 )
+
+                is HomeScreen.Event.ProjectMoreClicked -> {
+                    openedProjectMenuId = if (openedProjectMenuId == event.projectId) {
+                        null
+                    } else {
+                        event.projectId
+                    }
+                }
+
+                HomeScreen.Event.DismissProjectMenu -> {
+                    openedProjectMenuId = null
+                }
+
+                is HomeScreen.Event.EditProjectClicked -> {
+                    openedProjectMenuId = null
+                    navigator.goTo(screenProvider.editQuestionsScreen(event.projectId))
+                }
+
+                is HomeScreen.Event.DeleteProjectClicked -> {
+                    openedProjectMenuId = null
+                    isDeletingProject = true
+                    scope.launch {
+                        projectRepository.deleteProject(event.projectId)
+                            .onSuccess { fetchProjects() }
+                            .onFailure {
+                                isDeletingProject = false
+                                Log.e(TAG, "deleteProject failed: $it")
+                            }
+                    }
+                }
 
                 HomeScreen.Event.AccountClicked -> navigator.goTo(
                     screenProvider.accountScreen()

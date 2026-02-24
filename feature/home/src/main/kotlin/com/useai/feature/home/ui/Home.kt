@@ -86,7 +86,7 @@ fun Home(
                 LogitExperienceBanner(state.bannerItems)
                 Spacer(Modifier.height(43.dp))
                 LogitFormTitle(
-                    title = stringResource(R.string.home_project_list_title),
+                    title = "프로젝트 목록",
                 )
                 Spacer(Modifier.height(16.dp))
             }
@@ -105,7 +105,21 @@ fun Home(
                 projects = state.projects,
                 onClickProject = { projectId ->
                     state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
-                }
+                },
+                openedProjectMenuId = state.openedProjectMenuId,
+                isDeleting = state.isDeletingProject,
+                onClickProjectMore = { projectId ->
+                    state.eventSink(HomeScreen.Event.ProjectMoreClicked(projectId))
+                },
+                onDismissProjectMenu = {
+                    state.eventSink(HomeScreen.Event.DismissProjectMenu)
+                },
+                onClickEditProject = { projectId ->
+                    state.eventSink(HomeScreen.Event.EditProjectClicked(projectId))
+                },
+                onClickDeleteProject = { projectId ->
+                    state.eventSink(HomeScreen.Event.DeleteProjectClicked(projectId))
+                },
             )
         }
     }
@@ -124,6 +138,8 @@ private fun HomeWithEmptyProjectPreview() {
                     userProfile = UserProfile("로짓", ""),
                     bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
                     projects = emptyList(),
+                    openedProjectMenuId = null,
+                    isDeletingProject = false,
                 ),
             )
         }
@@ -176,6 +192,9 @@ private fun HomePreview() {
                             updatedAt = LocalDateTime.now()
                         ),
                     )
+                    ,
+                    openedProjectMenuId = null,
+                    isDeletingProject = false,
                 ),
             )
         }

@@ -34,12 +34,13 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.ui.AppHeader
+import com.useai.core.ui.project.ProjectDueStatusChip
 import com.useai.core.ui.project.EmptyProjectList
+import com.useai.core.ui.project.resolveProjectDueStatus
 import com.useai.feature.projects.ProjectsScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 @Composable
 @CircuitInject(ProjectsScreen::class, ActivityRetainedComponent::class)
@@ -68,6 +69,7 @@ fun Projects(
             },
             paddingValues = PaddingValues(
                 start = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                top = 12.dp,
             ),
         )
 
@@ -138,6 +140,8 @@ private fun ProjectListItemRow(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val dueStatus = item.resolveProjectDueStatus()
+
         Box(
             modifier = Modifier
                 .size(width = 3.dp, height = 24.dp)
@@ -159,62 +163,9 @@ private fun ProjectListItemRow(
         )
 
         Spacer(modifier = Modifier.width(10.dp))
-        DueStatusChip(status = item.resolveDueStatus())
+        ProjectDueStatusChip(status = dueStatus)
     }
 }
-
-@Composable
-private fun DueStatusChip(status: ProjectDueStatus) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = if (status.isClosed) LogitTheme.colors.gray20 else LogitTheme.colors.primary20,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(horizontal = 10.dp, vertical = 4.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = status.label,
-            style = LogitTheme.typography.body5_2,
-            color = if (status.isClosed) LogitTheme.colors.gray200 else LogitTheme.colors.primary200,
-        )
-    }
-}
-
-private fun ProjectListItem.resolveDueStatus(today: LocalDate = LocalDate.now()): ProjectDueStatus {
-    if (dueDate.year >= ALWAYS_OPEN_YEAR_THRESHOLD) return ProjectDueStatus.AlwaysOpen
-    if (dueDate.isBefore(today)) return ProjectDueStatus.Closed
-    if (dueDate.isEqual(today)) return ProjectDueStatus.DDay
-    return ProjectDueStatus.Dn(ChronoUnit.DAYS.between(today, dueDate))
-}
-
-private sealed interface ProjectDueStatus {
-    val label: String
-    val isClosed: Boolean
-
-    data object DDay : ProjectDueStatus {
-        override val label: String = "D-Day"
-        override val isClosed: Boolean = false
-    }
-
-    data class Dn(val remainingDays: Long) : ProjectDueStatus {
-        override val label: String = "D-$remainingDays"
-        override val isClosed: Boolean = false
-    }
-
-    data object AlwaysOpen : ProjectDueStatus {
-        override val label: String = "상시"
-        override val isClosed: Boolean = false
-    }
-
-    data object Closed : ProjectDueStatus {
-        override val label: String = "마감"
-        override val isClosed: Boolean = true
-    }
-}
-
-private const val ALWAYS_OPEN_YEAR_THRESHOLD = 9000
 
 @Preview
 @Composable

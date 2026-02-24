@@ -25,8 +25,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,15 +32,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.LogitDialog
+import com.useai.core.ui.LogitDropdownMenu
+import com.useai.core.ui.LogitDropdownMenuItem
+import com.useai.core.ui.LogitPageLoadingView
 import com.useai.feature.projects.ProjectLibraryScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.coroutines.launch
@@ -67,12 +70,9 @@ fun ProjectLibrary(
 
     when (state) {
         is ProjectLibraryScreen.State.Loading -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(text = stringResource(R.string.experience_loading))
-            }
+            LogitPageLoadingView(
+                modifier = modifier.fillMaxSize()
+            )
         }
 
         is ProjectLibraryScreen.State.LoadFailed -> {
@@ -152,29 +152,19 @@ fun ProjectLibrary(
                                 tint = LogitTheme.colors.black,
                             )
                         }
-                        DropdownMenu(
+                        LogitDropdownMenu(
                             expanded = state.isMenuExpanded,
                             onDismissRequest = { state.eventSink(ProjectLibraryScreen.Event.DismissMenu) },
                         ) {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(R.string.chat_edit)) },
+                            LogitDropdownMenuItem(
+                                text = stringResource(R.string.chat_edit),
                                 onClick = { state.eventSink(ProjectLibraryScreen.Event.EditProject) },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_write),
-                                        contentDescription = null,
-                                    )
-                                }
+                                icon = ImageVector.vectorResource(R.drawable.ic_write),
                             )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(R.string.chat_delete)) },
+                            LogitDropdownMenuItem(
+                                text = stringResource(R.string.chat_delete),
                                 onClick = { state.eventSink(ProjectLibraryScreen.Event.TryDeleteQuestion) },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_trash),
-                                        contentDescription = null,
-                                    )
-                                }
+                                icon = ImageVector.vectorResource(R.drawable.ic_trash_drop),
                             )
                         }
                     }
