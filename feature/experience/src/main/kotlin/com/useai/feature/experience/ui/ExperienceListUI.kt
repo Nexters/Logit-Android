@@ -24,7 +24,6 @@ fun ExperienceListUI(
             ExperienceLoadingUI(
                 modifier = modifier
                     .background(LogitTheme.colors.gray20)
-                    .statusBarsPadding()
             )
         }
 

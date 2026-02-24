@@ -39,7 +39,7 @@ internal fun ExperienceSuccessUI(
             onClickAdd = onClickAdd,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 18.dp)
         )
 
         if (experiences.isEmpty()) {

@@ -75,9 +75,10 @@ internal fun ExperienceCreateBasicInfoStep(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            ProgressCheckBox(
+            com.useai.core.ui.ProgressCheckBox(
                 checked = state.isInProgress,
-                onClick = { state.eventSink(ExperienceCreateScreen.Event.ToggleInProgress) },
+                text = "진행 중",
+                onCheckedChange = { state.eventSink(ExperienceCreateScreen.Event.ToggleInProgress) },
                 modifier = Modifier.padding(top = 12.dp)
             )
 

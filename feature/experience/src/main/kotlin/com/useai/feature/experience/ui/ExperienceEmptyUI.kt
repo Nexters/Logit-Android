@@ -1,5 +1,6 @@
 package com.useai.feature.experience.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,31 +26,33 @@ internal fun ExperienceEmptyUI(
     onClickRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = 260.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_logit_empty),
-            tint = Color.Unspecified,
-            contentDescription = null
-        )
+    Box(contentAlignment = Alignment.Center) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 260.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_logit_empty),
+                tint = Color.Unspecified,
+                contentDescription = null
+            )
 
-        Text(
-            text = stringResource(R.string.experience_empty),
-            style = LogitTheme.typography.body5_5,
-            color = LogitTheme.colors.gray100,
-            modifier = Modifier.padding(top = 12.dp)
-        )
+            Text(
+                text = stringResource(R.string.experience_empty),
+                style = LogitTheme.typography.body5_5,
+                color = LogitTheme.colors.gray100,
+                modifier = Modifier.padding(top = 12.dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
-        LogitPrimaryButton(
-            text = stringResource(R.string.experience_register),
-            textStyle = LogitTheme.typography.body5_2,
-            onClick = onClickRegister,
-            modifier = Modifier.width(170.dp)
-        )
+            Spacer(modifier = Modifier.height(16.dp))
+            LogitPrimaryButton(
+                text = stringResource(R.string.experience_register),
+                textStyle = LogitTheme.typography.body5_2,
+                onClick = onClickRegister,
+                modifier = Modifier.width(170.dp)
+            )
+        }
     }
 }

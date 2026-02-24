@@ -8,19 +8,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
+import com.useai.core.ui.LogitDropdownMenu
+import com.useai.core.ui.LogitDropdownMenuItem
 import com.useai.core.ui.experience.ExperienceCard
 
 @Composable
@@ -41,23 +41,23 @@ internal fun ExperienceCardListItem(
             .clip(RoundedCornerShape(14.dp))
             .background(
                 color = LogitTheme.colors.white,
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(14.dp),
             )
             .border(
                 width = 1.dp,
                 color = LogitTheme.colors.gray70,
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(14.dp),
             )
             .clickable(onClick = onClickCard)
             .padding(start = 18.dp, end = 12.dp, bottom = 14.dp),
     ) {
         ExperienceCard(
             experience = experience,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         Box(
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(top = 12.dp),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
@@ -66,49 +66,23 @@ internal fun ExperienceCardListItem(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .clickable(onClick = onClickMore)
-                    .padding(4.dp)
+                    .padding(4.dp),
             )
 
-            DropdownMenu(
+            LogitDropdownMenu(
                 expanded = isMenuExpanded,
                 onDismissRequest = onDismissMenu,
-                containerColor = LogitTheme.colors.white,
-                shape = RoundedCornerShape(14.dp)
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = "수정",
-                            style = LogitTheme.typography.body6_2,
-                            color = LogitTheme.colors.gray400
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_write),
-                            tint = LogitTheme.colors.gray400,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = onClickEdit
+                LogitDropdownMenuItem(
+                    text = stringResource(R.string.chat_edit),
+                    icon = ImageVector.vectorResource(R.drawable.ic_write),
+                    onClick = onClickEdit,
                 )
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = "삭제",
-                            style = LogitTheme.typography.body6_2,
-                            color = LogitTheme.colors.gray400
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_trash),
-                            tint = LogitTheme.colors.gray400,
-                            contentDescription = null
-                        )
-                    },
+                LogitDropdownMenuItem(
+                    text = stringResource(R.string.chat_delete),
+                    icon = ImageVector.vectorResource(R.drawable.ic_trash_drop),
                     enabled = !isDeleting,
-                    onClick = onClickDelete
+                    onClick = onClickDelete,
                 )
             }
         }

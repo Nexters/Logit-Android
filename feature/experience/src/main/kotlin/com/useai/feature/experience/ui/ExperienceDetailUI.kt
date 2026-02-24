@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +36,8 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
+import com.useai.core.ui.LogitDropdownMenu
+import com.useai.core.ui.LogitDropdownMenuItem
 import com.useai.core.ui.experience.CategoryChip
 import com.useai.core.ui.experience.TagChip
 import com.useai.feature.experience.ExperienceDetailScreen
@@ -127,31 +127,18 @@ private fun ExperienceDetailContent(
                         .clickable(onClick = onMore)
                         .padding(2.dp)
                 )
-                DropdownMenu(
+                LogitDropdownMenu(
                     expanded = isMenuExpanded,
                     onDismissRequest = onDismissMenu,
-                    containerColor = LogitTheme.colors.white
                 ) {
-                    DropdownMenuItem(
-                        text = { Text(text = stringResource(R.string.chat_edit)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_write),
-                                tint = LogitTheme.colors.gray400,
-                                contentDescription = null,
-                            )
-                        },
+                    LogitDropdownMenuItem(
+                        text = stringResource(R.string.chat_edit),
+                        icon = ImageVector.vectorResource(R.drawable.ic_write),
                         onClick = onClickEdit
                     )
-                    DropdownMenuItem(
-                        text = { Text(text = stringResource(R.string.chat_delete)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_trash),
-                                tint = LogitTheme.colors.gray400,
-                                contentDescription = null,
-                            )
-                        },
+                    LogitDropdownMenuItem(
+                        text = stringResource(R.string.chat_delete),
+                        icon = ImageVector.vectorResource(R.drawable.ic_trash_drop),
                         enabled = !isDeleting,
                         onClick = onClickDelete
                     )

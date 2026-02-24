@@ -49,6 +49,9 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         var task by rememberRetained { mutableStateOf("") }
         var action by rememberRetained { mutableStateOf("") }
         var result by rememberRetained { mutableStateOf("") }
+        var formatDrafts by rememberRetained {
+            mutableStateOf<Map<ExperienceCreateFormatType, InputDraft>>(emptyMap())
+        }
         var isSubmitting by rememberRetained { mutableStateOf(false) }
         var isPrefilled by rememberRetained { mutableStateOf(false) }
 
@@ -265,17 +268,67 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                 is ExperienceCreateScreen.Event.SelectExperienceType -> selectedExperienceType = event.value
                 is ExperienceCreateScreen.Event.SelectFormatType -> {
                     if (selectedFormatType != event.value) {
+                        val updatedDrafts = formatDrafts + (
+                            selectedFormatType to InputDraft(
+                                situation = situation,
+                                task = task,
+                                action = action,
+                                result = result
+                            )
+                        )
+                        formatDrafts = updatedDrafts
                         selectedFormatType = event.value
-                        situation = ""
-                        task = ""
-                        action = ""
-                        result = ""
+                        val selectedDraft = updatedDrafts[event.value] ?: InputDraft.EMPTY
+                        situation = selectedDraft.situation
+                        task = selectedDraft.task
+                        action = selectedDraft.action
+                        result = selectedDraft.result
                     }
                 }
-                is ExperienceCreateScreen.Event.ChangeSituation -> situation = event.value
-                is ExperienceCreateScreen.Event.ChangeTask -> task = event.value
-                is ExperienceCreateScreen.Event.ChangeAction -> action = event.value
-                is ExperienceCreateScreen.Event.ChangeResult -> result = event.value
+                is ExperienceCreateScreen.Event.ChangeSituation -> {
+                    situation = event.value
+                    formatDrafts = formatDrafts + (
+                        selectedFormatType to InputDraft(
+                            situation = situation,
+                            task = task,
+                            action = action,
+                            result = result
+                        )
+                    )
+                }
+                is ExperienceCreateScreen.Event.ChangeTask -> {
+                    task = event.value
+                    formatDrafts = formatDrafts + (
+                        selectedFormatType to InputDraft(
+                            situation = situation,
+                            task = task,
+                            action = action,
+                            result = result
+                        )
+                    )
+                }
+                is ExperienceCreateScreen.Event.ChangeAction -> {
+                    action = event.value
+                    formatDrafts = formatDrafts + (
+                        selectedFormatType to InputDraft(
+                            situation = situation,
+                            task = task,
+                            action = action,
+                            result = result
+                        )
+                    )
+                }
+                is ExperienceCreateScreen.Event.ChangeResult -> {
+                    result = event.value
+                    formatDrafts = formatDrafts + (
+                        selectedFormatType to InputDraft(
+                            situation = situation,
+                            task = task,
+                            action = action,
+                            result = result
+                        )
+                    )
+                }
             }
         }
 
@@ -397,6 +450,22 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         val action: String,
         val result: String,
     )
+
+    private data class InputDraft(
+        val situation: String,
+        val task: String,
+        val action: String,
+        val result: String,
+    ) {
+        companion object {
+            val EMPTY = InputDraft(
+                situation = "",
+                task = "",
+                action = "",
+                result = ""
+            )
+        }
+    }
 
     companion object {
         private const val MIN_INPUT_LENGTH = 50

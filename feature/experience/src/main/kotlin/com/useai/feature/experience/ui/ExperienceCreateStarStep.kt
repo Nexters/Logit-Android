@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.LogitDropdownMenu
+import com.useai.core.ui.LogitDropdownMenuItem
 import com.useai.core.ui.LogitInputField
 import com.useai.core.ui.LogitStepper
 import com.useai.core.ui.noRippleClickable
@@ -195,7 +197,7 @@ private fun ExperienceFormatTypeField(
                 )
             }
 
-            DropdownMenu(
+            LogitDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.then(
@@ -204,13 +206,14 @@ private fun ExperienceFormatTypeField(
                     } else {
                         Modifier
                     }
-                ),
-                containerColor = LogitTheme.colors.white
+                )
             ) {
                 ExperienceCreateFormatType.entries.forEach { formatType ->
                     DropdownMenuItem(
                         modifier = Modifier.fillMaxWidth(),
-                        text = { Text(text = stringResource(formatType.labelRes)) },
+                        text = {
+                            Text(text = stringResource(formatType.labelRes))
+                        },
                         onClick = {
                             expanded = false
                             onSelectFormatType(formatType)
