@@ -85,10 +85,11 @@ class AccountPresenter @AssistedInject constructor(
                     scope.launch {
                         accountRepository.requestLogout().onSuccess {
                             accountRepository.clear()
-                            navigator.resetRoot(LoginScreen)
                         }.onFailure {
                             Log.e(TAG, "Logout failed: $it")
                         }
+
+                        navigator.resetRoot(LoginScreen)
                     }
                 }
 
