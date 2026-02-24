@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.ui.InputFormContainer
+import com.useai.feature.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceCreateStep
 import dagger.hilt.android.components.ActivityRetainedComponent
@@ -29,7 +30,7 @@ fun ExperienceCreateUI(
         },
         bottomButtonText = stringResource(
             if (state.currentStep == ExperienceCreateStep.STAR) {
-                R.string.experience_register
+                if (state.isEditMode) R.string.chat_edit else R.string.experience_register
             } else {
                 R.string.next
             }
@@ -38,6 +39,7 @@ fun ExperienceCreateUI(
             state.eventSink(ExperienceCreateScreen.Event.Next)
         },
         bottomButtonEnabled = isBottomButtonEnabled(state),
+        contentScrollEnabled = false,
     ) {
         when (state.currentStep) {
             ExperienceCreateStep.BASIC_INFO -> ExperienceCreateBasicInfoStep(state = state)
@@ -55,10 +57,21 @@ private fun isBottomButtonEnabled(state: ExperienceCreateScreen.State): Boolean 
         }
 
         ExperienceCreateStep.STAR -> {
-            state.situation.trim().length >= 50 &&
-                state.task.trim().length >= 50 &&
-                state.action.trim().length >= 50 &&
-                state.result.trim().length >= 50
+            when (state.selectedFormatType) {
+                ExperienceCreateFormatType.STAR ->
+                    state.situation.trim().length >= 50 &&
+                        state.task.trim().length >= 50 &&
+                        state.action.trim().length >= 50 &&
+                        state.result.trim().length >= 50
+
+                ExperienceCreateFormatType.PSI ->
+                    state.situation.trim().length >= 50 &&
+                        state.task.trim().length >= 50 &&
+                        state.action.trim().length >= 50
+
+                ExperienceCreateFormatType.FREEFORM ->
+                    state.situation.trim().length >= 50
+            }
         }
     }
 }

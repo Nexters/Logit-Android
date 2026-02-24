@@ -3,11 +3,15 @@ package com.useai.feature.experience.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,8 +26,13 @@ import com.useai.core.ui.experience.ExperienceCard
 @Composable
 internal fun ExperienceCardListItem(
     experience: Experience,
+    isMenuExpanded: Boolean,
+    isDeleting: Boolean,
     onClickCard: () -> Unit,
     onClickMore: () -> Unit,
+    onDismissMenu: () -> Unit,
+    onClickEdit: () -> Unit,
+    onClickDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -47,15 +56,61 @@ internal fun ExperienceCardListItem(
             modifier = Modifier.weight(1f)
         )
 
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
-            tint = LogitTheme.colors.gray300,
-            contentDescription = null,
-            modifier = Modifier
-                .padding(top = 12.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .clickable(onClick = onClickMore)
-                .padding(4.dp)
-        )
+        Box(
+            modifier = Modifier.padding(top = 12.dp)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
+                tint = LogitTheme.colors.gray300,
+                contentDescription = null,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable(onClick = onClickMore)
+                    .padding(4.dp)
+            )
+
+            DropdownMenu(
+                expanded = isMenuExpanded,
+                onDismissRequest = onDismissMenu,
+                containerColor = LogitTheme.colors.white,
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "수정",
+                            style = LogitTheme.typography.body6_2,
+                            color = LogitTheme.colors.gray400
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_write),
+                            tint = LogitTheme.colors.gray400,
+                            contentDescription = null
+                        )
+                    },
+                    onClick = onClickEdit
+                )
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "삭제",
+                            style = LogitTheme.typography.body6_2,
+                            color = LogitTheme.colors.gray400
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_trash),
+                            tint = LogitTheme.colors.gray400,
+                            contentDescription = null
+                        )
+                    },
+                    enabled = !isDeleting,
+                    onClick = onClickDelete
+                )
+            }
+        }
     }
 }

@@ -44,7 +44,7 @@ class ScreenProviderImpl: ScreenProvider {
     override fun newQuestionScreen(projectId: String): Screen = NewQuestionScreen(projectId)
     override fun editQuestionsScreen(projectId: String): Screen = EditQuestionsScreen(projectId)
 
-    override fun experienceCreateScreen(): Screen = ExperienceCreateScreen
+    override fun experienceCreateScreen(experienceId: String?): Screen = ExperienceCreateScreen(experienceId)
 
     override fun experienceDetailScreen(experienceId: String): Screen = ExperienceDetailScreen(
         experienceId = experienceId

@@ -15,6 +15,7 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
 import com.useai.core.model.experience.ExperienceParam
+import com.useai.core.network.request.UpdateExperienceRequest
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,6 +28,7 @@ import java.util.Locale
 
 class ExperienceCreatePresenter @AssistedInject constructor(
     private val experienceRepository: ExperienceRepository,
+    @Assisted private val screen: ExperienceCreateScreen,
     @Assisted private val navigator: Navigator,
 ) : Presenter<ExperienceCreateScreen.State> {
 
@@ -42,11 +44,36 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         var startDate by rememberRetained { mutableStateOf("") }
         var isInProgress by rememberRetained { mutableStateOf(false) }
         var selectedExperienceType by rememberRetained { mutableStateOf<String?>(null) }
+        var selectedFormatType by rememberRetained { mutableStateOf(ExperienceCreateFormatType.STAR) }
         var situation by rememberRetained { mutableStateOf("") }
         var task by rememberRetained { mutableStateOf("") }
         var action by rememberRetained { mutableStateOf("") }
         var result by rememberRetained { mutableStateOf("") }
         var isSubmitting by rememberRetained { mutableStateOf(false) }
+        var isPrefilled by rememberRetained { mutableStateOf(false) }
+
+        if (!isPrefilled && screen.experienceId != null) {
+            isPrefilled = true
+            scope.launch {
+                experienceRepository.getExperience(screen.experienceId)
+                    .onSuccess { experience ->
+                        title = experience.title
+                        startDate = experience.startDate.format(DATE_INPUT_FORMATTER)
+                        isInProgress = experience.endDate == LocalDate.MIN
+                        selectedExperienceType = experience.experienceType
+                        selectedFormatType = experience.formatType.toFormatType()
+                        situation = experience.situation
+                        task = experience.task
+                        action = experience.action
+                        result = experience.result
+                    }.onFailure {
+                        snackbarHostState.showLogitSnackbar(
+                            message = createFailMessage,
+                            iconResId = R.drawable.ic_experience_default
+                        )
+                    }
+            }
+        }
 
         val eventSink: (ExperienceCreateScreen.Event) -> Unit = { event ->
             when (event) {
@@ -68,10 +95,28 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                         }
 
                         ExperienceCreateStep.STAR -> {
-                            situation = ExperienceCreateDefaults.sampleSituation
-                            task = ExperienceCreateDefaults.sampleTask
-                            action = ExperienceCreateDefaults.sampleAction
-                            result = ExperienceCreateDefaults.sampleResult
+                            when (selectedFormatType) {
+                                ExperienceCreateFormatType.FREEFORM -> {
+                                    situation = ExperienceCreateDefaults.sampleFreeform
+                                    task = ""
+                                    action = ""
+                                    result = ""
+                                }
+
+                                ExperienceCreateFormatType.PSI -> {
+                                    situation = ExperienceCreateDefaults.sampleProblem
+                                    task = ExperienceCreateDefaults.sampleSolution
+                                    action = ExperienceCreateDefaults.sampleInsight
+                                    result = ""
+                                }
+
+                                ExperienceCreateFormatType.STAR -> {
+                                    situation = ExperienceCreateDefaults.sampleSituation
+                                    task = ExperienceCreateDefaults.sampleTask
+                                    action = ExperienceCreateDefaults.sampleAction
+                                    result = ExperienceCreateDefaults.sampleResult
+                                }
+                            }
                         }
                     }
                 }
@@ -103,7 +148,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                 val parsedStartDate = parseDate(startDate)
                                 val parsedEndDate = if (isInProgress) null else parsedStartDate
                                 if (
-                                    !isStarValid(situation, task, action, result) ||
+                                    !isStep2Valid(selectedFormatType, situation, task, action, result) ||
                                     parsedStartDate == null ||
                                     selectedExperienceType == null ||
                                     (!isInProgress && parsedEndDate == null)
@@ -116,33 +161,95 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                     }
                                 } else {
                                     isSubmitting = true
+                                    val formattedInput = toFormattedInput(
+                                        formatType = selectedFormatType,
+                                        situation = situation,
+                                        task = task,
+                                        action = action,
+                                        result = result
+                                    )
                                     scope.launch {
-                                        experienceRepository.createExperience(
-                                            ExperienceParam(
-                                                title = title.trim(),
-                                                experienceType = selectedExperienceType.orEmpty(),
-                                                formatType = FORMAT_TYPE_STAR,
-                                                startDate = parsedStartDate,
-                                                endDate = parsedEndDate,
-                                                tags = "",
-                                                situation = situation.trim(),
-                                                task = task.trim(),
-                                                action = action.trim(),
-                                                result = result.trim()
-                                            )
-                                        ).onSuccess { created ->
-                                            isSubmitting = false
-                                            navigator.pop(
-                                                ExperienceCreateScreen.ExperienceCreatedResult(
-                                                    experienceId = created.id
+                                        val experienceId = screen.experienceId
+                                        if (experienceId == null) {
+                                            experienceRepository.createExperience(
+                                                ExperienceParam(
+                                                    title = title.trim(),
+                                                    experienceType = selectedExperienceType.orEmpty(),
+                                                    formatType = selectedFormatType.requestValue,
+                                                    startDate = parsedStartDate,
+                                                    endDate = parsedEndDate,
+                                                    tags = "",
+                                                    situation = formattedInput.situation,
+                                                    task = formattedInput.task,
+                                                    action = formattedInput.action,
+                                                    result = formattedInput.result
+                                                )
+                                            ).onSuccess { created ->
+                                                isSubmitting = false
+                                                navigator.pop(
+                                                    ExperienceCreateScreen.ExperienceSubmitResult(
+                                                        experienceId = created.id,
+                                                        action = ExperienceCreateScreen.Action.CREATED
+                                                    )
+                                                )
+                                            }.onFailure {
+                                                isSubmitting = false
+                                                snackbarHostState.showLogitSnackbar(
+                                                    message = createFailMessage,
+                                                    iconResId = R.drawable.ic_experience_default
+                                                )
+                                            }
+                                        } else {
+                                            experienceRepository.updateExperience(
+                                                experienceId = experienceId,
+                                                request = UpdateExperienceRequest(
+                                                    title = title.trim(),
+                                                    experienceType = selectedExperienceType,
+                                                    formatType = selectedFormatType.requestValue,
+                                                    startDate = parsedStartDate.toString(),
+                                                    endDate = parsedEndDate?.toString(),
+                                                    tags = "",
+                                                    situation = formattedInput.situation,
+                                                    task = formattedInput.task,
+                                                    action = formattedInput.action,
+                                                    result = formattedInput.result,
+                                                    problem = if (selectedFormatType == ExperienceCreateFormatType.PSI) {
+                                                        formattedInput.situation
+                                                    } else {
+                                                        null
+                                                    },
+                                                    solution = if (selectedFormatType == ExperienceCreateFormatType.PSI) {
+                                                        formattedInput.task
+                                                    } else {
+                                                        null
+                                                    },
+                                                    insight = if (selectedFormatType == ExperienceCreateFormatType.PSI) {
+                                                        formattedInput.action
+                                                    } else {
+                                                        null
+                                                    },
+                                                    content = if (selectedFormatType == ExperienceCreateFormatType.FREEFORM) {
+                                                        formattedInput.situation
+                                                    } else {
+                                                        null
+                                                    }
                                                 )
                                             )
-                                        }.onFailure {
-                                            isSubmitting = false
-                                            snackbarHostState.showLogitSnackbar(
-                                                message = createFailMessage,
-                                                iconResId = R.drawable.ic_experience_default
-                                            )
+                                                .onSuccess { updated ->
+                                                    isSubmitting = false
+                                                    navigator.pop(
+                                                        ExperienceCreateScreen.ExperienceSubmitResult(
+                                                            experienceId = updated.id,
+                                                            action = ExperienceCreateScreen.Action.UPDATED
+                                                        )
+                                                    )
+                                                }.onFailure {
+                                                    isSubmitting = false
+                                                    snackbarHostState.showLogitSnackbar(
+                                                        message = createFailMessage,
+                                                        iconResId = R.drawable.ic_experience_default
+                                                    )
+                                                }
                                         }
                                     }
                                 }
@@ -156,6 +263,15 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                 ExperienceCreateScreen.Event.ToggleInProgress -> isInProgress = !isInProgress
 
                 is ExperienceCreateScreen.Event.SelectExperienceType -> selectedExperienceType = event.value
+                is ExperienceCreateScreen.Event.SelectFormatType -> {
+                    if (selectedFormatType != event.value) {
+                        selectedFormatType = event.value
+                        situation = ""
+                        task = ""
+                        action = ""
+                        result = ""
+                    }
+                }
                 is ExperienceCreateScreen.Event.ChangeSituation -> situation = event.value
                 is ExperienceCreateScreen.Event.ChangeTask -> task = event.value
                 is ExperienceCreateScreen.Event.ChangeAction -> action = event.value
@@ -165,10 +281,12 @@ class ExperienceCreatePresenter @AssistedInject constructor(
 
         return ExperienceCreateScreen.State(
             currentStep = currentStep,
+            isEditMode = screen.experienceId != null,
             title = title,
             startDate = startDate,
             isInProgress = isInProgress,
             selectedExperienceType = selectedExperienceType,
+            selectedFormatType = selectedFormatType,
             situation = situation,
             task = task,
             action = action,
@@ -182,8 +300,15 @@ class ExperienceCreatePresenter @AssistedInject constructor(
     @CircuitInject(ExperienceCreateScreen::class, ActivityRetainedComponent::class)
     fun interface Factory {
         fun create(
+            screen: ExperienceCreateScreen,
             navigator: Navigator,
         ): ExperienceCreatePresenter
+    }
+
+    private fun String?.toFormatType(): ExperienceCreateFormatType = when (this?.trim()?.uppercase()) {
+        ExperienceCreateFormatType.PSI.requestValue -> ExperienceCreateFormatType.PSI
+        ExperienceCreateFormatType.FREEFORM.requestValue -> ExperienceCreateFormatType.FREEFORM
+        else -> ExperienceCreateFormatType.STAR
     }
 
     private fun isBasicInfoValid(
@@ -194,16 +319,63 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         return title.isNotBlank() && parseDate(startDate) != null && selectedExperienceType != null
     }
 
-    private fun isStarValid(
+    private fun isStep2Valid(
+        formatType: ExperienceCreateFormatType,
         situation: String,
         task: String,
         action: String,
         result: String,
     ): Boolean {
-        return situation.trim().length >= MIN_STAR_LENGTH &&
-            task.trim().length >= MIN_STAR_LENGTH &&
-            action.trim().length >= MIN_STAR_LENGTH &&
-            result.trim().length >= MIN_STAR_LENGTH
+        return when (formatType) {
+            ExperienceCreateFormatType.STAR ->
+                situation.trim().length >= MIN_INPUT_LENGTH &&
+                    task.trim().length >= MIN_INPUT_LENGTH &&
+                    action.trim().length >= MIN_INPUT_LENGTH &&
+                    result.trim().length >= MIN_INPUT_LENGTH
+
+            ExperienceCreateFormatType.PSI ->
+                situation.trim().length >= MIN_INPUT_LENGTH &&
+                    task.trim().length >= MIN_INPUT_LENGTH &&
+                    action.trim().length >= MIN_INPUT_LENGTH
+
+            ExperienceCreateFormatType.FREEFORM ->
+                situation.trim().length >= MIN_INPUT_LENGTH
+        }
+    }
+
+    private fun toFormattedInput(
+        formatType: ExperienceCreateFormatType,
+        situation: String,
+        task: String,
+        action: String,
+        result: String,
+    ): FormattedInput {
+        val trimmedSituation = situation.trim()
+        val trimmedTask = task.trim()
+        val trimmedAction = action.trim()
+        val trimmedResult = result.trim()
+        return when (formatType) {
+            ExperienceCreateFormatType.STAR -> FormattedInput(
+                situation = trimmedSituation,
+                task = trimmedTask,
+                action = trimmedAction,
+                result = trimmedResult
+            )
+
+            ExperienceCreateFormatType.PSI -> FormattedInput(
+                situation = trimmedSituation,
+                task = trimmedTask,
+                action = trimmedAction,
+                result = ""
+            )
+
+            ExperienceCreateFormatType.FREEFORM -> FormattedInput(
+                situation = trimmedSituation,
+                task = "",
+                action = "",
+                result = ""
+            )
+        }
     }
 
     private fun parseDate(raw: String): LocalDate? {
@@ -219,9 +391,15 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         ExperienceCreateStep.STAR -> ExperienceCreateStep.BASIC_INFO
     }
 
+    private data class FormattedInput(
+        val situation: String,
+        val task: String,
+        val action: String,
+        val result: String,
+    )
+
     companion object {
-        private const val MIN_STAR_LENGTH = 50
-        private const val FORMAT_TYPE_STAR = "STAR"
+        private const val MIN_INPUT_LENGTH = 50
         private val DATE_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy. MM. dd", Locale.KOREA)
     }
 }

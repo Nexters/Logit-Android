@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,8 +71,13 @@ fun ExperienceDetailUI(
         is ExperienceDetailScreen.State.Success -> {
             ExperienceDetailContent(
                 experience = state.experience,
+                isMenuExpanded = state.isMenuExpanded,
+                isDeleting = state.isDeleting,
                 onBack = { state.eventSink(ExperienceDetailScreen.Event.Back) },
                 onMore = { state.eventSink(ExperienceDetailScreen.Event.ClickMore) },
+                onDismissMenu = { state.eventSink(ExperienceDetailScreen.Event.DismissMenu) },
+                onClickEdit = { state.eventSink(ExperienceDetailScreen.Event.ClickEdit) },
+                onClickDelete = { state.eventSink(ExperienceDetailScreen.Event.ClickDelete) },
                 modifier = modifier
             )
         }
@@ -80,8 +87,13 @@ fun ExperienceDetailUI(
 @Composable
 private fun ExperienceDetailContent(
     experience: Experience,
+    isMenuExpanded: Boolean,
+    isDeleting: Boolean,
     onBack: () -> Unit,
     onMore: () -> Unit,
+    onDismissMenu: () -> Unit,
+    onClickEdit: () -> Unit,
+    onClickDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -106,14 +118,45 @@ private fun ExperienceDetailContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
-                tint = LogitTheme.colors.gray300,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable(onClick = onMore)
-                    .padding(2.dp)
-            )
+            androidx.compose.foundation.layout.Box {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
+                    tint = LogitTheme.colors.gray300,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable(onClick = onMore)
+                        .padding(2.dp)
+                )
+                DropdownMenu(
+                    expanded = isMenuExpanded,
+                    onDismissRequest = onDismissMenu,
+                    containerColor = LogitTheme.colors.white
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(R.string.chat_edit)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_write),
+                                tint = LogitTheme.colors.gray400,
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = onClickEdit
+                    )
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(R.string.chat_delete)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_trash),
+                                tint = LogitTheme.colors.gray400,
+                                contentDescription = null,
+                            )
+                        },
+                        enabled = !isDeleting,
+                        onClick = onClickDelete
+                    )
+                }
+            }
         }
 
         Text(
@@ -274,8 +317,11 @@ private fun ExperienceDetailSuccessPreview() {
                     startDate = LocalDate.of(2022, 4, 6),
                     endDate = LocalDate.of(2022, 4, 6),
                     experienceType = "인턴",
+                    formatType = "STAR",
                     title = "로짓 데이터 분석을 통한 이탈률 개선"
                 ),
+                isMenuExpanded = false,
+                isDeleting = false,
                 eventSink = {}
             )
         )

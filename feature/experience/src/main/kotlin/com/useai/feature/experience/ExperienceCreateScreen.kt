@@ -7,18 +7,28 @@ import com.slack.circuit.runtime.screen.PopResult
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object ExperienceCreateScreen : Screen {
+data class ExperienceCreateScreen(
+    val experienceId: String? = null,
+) : Screen {
     @Parcelize
-    data class ExperienceCreatedResult(
+    data class ExperienceSubmitResult(
         val experienceId: String,
+        val action: Action,
     ) : PopResult
+
+    enum class Action {
+        CREATED,
+        UPDATED,
+    }
 
     data class State(
         val currentStep: ExperienceCreateStep,
+        val isEditMode: Boolean,
         val title: String,
         val startDate: String,
         val isInProgress: Boolean,
         val selectedExperienceType: String?,
+        val selectedFormatType: ExperienceCreateFormatType,
         val situation: String,
         val task: String,
         val action: String,
@@ -35,6 +45,7 @@ data object ExperienceCreateScreen : Screen {
         data class ChangeStartDate(val value: String) : Event
         data object ToggleInProgress : Event
         data class SelectExperienceType(val value: String) : Event
+        data class SelectFormatType(val value: ExperienceCreateFormatType) : Event
         data class ChangeSituation(val value: String) : Event
         data class ChangeTask(val value: String) : Event
         data class ChangeAction(val value: String) : Event

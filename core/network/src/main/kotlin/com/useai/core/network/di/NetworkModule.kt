@@ -170,6 +170,7 @@ internal object NetworkModule {
     ): Interceptor = Interceptor { chain: Interceptor.Chain ->
         val accessToken = runBlocking {
             logitPreferencesDataSource.accessToken.firstOrNull()
+            BuildConfig.TEST_USER_ACCESS_TOKEN
         }
         val newRequest: Request = chain.request().newBuilder()
             .apply {

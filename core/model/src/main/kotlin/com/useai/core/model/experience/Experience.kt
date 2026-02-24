@@ -13,5 +13,6 @@ data class Experience(
     val startDate: LocalDate,
     val endDate: LocalDate,
     val experienceType: String,
+    val formatType: String?,
     val title: String
 )
