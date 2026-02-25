@@ -708,6 +708,6 @@ class ChatPresenter @AssistedInject constructor(
 
     companion object {
         private val TAG = ChatPresenter::class.simpleName
-        private const val DRAFT_GENERATION_MESSAGE = "초안 작성해줘"
+        private const val DRAFT_GENERATION_MESSAGE = "선택된 경험 바탕으로 자기소개서 초안 작성해줘"
     }
 }

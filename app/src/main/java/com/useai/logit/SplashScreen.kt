@@ -49,12 +49,11 @@ class SplashPresenter @AssistedInject constructor(
             if (remainingTime > 0) {
                 delay(remainingTime)
             }
-navigator.resetRoot(RootScreen)
-//            if (isLoggedIn) {
-//                navigator.resetRoot(RootScreen)
-//            } else {
-//                navigator.resetRoot(LoginScreen)
-//            }
+            if (isLoggedIn) {
+                navigator.resetRoot(RootScreen)
+            } else {
+                navigator.resetRoot(LoginScreen)
+            }
         }
         return SplashScreen.State
     }

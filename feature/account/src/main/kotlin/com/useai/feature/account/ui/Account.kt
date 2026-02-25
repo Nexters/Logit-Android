@@ -89,40 +89,42 @@ fun Account(
 
             // 알림 설정
             Spacer(Modifier.height(28.dp))
-            Column(
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.account_notification_settings_title),
-                    style = LogitTheme.typography.body5_2,
-                    color = LogitTheme.colors.black,
-                )
-                Spacer(Modifier.height(10.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.account_report_notification_setting),
-                        modifier = Modifier.weight(1f),
-                        style = LogitTheme.typography.body7_4,
-                        color = LogitTheme.colors.gray400,
-                    )
-                    LogitSwitch(
-                        checked = state.reportNotificationEnabled,
-                        onCheckedChange = { checked ->
-                            // TODO: checked가 항상 true인데 LogitSwitch 내부에서 처리하게 수정되면 AccountScreen 로직 수정 필요
-                            Log.d(TAG, "onCheckedChange: $checked")
-                            state.eventSink(
-                                AccountScreen.Event.ReportNotificationSettingUpdated
-                            )
-                        }
-                    )
-                }
-            }
+
+            // fixme MVP X
+//            Column(
+//                modifier = Modifier.padding(
+//                    horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+//                )
+//            ) {
+//                Text(
+//                    text = stringResource(R.string.account_notification_settings_title),
+//                    style = LogitTheme.typography.body5_2,
+//                    color = LogitTheme.colors.black,
+//                )
+//                Spacer(Modifier.height(10.dp))
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(vertical = 12.dp),
+//                ) {
+//                    Text(
+//                        text = stringResource(R.string.account_report_notification_setting),
+//                        modifier = Modifier.weight(1f),
+//                        style = LogitTheme.typography.body7_4,
+//                        color = LogitTheme.colors.gray400,
+//                    )
+//                    LogitSwitch(
+//                        checked = state.reportNotificationEnabled,
+//                        onCheckedChange = { checked ->
+//                            // TODO: checked가 항상 true인데 LogitSwitch 내부에서 처리하게 수정되면 AccountScreen 로직 수정 필요
+//                            Log.d(TAG, "onCheckedChange: $checked")
+//                            state.eventSink(
+//                                AccountScreen.Event.ReportNotificationSettingUpdated
+//                            )
+//                        }
+//                    )
+//                }
+//            }
             Spacer(Modifier.height(18.dp))
 
             AccountDivider()
@@ -138,12 +140,13 @@ fun Account(
                 color = LogitTheme.colors.black,
             )
             Spacer(Modifier.height(14.dp))
-            SupportItem(
-                text = stringResource(R.string.account_contact),
-                onClick = {
-                    state.eventSink(AccountScreen.Event.Contact)
-                }
-            )
+//            fixme
+//            SupportItem(
+//                text = stringResource(R.string.account_contact),
+//                onClick = {
+//                    state.eventSink(AccountScreen.Event.Contact)
+//                }
+//            )
             SupportItem(
                 text = stringResource(R.string.account_logout),
                 onClick = {
