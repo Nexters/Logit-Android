@@ -1,6 +1,5 @@
 package com.useai.feature.account.ui
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.appbar.PopUpTitle
-import com.useai.core.designsystem.component.toggle.LogitSwitch
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.account.UserProfile
+import com.useai.core.ui.LogitDialog
 import com.useai.feature.account.AccountScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
@@ -44,6 +43,27 @@ fun Account(
 ) {
     BackHandler {
         state.eventSink(AccountScreen.Event.Back)
+    }
+
+    if (state.showLogoutDialog) {
+        LogitDialog(
+            onDismissRequest = { state.eventSink(AccountScreen.Event.DismissLogoutDialog) },
+            title = stringResource(R.string.account_dialog_logout_title),
+            confirmText = stringResource(R.string.account_dialog_logout),
+            onConfirm = { state.eventSink(AccountScreen.Event.ConfirmLogout) },
+            cancelText = stringResource(R.string.account_dialog_cancel),
+            onCancel = { state.eventSink(AccountScreen.Event.DismissLogoutDialog) },
+        )
+    } else if (state.showWithdrawDialog) {
+        LogitDialog(
+            onDismissRequest = { state.eventSink(AccountScreen.Event.DismissWithdrawDialog) },
+            title = stringResource(R.string.account_dialog_withdraw_title),
+            description = stringResource(R.string.account_dialog_withdraw_desc),
+            confirmText = stringResource(R.string.account_dialog_withdraw),
+            onConfirm = { state.eventSink(AccountScreen.Event.ConfirmWithdraw) },
+            cancelText = stringResource(R.string.account_dialog_cancel),
+            onCancel = { state.eventSink(AccountScreen.Event.DismissWithdrawDialog) },
+        )
     }
 
     Scaffold(
@@ -83,12 +103,12 @@ fun Account(
                     color = LogitTheme.colors.gray400,
                 )
             }
-            Spacer(Modifier.height(26.dp))
+//            Spacer(Modifier.height(26.dp))
 
-            AccountDivider()
+//            AccountDivider()
 
             // 알림 설정
-            Spacer(Modifier.height(28.dp))
+//            Spacer(Modifier.height(28.dp))
 
             // fixme MVP X
 //            Column(
@@ -150,13 +170,13 @@ fun Account(
             SupportItem(
                 text = stringResource(R.string.account_logout),
                 onClick = {
-                    state.eventSink(AccountScreen.Event.Logout)
+                    state.eventSink(AccountScreen.Event.LogoutClicked)
                 }
             )
             SupportItem(
                 text = stringResource(R.string.account_withdraw),
                 onClick = {
-                    state.eventSink(AccountScreen.Event.Withdraw)
+                    state.eventSink(AccountScreen.Event.WithdrawClicked)
                 }
             )
         }
@@ -208,7 +228,12 @@ private fun SupportItem(
 private fun AccountPreview() {
     LogitTheme {
         Account(
-            state = AccountScreen.State(UserProfile("로짓", ""), false)
+            state = AccountScreen.State(
+                userProfile = UserProfile("로짓", ""),
+                reportNotificationEnabled = true,
+                showLogoutDialog = false,
+                showWithdrawDialog = false,
+            )
         )
     }
 }
