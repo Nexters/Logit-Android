@@ -1,6 +1,5 @@
 package com.useai.logit
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -36,19 +34,20 @@ data object SplashScreen : Screen {
 
 class SplashPresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
+    private val accountRepository: AccountRepository,
 ) : Presenter<SplashScreen.State> {
     @Composable
     override fun present(): SplashScreen.State {
-        val context = LocalContext.current
         LaunchedEffect(Unit) {
             val startTime = System.currentTimeMillis()
-            val isLoggedIn = checkLoginStatus(context)
-            
+            val isLoggedIn = checkLoginStatus()
+
             val elapsedTime = System.currentTimeMillis() - startTime
             val remainingTime = 1000L - elapsedTime
             if (remainingTime > 0) {
                 delay(remainingTime)
             }
+
             if (isLoggedIn) {
                 navigator.resetRoot(RootScreen)
             } else {
@@ -58,9 +57,8 @@ class SplashPresenter @AssistedInject constructor(
         return SplashScreen.State
     }
 
-    private suspend fun checkLoginStatus(context: Context): Boolean {
-        // TODO: DataStore에 자동 로그인 정보 읽어서 로그인 상태 확인 로직 구현
-        return false
+    private suspend fun checkLoginStatus(): Boolean {
+        return accountRepository.isLoggedIn()
     }
 
     @AssistedFactory

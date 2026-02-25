@@ -21,6 +21,10 @@ internal class AccountRepositoryImpl @Inject constructor(
         return logitPreferencesDataSource.accessToken.firstOrNull()
     }
 
+    override suspend fun isLoggedIn(): Boolean {
+        return getUser().isSuccess
+    }
+
     override suspend fun requestLogin(idToken: String): Result<Login> {
         return runCatching {
             authRemoteDataSource.requestGoogleLogin(

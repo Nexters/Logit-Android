@@ -11,11 +11,14 @@ import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceDetailScreen
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
 import com.useai.feature.newproject.NewProjectQuestionScreen
+import com.useai.feature.onboarding.OnboardingScreen
 import com.useai.feature.projects.ProjectLibraryScreen
 import com.useai.feature.projects.ProjectsScreen
 import java.time.LocalDate
 
 class ScreenProviderImpl: ScreenProvider {
+    override fun onboardingScreen(): Screen = OnboardingScreen
+
     override fun rootScreen(): Screen = RootScreen
 
     override fun homeScreen(): Screen = HomeScreen

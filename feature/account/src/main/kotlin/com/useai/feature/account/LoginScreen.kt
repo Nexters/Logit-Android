@@ -23,8 +23,8 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
+import com.useai.core.model.account.Login
 import com.useai.core.navigation.LocalScreenProvider
-import com.useai.core.navigation.ScreenProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -67,8 +67,21 @@ class LoginPresenter @AssistedInject constructor(
                             credentialManager = credentialManager,
                             context = context,
                             scope = scope,
-                            navigator = navigator,
-                            screenProvider = screenProvider,
+                            onSuccess = { loginResult ->
+                                scope.launch {
+                                    Log.d(TAG, "Google login success: $loginResult")
+                                    accountRepository.setAccessToken(loginResult.accessToken)
+                                    accountRepository.setRefreshToken(loginResult.refreshToken)
+
+                                    val newRoot = if (loginResult.isNewUser) {
+                                        screenProvider.onboardingScreen()
+                                    } else {
+                                        screenProvider.rootScreen()
+                                    }
+//                                    navigator.resetRoot(newRoot)
+                                    navigator.resetRoot(screenProvider.onboardingScreen())
+                                }
+                            }
                         )
                     }
                 }
@@ -90,8 +103,7 @@ class LoginPresenter @AssistedInject constructor(
         credentialManager: CredentialManager,
         context: Context,
         scope: CoroutineScope,
-        navigator: Navigator,
-        screenProvider: ScreenProvider,
+        onSuccess: (Login) -> Unit,
     ) {
         val nonce = generateNonce()
         val signInWithGoogleOption: GetSignInWithGoogleOption = GetSignInWithGoogleOption.Builder(
@@ -114,12 +126,9 @@ class LoginPresenter @AssistedInject constructor(
                     scope.launch {
                         accountRepository.requestLogin(
                             idToken = googleIdTokenCredential.idToken,
-                        ).onSuccess {
-                            scope.launch {
-                                accountRepository.setAccessToken(it.accessToken)
-                                navigator.resetRoot(screenProvider.rootScreen())
-                            }
-                        }.onFailure {
+                        ).onSuccess { loginResult ->
+                            onSuccess(loginResult)
+                        }.onFailure { 
                             Log.e(TAG, "Google login failed: $it")
                         }
                     }
@@ -133,9 +142,8 @@ class LoginPresenter @AssistedInject constructor(
                                 scope.launch {
                                     accountRepository.requestLogin(
                                         idToken = googleIdTokenCredential.idToken,
-                                    ).onSuccess {
-                                        accountRepository.setAccessToken(it.accessToken)
-                                        navigator.resetRoot(screenProvider.rootScreen())
+                                    ).onSuccess { loginResult ->
+                                        onSuccess(loginResult)
                                     }
                                 }
                             },
@@ -152,9 +160,8 @@ class LoginPresenter @AssistedInject constructor(
                     scope.launch {
                         accountRepository.requestLogin(
                             idToken = googleIdTokenCredential.idToken,
-                        ).onSuccess {
-                            accountRepository.setAccessToken(it.accessToken)
-                            navigator.resetRoot(screenProvider.rootScreen())
+                        ).onSuccess { loginResult ->
+                            onSuccess(loginResult)
                         }
                     }
                 },
@@ -169,7 +176,7 @@ class LoginPresenter @AssistedInject constructor(
         return bytes.toHexString()
     }
 
-    // 바이??배열??16진수 문자?�로 변?�하???�장 ?�수
+    // 바이트 배열을 16진수 문자열로 변환하는 확장 함수
     private fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
     private fun handleSignInWithGoogleOption(
