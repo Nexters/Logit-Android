@@ -28,6 +28,8 @@ data object AccountScreen : Screen {
     data class State(
         val userProfile: UserProfile,
         val reportNotificationEnabled: Boolean,
+        val showLogoutDialog: Boolean,
+        val showWithdrawDialog: Boolean,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
 
@@ -35,8 +37,12 @@ data object AccountScreen : Screen {
         data object Back : Event
         data object ReportNotificationSettingUpdated : Event
         data object Contact : Event
-        data object Logout : Event
-        data object Withdraw : Event
+        data object LogoutClicked : Event
+        data object DismissLogoutDialog : Event
+        data object ConfirmLogout : Event
+        data object WithdrawClicked : Event
+        data object DismissWithdrawDialog : Event
+        data object ConfirmWithdraw : Event
     }
 }
 
@@ -56,11 +62,15 @@ class AccountPresenter @AssistedInject constructor(
                 }
         }
         var reportNotificationEnabled by rememberRetained { mutableStateOf(false) }
+        var showLogoutDialog by rememberRetained { mutableStateOf(false) }
+        var showWithdrawDialog by rememberRetained { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
 
         return AccountScreen.State(
             userProfile = userProfile,
             reportNotificationEnabled = reportNotificationEnabled,
+            showLogoutDialog = showLogoutDialog,
+            showWithdrawDialog = showWithdrawDialog,
         ) { event ->
             when (event) {
                 AccountScreen.Event.Back -> navigator.pop()
@@ -81,19 +91,36 @@ class AccountPresenter @AssistedInject constructor(
                     // TODO: 문의하기
                 }
 
-                AccountScreen.Event.Logout -> {
+                AccountScreen.Event.LogoutClicked -> {
+                    showLogoutDialog = true
+                }
+
+                AccountScreen.Event.DismissLogoutDialog -> {
+                    showLogoutDialog = false
+                }
+
+                AccountScreen.Event.ConfirmLogout -> {
+                    showLogoutDialog = false
                     scope.launch {
                         accountRepository.requestLogout().onSuccess {
                             accountRepository.clear()
                         }.onFailure {
                             Log.e(TAG, "Logout failed: $it")
                         }
-
                         navigator.resetRoot(LoginScreen)
                     }
                 }
 
-                AccountScreen.Event.Withdraw -> {
+                AccountScreen.Event.WithdrawClicked -> {
+                    showWithdrawDialog = true
+                }
+
+                AccountScreen.Event.DismissWithdrawDialog -> {
+                    showWithdrawDialog = false
+                }
+
+                AccountScreen.Event.ConfirmWithdraw -> {
+                    showWithdrawDialog = false
                     scope.launch {
                         accountRepository.deleteUser()
                             .onSuccess {
