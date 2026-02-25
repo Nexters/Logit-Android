@@ -2,9 +2,11 @@ package com.useai.core.ui.project
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,33 +29,35 @@ fun EmptyProjectList(
     modifier: Modifier = Modifier,
     onClickCreateProject: () -> Unit,
 ) {
-    Column(
+    Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(vertical = 42.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        contentAlignment = Alignment.Center,
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_empty_state),
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-        )
-        Spacer(Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.home_empty_project_phrase),
-            style = LogitTheme.typography.body6_2,
-            color = LogitTheme.colors.gray100,
-        )
-        Spacer(Modifier.height(17.dp))
-        LogitPrimaryButton(
-            text = stringResource(R.string.home_new_project),
-            onClick = {
-                onClickCreateProject()
-            },
-            textStyle = LogitTheme.typography.body6_2,
-            shape = RoundedCornerShape(8.dp),
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painter = painterResource(R.drawable.ic_empty_state),
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.home_empty_project_phrase),
+                style = LogitTheme.typography.body6_2,
+                color = LogitTheme.colors.gray100,
+            )
+            Spacer(Modifier.height(17.dp))
+            LogitPrimaryButton(
+                text = stringResource(R.string.home_new_project),
+                onClick = {
+                    onClickCreateProject()
+                },
+                textStyle = LogitTheme.typography.body6_2,
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 7.dp),
+            )
+        }
     }
 }
 

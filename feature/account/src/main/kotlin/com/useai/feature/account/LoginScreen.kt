@@ -1,6 +1,8 @@
 package com.useai.feature.account
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -73,12 +75,12 @@ class LoginPresenter @AssistedInject constructor(
 
                 LoginScreen.Event.TermsClicked -> {
                     Log.d(TAG, "TermsClicked")
-                    // TODO: 이용약관 화면으로 이동
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(TERMS_URL)))
                 }
 
                 LoginScreen.Event.PrivacyClicked -> {
                     Log.d(TAG, "PrivacyClicked")
-                    // TODO: 개인정보 처리방침 화면으로 이동
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL)))
                 }
             }
         }
@@ -112,14 +114,12 @@ class LoginPresenter @AssistedInject constructor(
                     scope.launch {
                         accountRepository.requestLogin(
                             idToken = googleIdTokenCredential.idToken,
-                        ).onSuccess { loginResult ->
+                        ).onSuccess {
                             scope.launch {
-                                Log.d(TAG, "Google login success: $loginResult")
-                                accountRepository.setAccessToken(loginResult.accessToken)
-                                accountRepository.setRefreshToken(loginResult.refreshToken)
+                                accountRepository.setAccessToken(it.accessToken)
                                 navigator.resetRoot(screenProvider.rootScreen())
                             }
-                        }.onFailure { 
+                        }.onFailure {
                             Log.e(TAG, "Google login failed: $it")
                         }
                     }
@@ -133,10 +133,8 @@ class LoginPresenter @AssistedInject constructor(
                                 scope.launch {
                                     accountRepository.requestLogin(
                                         idToken = googleIdTokenCredential.idToken,
-                                    ).onSuccess { loginResult ->
-                                        Log.d(TAG, "Google login success: $loginResult")
-                                        accountRepository.setAccessToken(loginResult.accessToken)
-                                        accountRepository.setRefreshToken(loginResult.refreshToken)
+                                    ).onSuccess {
+                                        accountRepository.setAccessToken(it.accessToken)
                                         navigator.resetRoot(screenProvider.rootScreen())
                                     }
                                 }
@@ -154,10 +152,8 @@ class LoginPresenter @AssistedInject constructor(
                     scope.launch {
                         accountRepository.requestLogin(
                             idToken = googleIdTokenCredential.idToken,
-                        ).onSuccess { loginResult ->
-                            Log.d(TAG, "Google login success: $loginResult")
-                            accountRepository.setAccessToken(loginResult.accessToken)
-                            accountRepository.setRefreshToken(loginResult.refreshToken)
+                        ).onSuccess {
+                            accountRepository.setAccessToken(it.accessToken)
                             navigator.resetRoot(screenProvider.rootScreen())
                         }
                     }
@@ -173,7 +169,7 @@ class LoginPresenter @AssistedInject constructor(
         return bytes.toHexString()
     }
 
-    // 바이트 배열을 16진수 문자열로 변환하는 확장 함수
+    // 바이??배열??16진수 문자?�로 변?�하???�장 ?�수
     private fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
     private fun handleSignInWithGoogleOption(
@@ -248,5 +244,7 @@ class LoginPresenter @AssistedInject constructor(
     companion object {
         private val TAG = LoginPresenter::class.simpleName
         private const val CLIENT_ID = BuildConfig.GOOGLE_OAUTH_CLIENT_ID
+        private const val TERMS_URL = "https://docs.logit.ai.kr/policys/tos"
+        private const val PRIVACY_POLICY_URL = "https://docs.logit.ai.kr/policys/privacy-policy"
     }
 }

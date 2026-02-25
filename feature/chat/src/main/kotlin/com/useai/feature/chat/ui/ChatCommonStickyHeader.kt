@@ -4,13 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,15 +24,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.chat.Question
+import com.useai.core.ui.LogitDropdownMenu
+import com.useai.core.ui.LogitDropdownMenuItem
 import com.useai.core.ui.noRippleClickable
 import com.useai.feature.chat.ChatScreenCategory
 
@@ -41,6 +48,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
     currentQuestion: Question,
     currentCategory: ChatScreenCategory,
     isHeaderUIExpanded: Boolean,
+    extraStickyContent: (@Composable () -> Unit)? = null,
     onQuestionTabChange: (Question) -> Unit,
     onQuestionAdd: () -> Unit,
     onCategoryChange: (ChatScreenCategory) -> Unit,
@@ -51,6 +59,9 @@ internal fun LazyListScope.chatCommonStickyHeader(
 ) {
     stickyHeader {
         var menuExpanded by remember { mutableStateOf(false) }
+        var isTitleExpandable by remember(currentQuestion.id, currentQuestion.title) {
+            mutableStateOf(false)
+        }
 
         Row(
             modifier = Modifier
@@ -80,38 +91,26 @@ internal fun LazyListScope.chatCommonStickyHeader(
                     tint = LogitTheme.colors.black,
                     modifier = Modifier.noRippleClickable { menuExpanded = true }
                 )
-                DropdownMenu(
+                LogitDropdownMenu(
                     expanded = menuExpanded,
                     onDismissRequest = { menuExpanded = false },
-                    containerColor = LogitTheme.colors.white
                 ) {
-                    DropdownMenuItem(
-                        text = { Text(text = stringResource(R.string.chat_edit)) },
+                    LogitDropdownMenuItem(
+                        text = stringResource(R.string.chat_edit),
                         onClick = {
                             menuExpanded = false
                             onQuestionEdit()
                         },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_write),
-                                contentDescription = null,
-                                tint = LogitTheme.colors.gray300
-                            )
-                        },
+                        icon = ImageVector.vectorResource(R.drawable.ic_write),
                     )
-                    DropdownMenuItem(
-                        text = { Text(text = stringResource(R.string.chat_delete)) },
+                    LogitDropdownMenuItem(
+                        text = stringResource(R.string.chat_delete),
                         onClick = {
                             menuExpanded = false
                             onQuestionDelete()
                         },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_trash_drop),
-                                contentDescription = stringResource(R.string.content_description_delete),
-                                tint = Color.Unspecified
-                            )
-                        }
+                        icon = ImageVector.vectorResource(R.drawable.ic_trash_drop),
+                        iconTint = Color.Unspecified,
                     )
                 }
             }
@@ -141,18 +140,26 @@ internal fun LazyListScope.chatCommonStickyHeader(
                 color = LogitTheme.colors.gray400,
                 maxLines = if (isHeaderUIExpanded) Int.MAX_VALUE else 2,
                 overflow = TextOverflow.Ellipsis,
+                onTextLayout = { textLayoutResult ->
+                    if (!isHeaderUIExpanded) {
+                        isTitleExpandable = textLayoutResult.hasVisualOverflow
+                    }
+                },
                 modifier = Modifier.weight(1f)
             )
-            Icon(
-                imageVector = ImageVector.vectorResource(
-                    if (isHeaderUIExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down
-                ),
-                contentDescription = null,
-                tint = LogitTheme.colors.gray300,
-                modifier = Modifier
-                    .padding(top = 2.dp)
-                    .clickable { onQuestionTitleExpand() }
-            )
+
+            if (isHeaderUIExpanded || isTitleExpandable) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(
+                        if (isHeaderUIExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down
+                    ),
+                    contentDescription = null,
+                    tint = LogitTheme.colors.gray300,
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .clickable { onQuestionTitleExpand() }
+                )
+            }
         }
 
         Row(
@@ -160,18 +167,59 @@ internal fun LazyListScope.chatCommonStickyHeader(
                 .fillMaxWidth()
                 .background(color = LogitTheme.colors.white)
                 .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            val textMeasurer = rememberTextMeasurer()
+            val density = LocalDensity.current
+            val tabLabelStyle = LogitTheme.typography.body6_2
+            val tabLabelWidths = with(density) {
+                ChatScreenCategory.entries.associateWith { category ->
+                    textMeasurer.measure(
+                        text = AnnotatedString(stringResource(category.title)),
+                        style = tabLabelStyle
+                    ).size.width.toDp()
+                }
+            }
+            val tabHorizontalPadding = 4.dp
+
             ChatScreenCategory.entries.fastForEach { category ->
                 val isSelected = category == currentCategory
-                Text(
-                    text = stringResource(category.title),
-                    style = if (isSelected) LogitTheme.typography.body6_2 else LogitTheme.typography.body6_1,
-                    color = if (isSelected) LogitTheme.colors.black else LogitTheme.colors.gray100,
+                val selectedUnderlineColor = LogitTheme.colors.gray400
+                val tabContentWidth = tabLabelWidths.getValue(category) + (tabHorizontalPadding * 2)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .padding(top = 4.dp, bottom = 8.dp)
                         .clickable { onCategoryChange(category) }
-                )
+                ) {
+                    Text(
+                        text = stringResource(category.title),
+                        style = if (isSelected) LogitTheme.typography.body6_2 else LogitTheme.typography.body6_1,
+                        color = if (isSelected) LogitTheme.colors.black else LogitTheme.colors.gray200,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Clip,
+                        modifier = Modifier
+                            .width(tabContentWidth)
+                            .padding(horizontal = tabHorizontalPadding)
+                            .padding(top = 8.dp, bottom = 10.dp),
+                        textAlign = TextAlign.Center
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(tabContentWidth)
+                            .height(2.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(tabLabelWidths.getValue(category))
+                                .height(2.dp)
+                                .background(
+                                    if (isSelected) selectedUnderlineColor else Color.Transparent
+                                )
+                        )
+                    }
+                }
             }
         }
 
@@ -179,6 +227,7 @@ internal fun LazyListScope.chatCommonStickyHeader(
             color = LogitTheme.colors.gray70,
             thickness = 1.dp
         )
+        extraStickyContent?.invoke()
     }
 }
 

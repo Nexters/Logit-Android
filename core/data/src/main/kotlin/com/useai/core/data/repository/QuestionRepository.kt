@@ -9,5 +9,6 @@ interface QuestionRepository {
     suspend fun getQuestions(projectId: String): Result<List<Question>>
     suspend fun getQuestion(projectId: String, questionId: String): Result<Question>
     suspend fun updateQuestion(projectId: String, question: Question): Result<Question>
+    suspend fun completeQuestion(projectId: String, questionId: String): Result<Question>
     suspend fun deleteQuestion(projectId: String, questionId: String): Result<Unit>
 }

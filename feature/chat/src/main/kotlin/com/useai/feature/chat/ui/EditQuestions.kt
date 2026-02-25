@@ -3,11 +3,13 @@ package com.useai.feature.chat.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,8 +17,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -55,56 +59,69 @@ fun EditQuestions(
             state.eventSink(EditQuestionsScreen.Event.Submit)
         },
         bottomButtonEnabled = state.isSubmitEnabled,
+        contentScrollEnabled = false,
     ) {
-        Text(
-            text = stringResource(R.string.chat_edit_questions_title),
-            style = LogitTheme.typography.body3_1,
-            color = LogitTheme.colors.black,
-        )
-
-        Text(
-            text = stringResource(R.string.chat_edit_questions_desc),
-            style = LogitTheme.typography.body6_1,
-            color = LogitTheme.colors.gray300,
-            modifier = Modifier.padding(top = 6.dp)
-        )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        state.questions.forEachIndexed { index, question ->
-            val isQuestionError = state.showValidationErrors && question.title.isBlank()
-            val isCountError = state.showValidationErrors && question.maxLength <= 0
-
-            QuestionEditRow(
-                index = index,
-                question = question,
-                isQuestionError = isQuestionError,
-                isCountError = isCountError,
-                onQuestionChange = {
-                    state.eventSink(EditQuestionsScreen.Event.ChangeQuestion(index, it))
-                },
-                onMaxLengthChange = {
-                    state.eventSink(EditQuestionsScreen.Event.ChangeMaxLength(index, it))
-                },
-                onDelete = {
-                    state.eventSink(EditQuestionsScreen.Event.DeleteQuestion(index))
-                }
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = stringResource(R.string.chat_edit_questions_title),
+                style = LogitTheme.typography.body3_1,
+                color = LogitTheme.colors.black,
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
-        }
+            Text(
+                text = stringResource(R.string.chat_edit_questions_desc),
+                style = LogitTheme.typography.body6_1,
+                color = LogitTheme.colors.gray300,
+                modifier = Modifier.padding(top = 6.dp)
+            )
 
-        AddQuestionButton(
-            onClick = {
-                state.eventSink(EditQuestionsScreen.Event.AddQuestion)
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                state.questions.forEachIndexed { index, question ->
+                    val isQuestionError = state.showValidationErrors && question.title.isBlank()
+                    val isCountError = state.showValidationErrors && question.maxLength <= 0
+                    val canDelete = state.questions.size >= 2
+
+                    QuestionEditRow(
+                        index = index,
+                        canDelete = canDelete,
+                        question = question,
+                        isQuestionError = isQuestionError,
+                        isCountError = isCountError,
+                        onQuestionChange = {
+                            state.eventSink(EditQuestionsScreen.Event.ChangeQuestion(index, it))
+                        },
+                        onMaxLengthChange = {
+                            state.eventSink(EditQuestionsScreen.Event.ChangeMaxLength(index, it))
+                        },
+                        onDelete = {
+                            state.eventSink(EditQuestionsScreen.Event.DeleteQuestion(index))
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+
+                AddQuestionButton(
+                    onClick = {
+                        state.eventSink(EditQuestionsScreen.Event.AddQuestion)
+                    }
+                )
             }
-        )
+        }
     }
 }
 
 @Composable
 private fun QuestionEditRow(
     index: Int,
+    canDelete: Boolean,
     question: EditQuestionsScreen.EditableQuestion,
     isQuestionError: Boolean,
     isCountError: Boolean,
@@ -145,7 +162,7 @@ private fun QuestionEditRow(
                 .width(78.dp)
         )
 
-        if (index > 0) {
+        if (canDelete) {
             Spacer(modifier = Modifier.width(8.dp))
             DeleteQuestionButton(
                 onClick = onDelete,

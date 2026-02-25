@@ -10,5 +10,6 @@ interface QuestionRemoteDataSource {
     suspend fun getQuestions(projectId: String): List<QuestionResponse>
     suspend fun getQuestion(projectId: String, questionId: String): QuestionResponse
     suspend fun updateQuestion(projectId: String, questionId: String, request: UpdateQuestionRequest): QuestionResponse
+    suspend fun completeQuestion(projectId: String, questionId: String): QuestionResponse
     suspend fun deleteQuestion(projectId: String, questionId: String)
 }

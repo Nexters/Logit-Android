@@ -18,10 +18,15 @@ import com.useai.core.model.experience.Experience
 @Composable
 internal fun ExperienceSuccessUI(
     experiences: List<Experience>,
+    openedMenuExperienceId: String?,
+    isDeleting: Boolean,
     onClickAdd: () -> Unit,
     onClickRegister: () -> Unit,
     onClickExperienceCard: (String) -> Unit,
     onClickExperienceMore: (String) -> Unit,
+    onDismissMenu: () -> Unit,
+    onClickEditExperience: (String) -> Unit,
+    onClickDeleteExperience: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -34,7 +39,7 @@ internal fun ExperienceSuccessUI(
             onClickAdd = onClickAdd,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 18.dp)
         )
 
         if (experiences.isEmpty()) {
@@ -55,7 +60,12 @@ internal fun ExperienceSuccessUI(
                     ExperienceCardListItem(
                         experience = experience,
                         onClickCard = { onClickExperienceCard(experience.id) },
-                        onClickMore = { onClickExperienceMore(experience.id) }
+                        onClickMore = { onClickExperienceMore(experience.id) },
+                        isMenuExpanded = openedMenuExperienceId == experience.id,
+                        isDeleting = isDeleting,
+                        onDismissMenu = onDismissMenu,
+                        onClickEdit = { onClickEditExperience(experience.id) },
+                        onClickDelete = { onClickDeleteExperience(experience.id) }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }

@@ -1,6 +1,7 @@
 package com.useai.feature.chat.ui.chatting
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -18,13 +20,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,13 +43,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.ime
+import androidx.compose.material3.rememberModalBottomSheetState
 import com.slack.circuit.retained.rememberRetained
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.button.LogitPrimaryButton
@@ -60,6 +63,7 @@ import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
 import com.useai.core.model.project.Project
+import com.useai.core.ui.ChatLoadingLottie
 import com.useai.core.ui.experience.ExperienceCard
 import com.useai.feature.chat.ChatScreen
 import com.useai.feature.chat.ChatScreenCategory
@@ -86,6 +90,9 @@ internal fun ChatChattingUI(
     val scope = rememberCoroutineScope()
     val maxExperienceSelectMessage = stringResource(R.string.select_experience_max_count_message)
     val experienceBottomSheetSnackbarHostState = remember { SnackbarHostState() }
+    val updateLetterSnackbarHostState = remember { SnackbarHostState() }
+    val updateLetterSuccessMessage = stringResource(R.string.chat_letter_updated_message)
+    val updateLetterShortcutText = stringResource(R.string.common_shortcut)
     val density = LocalDensity.current
     val imeBottom = WindowInsets.ime.getBottom(density)
     val isImeVisible = imeBottom > 0
@@ -177,6 +184,7 @@ internal fun ChatChattingUI(
     }
     if (state.showExperienceModal) {
         ModalBottomSheet(
+            sheetState = rememberModalBottomSheetState(true),
             modifier = Modifier.fillMaxWidth(),
             containerColor = LogitTheme.colors.white,
             shape = RoundedCornerShape(14.dp),
@@ -185,95 +193,106 @@ internal fun ChatChattingUI(
             },
             dragHandle = null
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(.8f)) {
                 Column(
                     modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .verticalScroll(rememberScrollState())
                         .navigationBarsPadding()
                 ) {
-                Row(
-                    modifier = Modifier.padding(top = 27.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_ex_list),
-                        tint = LogitTheme.colors.black,
-                        contentDescription = null
-                    )
-                    Text(
-                        text = stringResource(R.string.select_experience),
-                        style = LogitTheme.typography.body3_1,
-                        color = LogitTheme.colors.black,
-                        modifier = Modifier.padding(start = 10.dp)
-                    )
-                }
-
-                Text(
-                    text = stringResource(R.string.select_experience_explain),
-                    style = LogitTheme.typography.body6_1,
-                    color = LogitTheme.colors.gray300,
-                    modifier = Modifier.padding(top = 6.dp)
-                )
-
-                Row(
-                    modifier = Modifier.padding(top = 35.dp).clip(RoundedCornerShape(8.dp)).background(
-                        shape = RoundedCornerShape(8.dp),
-                        color = LogitTheme.colors.primary50
-                    ).clickable {
-                        TODO("AddExperience Event")
-                    },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.padding(start = 14.dp).padding(vertical = 13.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_add),
-                        tint = Color.Unspecified,
-                        contentDescription = null,
-                    )
+                    Row(
+                        modifier = Modifier.padding(top = 27.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_ex_list),
+                            tint = LogitTheme.colors.black,
+                            contentDescription = null
+                        )
+                        Text(
+                            text = stringResource(R.string.select_experience),
+                            style = LogitTheme.typography.body3_1,
+                            color = LogitTheme.colors.black,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    }
 
                     Text(
-                        text = stringResource(R.string.add_experience),
-                        style = LogitTheme.typography.body6_2,
+                        text = stringResource(R.string.select_experience_explain),
+                        style = LogitTheme.typography.body6_1,
                         color = LogitTheme.colors.gray300,
-                        modifier = Modifier.padding(start = 8.dp).fillMaxWidth()
+                        modifier = Modifier.padding(top = 6.dp)
                     )
-                }
 
-                Spacer(modifier = Modifier.padding(top = 12.dp))
-                state.matchingExperiences.fastForEach { matchingExperience ->
-                    ExperienceCard(
-                        matchingExperience = matchingExperience,
-                        isSelected = matchingExperience.experience.id in temporarilySelectedExperiences,
-                        onClick = {
-                            if (matchingExperience.experience.id in temporarilySelectedExperiences)
-                                temporarilySelectedExperiences.remove(matchingExperience.experience.id)
-                            else if (temporarilySelectedExperiences.size < 3) {
-                                temporarilySelectedExperiences.add(matchingExperience.experience.id)
-                            } else {
-                                scope.launch {
-                                    experienceBottomSheetSnackbarHostState.currentSnackbarData?.dismiss()
-                                    experienceBottomSheetSnackbarHostState.showLogitSnackbar(
-                                        message = maxExperienceSelectMessage,
-                                        iconResId = R.drawable.ic_alert,
-                                    )
-                                }
-                            }
+                    Row(
+                        modifier = Modifier.padding(top = 35.dp).clip(RoundedCornerShape(8.dp)).background(
+                            shape = RoundedCornerShape(8.dp),
+                            color = LogitTheme.colors.primary50
+                        ).clickable {
+                            state.eventSink(ChatScreen.Event.ClickAddExperience)
                         },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.padding(top = 8.dp))
-                }
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(start = 14.dp).padding(vertical = 13.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_add),
+                            tint = Color.Unspecified,
+                            contentDescription = null,
+                        )
 
-                LogitPrimaryButton(
-                    text = stringResource(R.string.chat_create_draft),
-                    onClick = {
-                        state.eventSink(ChatScreen.Event.GenerateDraft(
-                            experienceIds = temporarilySelectedExperiences.toList()
-                        ))
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                        Text(
+                            text = stringResource(R.string.add_experience),
+                            style = LogitTheme.typography.body6_2,
+                            color = LogitTheme.colors.gray300,
+                            modifier = Modifier.padding(start = 8.dp).fillMaxWidth()
+                        )
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 12.dp)
+                    ) {
+                        items(state.matchingExperiences) { matchingExperience ->
+                            ExperienceCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                matchingExperience = matchingExperience,
+                                isSelected = matchingExperience.experience.id in temporarilySelectedExperiences,
+                                onClick = {
+                                    if (matchingExperience.experience.id in temporarilySelectedExperiences)
+                                        temporarilySelectedExperiences.remove(matchingExperience.experience.id)
+                                    else if (temporarilySelectedExperiences.size < 3) {
+                                        temporarilySelectedExperiences.add(matchingExperience.experience.id)
+                                    } else {
+                                        scope.launch {
+                                            experienceBottomSheetSnackbarHostState.currentSnackbarData?.dismiss()
+                                            experienceBottomSheetSnackbarHostState.showLogitSnackbar(
+                                                message = maxExperienceSelectMessage,
+                                                iconResId = R.drawable.ic_alert,
+                                            )
+                                        }
+                                    }
+                                }
+                            )
+                            Spacer(modifier = Modifier.padding(top = 8.dp))
+                        }
+                    }
+
+                    LogitPrimaryButton(
+                        text = stringResource(
+                            R.string.select_experiences,
+                            temporarilySelectedExperiences.size.toString()
+                        ),
+                        onClick = {
+                            state.eventSink(ChatScreen.Event.GenerateDraft(
+                                experienceIds = temporarilySelectedExperiences.toList()
+                            ))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp)
+                    )
                 }
 
                 LogitSnackbarHost(
@@ -286,7 +305,8 @@ internal fun ChatChattingUI(
         }
     }
 
-    Column(modifier = modifier) {
+    Box(modifier = modifier) {
+        Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             state = lazyListState,
             modifier = Modifier
@@ -315,7 +335,7 @@ internal fun ChatChattingUI(
                     state.eventSink(ChatScreen.Event.EditQuestions)
                 },
                 onQuestionDelete = {
-                    state.eventSink(ChatScreen.Event.DeleteProject)
+                    state.eventSink(ChatScreen.Event.TryDeleteProject)
                 },
                 onBack = {
                     state.eventSink(ChatScreen.Event.NavigateBack)
@@ -373,6 +393,17 @@ internal fun ChatChattingUI(
                                 chatting = chat,
                                 onUpdateLetterClick = {
                                     state.eventSink(ChatScreen.Event.UpdateLetter(chat.message))
+                                    scope.launch {
+                                        updateLetterSnackbarHostState.currentSnackbarData?.dismiss()
+                                        val snackbarResult = updateLetterSnackbarHostState.showLogitSnackbar(
+                                            message = updateLetterSuccessMessage,
+                                            actionText = updateLetterShortcutText,
+                                            iconResId = R.drawable.ic_complete,
+                                        )
+                                        if (snackbarResult == SnackbarResult.ActionPerformed) {
+                                            state.eventSink(ChatScreen.Event.ChangeCategory(ChatScreenCategory.LETTER))
+                                        }
+                                    }
                                 },
                                 modifier = Modifier.align(Alignment.CenterStart),
                                 fadeFromGradient = chat.id == fadingAiMessageId
@@ -439,6 +470,16 @@ internal fun ChatChattingUI(
                 .imePadding()
                 .padding(vertical = 10.dp, horizontal = 20.dp),
         )
+        }
+
+        LogitSnackbarHost(
+            hostState = updateLetterSnackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .imePadding()
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 54.dp)
+        )
     }
 }
 
@@ -455,21 +496,24 @@ private fun ChatLoadingItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
+        modifier = modifier.padding(top = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(18.dp),
-            strokeWidth = 2.dp,
-            color = LogitTheme.colors.primary100
+        Image(
+            painter = painterResource(R.drawable.ic_ai_word),
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
         )
         Text(
-            text = "응답 생성 중...",
+            text = stringResource(R.string.chat_loading_response),
             style = LogitTheme.typography.body6_1,
             color = LogitTheme.colors.gray300,
             modifier = Modifier.padding(start = 8.dp)
+        )
+        ChatLoadingLottie(
+            modifier = Modifier
+                .padding(start = 6.dp)
+                .size(18.dp)
         )
     }
 }

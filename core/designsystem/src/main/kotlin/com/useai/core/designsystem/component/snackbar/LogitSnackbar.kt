@@ -1,15 +1,16 @@
 package com.useai.core.designsystem.component.snackbar
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -71,7 +72,8 @@ private fun LogitSnackbarInternal(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .height(IntrinsicSize.Min)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -79,7 +81,7 @@ private fun LogitSnackbarInternal(
                 painter = painterResource(id = iconResId),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(20.dp)
             )
 
             Text(
@@ -90,18 +92,16 @@ private fun LogitSnackbarInternal(
             )
 
             if (!actionText.isNullOrBlank() && onActionClick != null) {
-                Button(
-                    onClick = onActionClick,
+                Surface(
+                    color = LogitTheme.colors.primary500,
                     shape = RoundedCornerShape(18.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = LogitTheme.colors.primary500,
-                        contentColor = LogitTheme.colors.white
-                    ),
-                    contentPadding = PaddingValues(vertical = 4.dp, horizontal = 14.dp),
+                    modifier = Modifier.fillMaxHeight().clickable(onClick = onActionClick)
                 ) {
                     Text(
                         text = actionText,
-                        style = LogitTheme.typography.body7_3
+                        style = LogitTheme.typography.body7_3,
+                        color = LogitTheme.colors.white,
+                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 12.dp)
                     )
                 }
             }

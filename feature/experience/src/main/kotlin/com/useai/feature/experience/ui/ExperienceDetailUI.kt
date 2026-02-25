@@ -36,6 +36,8 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
+import com.useai.core.ui.LogitDropdownMenu
+import com.useai.core.ui.LogitDropdownMenuItem
 import com.useai.core.ui.experience.CategoryChip
 import com.useai.core.ui.experience.TagChip
 import com.useai.feature.experience.ExperienceDetailScreen
@@ -69,8 +71,13 @@ fun ExperienceDetailUI(
         is ExperienceDetailScreen.State.Success -> {
             ExperienceDetailContent(
                 experience = state.experience,
+                isMenuExpanded = state.isMenuExpanded,
+                isDeleting = state.isDeleting,
                 onBack = { state.eventSink(ExperienceDetailScreen.Event.Back) },
                 onMore = { state.eventSink(ExperienceDetailScreen.Event.ClickMore) },
+                onDismissMenu = { state.eventSink(ExperienceDetailScreen.Event.DismissMenu) },
+                onClickEdit = { state.eventSink(ExperienceDetailScreen.Event.ClickEdit) },
+                onClickDelete = { state.eventSink(ExperienceDetailScreen.Event.ClickDelete) },
                 modifier = modifier
             )
         }
@@ -80,8 +87,13 @@ fun ExperienceDetailUI(
 @Composable
 private fun ExperienceDetailContent(
     experience: Experience,
+    isMenuExpanded: Boolean,
+    isDeleting: Boolean,
     onBack: () -> Unit,
     onMore: () -> Unit,
+    onDismissMenu: () -> Unit,
+    onClickEdit: () -> Unit,
+    onClickDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -106,14 +118,32 @@ private fun ExperienceDetailContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
-                tint = LogitTheme.colors.gray300,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable(onClick = onMore)
-                    .padding(2.dp)
-            )
+            androidx.compose.foundation.layout.Box {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
+                    tint = LogitTheme.colors.gray300,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable(onClick = onMore)
+                        .padding(2.dp)
+                )
+                LogitDropdownMenu(
+                    expanded = isMenuExpanded,
+                    onDismissRequest = onDismissMenu,
+                ) {
+                    LogitDropdownMenuItem(
+                        text = stringResource(R.string.chat_edit),
+                        icon = ImageVector.vectorResource(R.drawable.ic_write),
+                        onClick = onClickEdit
+                    )
+                    LogitDropdownMenuItem(
+                        text = stringResource(R.string.chat_delete),
+                        icon = ImageVector.vectorResource(R.drawable.ic_trash_drop),
+                        enabled = !isDeleting,
+                        onClick = onClickDelete
+                    )
+                }
+            }
         }
 
         Text(
@@ -274,8 +304,11 @@ private fun ExperienceDetailSuccessPreview() {
                     startDate = LocalDate.of(2022, 4, 6),
                     endDate = LocalDate.of(2022, 4, 6),
                     experienceType = "인턴",
+                    formatType = "STAR",
                     title = "로짓 데이터 분석을 통한 이탈률 개선"
                 ),
+                isMenuExpanded = false,
+                isDeleting = false,
                 eventSink = {}
             )
         )

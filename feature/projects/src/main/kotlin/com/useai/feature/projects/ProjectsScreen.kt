@@ -58,7 +58,7 @@ class ProjectsPresenter @AssistedInject constructor(
                 }
 
                 is ProjectsScreen.Event.ProjectClicked -> {
-                    navigator.goTo(screenProvider.chatScreen(event.projectId))
+                    navigator.goTo(screenProvider.projectLibraryScreen(event.projectId))
                 }
             }
         }

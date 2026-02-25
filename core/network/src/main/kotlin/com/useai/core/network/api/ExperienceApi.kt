@@ -10,6 +10,7 @@ import com.useai.core.network.response.QuestionMatchingExperiencesResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -43,7 +44,7 @@ interface ExperienceApi {
         @Path("experience_id") experienceId: String
     ): ExperienceResponse
 
-    @GET("api/v1/experiences/{experience_id}")
+    @PATCH("api/v1/experiences/{experience_id}")
     suspend fun updateExperience(
         @Path("experience_id") experienceId: String,
         @Body request: UpdateExperienceRequest

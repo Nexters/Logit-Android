@@ -2,6 +2,7 @@ package com.useai.feature.experience.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.tooling.preview.Preview
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -20,7 +21,10 @@ fun ExperienceListUI(
 ) {
     when (state) {
         is ExperienceScreen.State.Loading -> {
-            ExperienceLoadingUI(modifier = modifier.statusBarsPadding())
+            ExperienceLoadingUI(
+                modifier = modifier
+                    .background(LogitTheme.colors.gray20)
+            )
         }
 
         is ExperienceScreen.State.LoadFailed -> {
@@ -29,6 +33,7 @@ fun ExperienceListUI(
                     state.eventSink(ExperienceScreen.Event.Retry)
                 },
                 modifier = modifier
+                    .background(LogitTheme.colors.gray20)
                     .statusBarsPadding()
             )
         }
@@ -36,6 +41,8 @@ fun ExperienceListUI(
         is ExperienceScreen.State.Success -> {
             ExperienceSuccessUI(
                 experiences = state.experiences,
+                openedMenuExperienceId = state.openedMenuExperienceId,
+                isDeleting = state.isDeleting,
                 onClickAdd = {
                     state.eventSink(ExperienceScreen.Event.ClickAddExperience)
                 },
@@ -48,7 +55,17 @@ fun ExperienceListUI(
                 onClickExperienceMore = { experienceId ->
                     state.eventSink(ExperienceScreen.Event.ClickExperienceMore(experienceId))
                 },
+                onDismissMenu = {
+                    state.eventSink(ExperienceScreen.Event.DismissExperienceMenu)
+                },
+                onClickEditExperience = { experienceId ->
+                    state.eventSink(ExperienceScreen.Event.ClickEditExperience(experienceId))
+                },
+                onClickDeleteExperience = { experienceId ->
+                    state.eventSink(ExperienceScreen.Event.ClickDeleteExperience(experienceId))
+                },
                 modifier = modifier
+                    .background(LogitTheme.colors.gray20)
                     .statusBarsPadding()
             )
         }
@@ -62,6 +79,8 @@ private fun ExperienceListUIPreview() {
         ExperienceListUI(
             state = ExperienceScreen.State.Success(
                 experiences = previewExperiences,
+                openedMenuExperienceId = null,
+                isDeleting = false,
                 eventSink = {}
             )
         )
@@ -75,6 +94,8 @@ private fun ExperienceEmptyUIPreview() {
         ExperienceListUI(
             state = ExperienceScreen.State.Success(
                 experiences = emptyList(),
+                openedMenuExperienceId = null,
+                isDeleting = false,
                 eventSink = {}
             )
         )
@@ -93,6 +114,7 @@ private val previewExperiences = List(4) { index ->
         startDate = LocalDate.MIN,
         endDate = LocalDate.MIN,
         experienceType = "",
+        formatType = "STAR",
         title = "넥스트즈 AI 자소서 프로젝트 경험 UI 구현"
     )
 }

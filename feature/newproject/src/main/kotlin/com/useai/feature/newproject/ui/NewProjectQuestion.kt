@@ -1,7 +1,9 @@
 package com.useai.feature.newproject.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
@@ -35,13 +38,13 @@ import com.useai.core.model.project.ProjectQuestionParam
 import com.useai.core.ui.InputFormContainer
 import com.useai.core.ui.LetterCountInput
 import com.useai.core.ui.LogitAddButton
-import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.LogitStepper
 import com.useai.feature.newproject.NewProjectQuestionScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 
 @Composable
 @CircuitInject(NewProjectQuestionScreen::class, ActivityRetainedComponent::class)
+@OptIn(ExperimentalFoundationApi::class)
 fun NewProjectQuestion(
     modifier: Modifier = Modifier,
     state: NewProjectQuestionScreen.State,
@@ -62,54 +65,73 @@ fun NewProjectQuestion(
             state.eventSink(NewProjectQuestionScreen.Event.FinishClicked)
         },
         bottomButtonEnabled = state.isButtonEnabled,
+        contentScrollEnabled = false,
     ) {
-        LogitStepper(
-            currentStep = "2",
-            totalStep = "2"
-        )
-        Spacer(Modifier.height(13.dp))
-        LogitFormTitle(
-            title = stringResource(R.string.project_form_title_2),
-            desc = stringResource(R.string.project_form_desc_2),
-        )
-        Spacer(Modifier.height(75.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            stickyHeader {
+                androidx.compose.foundation.layout.Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(LogitTheme.colors.white)
+                ) {
+                    LogitStepper(
+                        currentStep = "2",
+                        totalStep = "2"
+                    )
+                    Spacer(Modifier.height(13.dp))
+                    NewProjectSectionHeader(
+                        title = stringResource(R.string.project_form_title_2),
+                        desc = stringResource(R.string.project_form_desc_2),
+                        onClickLoadExample = {
+                            state.eventSink(NewProjectQuestionScreen.Event.LoadExample)
+                        }
+                    )
+                    Spacer(Modifier.height(75.dp))
+                }
+            }
 
-        state.questions.forEachIndexed { i, newQuestion ->
-            key(i) {
-                NewQuestion(
-                    question = newQuestion.question,
-                    onQuestionChange = { newValue ->
-                        state.eventSink(
-                            NewProjectQuestionScreen.Event.QuestionChanged(
-                                i,
-                                newValue
+            items(state.questions.size) { i ->
+                val newQuestion = state.questions[i]
+                key(i) {
+                    NewQuestion(
+                        question = newQuestion.question,
+                        onQuestionChange = { newValue ->
+                            state.eventSink(
+                                NewProjectQuestionScreen.Event.QuestionChanged(
+                                    i,
+                                    newValue
+                                )
                             )
-                        )
-                    },
-                    maxLength = newQuestion.maxLength,
-                    onMaxLengthChange = { newValue ->
-                        state.eventSink(
-                            NewProjectQuestionScreen.Event.MaxLengthChanged(
-                                i,
-                                newValue.toIntOrNull() ?: 0
+                        },
+                        maxLength = newQuestion.maxLength,
+                        onMaxLengthChange = { newValue ->
+                            state.eventSink(
+                                NewProjectQuestionScreen.Event.MaxLengthChanged(
+                                    i,
+                                    newValue.toIntOrNull() ?: 0
+                                )
                             )
-                        )
-                    },
-                    onDelete = {
-                        state.eventSink(NewProjectQuestionScreen.Event.DeleteQuestionClicked(i))
-                    },
-                    placeHolder = if (newQuestion.question.isEmpty()) stringResource(R.string.project_field_question, i + 1) else "",
-                    isAdditionalQuestion = i > 0,
+                        },
+                        onDelete = {
+                            state.eventSink(NewProjectQuestionScreen.Event.DeleteQuestionClicked(i))
+                        },
+                        placeHolder = if (newQuestion.question.isEmpty()) stringResource(R.string.project_field_question, i + 1) else "",
+                        isAdditionalQuestion = state.questions.size >= 2,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
+
+            item {
+                LogitAddButton(
+                    onClick = {
+                        state.eventSink(NewProjectQuestionScreen.Event.AddQuestionClicked)
+                    }
                 )
-                Spacer(Modifier.height(8.dp))
             }
         }
-        
-        LogitAddButton(
-            onClick = {
-                state.eventSink(NewProjectQuestionScreen.Event.AddQuestionClicked)
-            }
-        )
     }
 }
 
@@ -138,6 +160,9 @@ private fun NewQuestion(
                 .weight(1f),
             placeholder = placeHolder,
             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
+            singleLine = true,
+            maxLines = 1,
+            minLines = 1,
         )
         Spacer(Modifier.width(12.dp))
         LetterCountInput(

@@ -1,4 +1,4 @@
-package com.useai.core.ui
+﻿package com.useai.core.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -7,20 +7,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,13 +38,11 @@ fun LogitExperienceBanner(
     val totalPageCount = if (items.size > 1) Int.MAX_VALUE else items.size
     val pagerState = rememberPagerState(
         pageCount = { totalPageCount },
-        initialPage = if (items.size > 1) (Int.MAX_VALUE / 2) - ((Int.MAX_VALUE / 2) % items.size) else 0
+        initialPage = if (items.size > 1) (Int.MAX_VALUE / 2) - ((Int.MAX_VALUE / 2) % items.size) else 0,
     )
 
     Box(
-        modifier = modifier
-            .height(155.dp)
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         HorizontalPager(
             state = pagerState,
@@ -53,32 +51,26 @@ fun LogitExperienceBanner(
             val index = page % items.size
             BannerContent(item = items[index])
         }
-        Column(
+
+        Box(
             modifier = Modifier
-                .padding(20.dp),
+                .align(Alignment.BottomStart)
+                .clip(RoundedCornerShape(12.dp))
+                .padding(vertical = 19.dp, horizontal = 18.dp)
+                .background(color = Color.Black.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
+                .padding(vertical = 3.dp, horizontal = 17.dp),
         ) {
-            Spacer(modifier = Modifier.weight(1f))
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.Black.copy(alpha = 0.2f))
-                    .padding(
-                        vertical = 3.dp,
-                        horizontal = 17.dp,
-                    ),
-            ) {
-                Row {
-                    Text(
-                        text = (pagerState.currentPage % items.size + 1).toString(),
-                        style = LogitTheme.typography.body7_1,
-                        color = LogitTheme.colors.white,
-                    )
-                    Text(
-                        text = " / ${items.size}",
-                        style = LogitTheme.typography.body7_4,
-                        color = LogitTheme.colors.white
-                    )
-                }
+            Row {
+                Text(
+                    text = (pagerState.currentPage % items.size + 1).toString(),
+                    style = LogitTheme.typography.body7_1,
+                    color = LogitTheme.colors.white,
+                )
+                Text(
+                    text = " / ${items.size}",
+                    style = LogitTheme.typography.body7_4,
+                    color = LogitTheme.colors.white,
+                )
             }
         }
     }
@@ -87,43 +79,17 @@ fun LogitExperienceBanner(
 @Composable
 private fun BannerContent(
     item: ExperienceBannerItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    Row(
+    Image(
+        painter = painterResource(item.experienceType.bannerImage),
+        contentDescription = item.experienceType.title,
         modifier = modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(20.dp))
-            .background(
-                brush = Brush.linearGradient(
-                    colors = item.experienceType.backgroundColors,
-                    start = Offset(Float.POSITIVE_INFINITY, 0f),
-                    end = Offset(0f, Float.POSITIVE_INFINITY)
-                )
-            )
-            .padding(20.dp),
-    ) {
-        Column {
-            Text(
-                text = item.experienceType.title,
-                style = LogitTheme.typography.body3_2,
-                color = LogitTheme.colors.primary600
-            )
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = stringResource(
-                    R.string.home_experience_type_banner_desc_format,
-                    item.experienceCount
-                ),
-                style = LogitTheme.typography.body6_2,
-                color = Color(0xFF879BA2)
-            )
-        }
-        Spacer(Modifier.weight(1f))
-        Image(
-            painter = painterResource(item.experienceType.image),
-            contentDescription = item.experienceType.title,
-        )
-    }
+            .background(LogitTheme.colors.white),
+        contentScale = ContentScale.Fit,
+    )
 }
 
 data class ExperienceBannerItem(
@@ -133,82 +99,43 @@ data class ExperienceBannerItem(
 
 enum class ExperienceType(
     val title: String,
-    @get:DrawableRes val image: Int,
-    val backgroundColors: List<Color>,
+    @get:DrawableRes val bannerImage: Int,
 ) {
     Leadership(
         title = "주도적 실행력",
-        image = R.drawable.ic_leadership_3d,
-        backgroundColors = listOf(
-            Color(0xFFE0F6FF),
-            Color(0xFFE7FCFC),
-            Color(0xFFEBFFF4),
-        ),
+        bannerImage = R.drawable.banner_execution,
     ),
     Expertise(
         title = "기술적 전문성",
-        image = R.drawable.ic_expertise_3d,
-        backgroundColors = listOf(
-            Color(0xFFE0E7FF),
-            Color(0xFFE9F5FF),
-            Color(0xFFE5F9F9),
-        ),
+        bannerImage = R.drawable.banner_expertise,
     ),
     Analysis(
         title = "논리적 분석력",
-        image = R.drawable.ic_analysis_3d,
-        backgroundColors = listOf(
-            Color(0xFFE4E0FF),
-            Color(0xFFE9EDFF),
-            Color(0xFFE5F3F9),
-        ),
+        bannerImage = R.drawable.banner_analysis,
     ),
     Creativity(
         title = "창의적 문제해결",
-        image = R.drawable.ic_creativity_3d,
-        backgroundColors = listOf(
-            Color(0xFFEFE0FF),
-            Color(0xFFEDE9FF),
-            Color(0xFFE5ECF9),
-        ),
+        bannerImage = R.drawable.banner_problem_solving,
     ),
     Communication(
         title = "협력적 소통",
-        image = R.drawable.ic_communication_3d,
-        backgroundColors = listOf(
-            Color(0xFFFBEEFE),
-            Color(0xFFF4E9FF),
-            Color(0xFFEAE6FF),
-        ),
+        bannerImage = R.drawable.banner_communication,
     ),
     Accountability(
         title = "끈기 있는 책임감",
-        image = R.drawable.ic_accountability_3d,
-        backgroundColors = listOf(
-            Color(0xFFFFDFFB),
-            Color(0xFFEFE2F2),
-            Color(0xFFF4E1FF),
-        ),
+        bannerImage = R.drawable.banner_responsibility,
     ),
     Adaptability(
         title = "유연한 적응력",
-        image = R.drawable.ic_adaptivity_3d,
-        backgroundColors = listOf(
-            Color(0xFFFFDEF4),
-            Color(0xFFFFF2FD),
-            Color(0xFFFFE9FE),
-        ),
+        bannerImage = R.drawable.banner_adaptability,
     ),
     CustomerFocus(
         title = "고객 가치 지향",
-        image = R.drawable.ic_customer_focus_3d,
-        backgroundColors = listOf(
-            Color(0xFFFFE5E0),
-            Color(0xFFF8EDEF),
-            Color(0xFFFFEAF3),
-        )
-    )
+        bannerImage = R.drawable.banner_value_orientation,
+    ),
 }
+
+private const val BANNER_ASPECT_RATIO = 261f / 190f
 
 @Preview
 @Composable
@@ -216,23 +143,11 @@ private fun LogitExperienceBannerPreview() {
     LogitTheme {
         LogitExperienceBanner(
             items = listOf(
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Leadership,
-                    experienceCount = 7,
-                ),
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Expertise,
-                    experienceCount = 1,
-                ),
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Analysis,
-                    experienceCount = 3,
-                ),
-                ExperienceBannerItem(
-                    experienceType = ExperienceType.Creativity,
-                    experienceCount = 30,
-                ),
-            )
+                ExperienceBannerItem(ExperienceType.Leadership, 7),
+                ExperienceBannerItem(ExperienceType.Expertise, 1),
+                ExperienceBannerItem(ExperienceType.Analysis, 3),
+                ExperienceBannerItem(ExperienceType.Creativity, 30),
+            ),
         )
     }
 }

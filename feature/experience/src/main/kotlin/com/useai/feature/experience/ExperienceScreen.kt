@@ -11,6 +11,8 @@ data object ExperienceScreen : Screen {
     sealed interface State : CircuitUiState {
         data class Success(
             val experiences: List<Experience>,
+            val openedMenuExperienceId: String?,
+            val isDeleting: Boolean,
             val eventSink: (Event) -> Unit,
         ) : State
 
@@ -27,5 +29,8 @@ data object ExperienceScreen : Screen {
         data object ClickRegisterExperience : Event
         data class ClickExperienceCard(val experienceId: String) : Event
         data class ClickExperienceMore(val experienceId: String) : Event
+        data object DismissExperienceMenu : Event
+        data class ClickEditExperience(val experienceId: String) : Event
+        data class ClickDeleteExperience(val experienceId: String) : Event
     }
 }

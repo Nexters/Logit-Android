@@ -31,6 +31,7 @@ data class NewProjectQuestionScreen(
     val jobName: String,
     val jobDesc: String,
     val talent: String,
+    val dueDate: LocalDate,
 ) : Screen {
     data class State(
         val questions: List<ProjectQuestionParam>,
@@ -40,6 +41,7 @@ data class NewProjectQuestionScreen(
 
     sealed interface Event : CircuitUiEvent {
         data object Back : Event
+        data object LoadExample : Event
         data class QuestionChanged(val index: Int, val value: String) : Event
         data class MaxLengthChanged(val index: Int, val value: Int) : Event
         data object AddQuestionClicked : Event
@@ -67,6 +69,9 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
         ) { event ->
             when (event) {
                 NewProjectQuestionScreen.Event.Back -> navigator.pop()
+                NewProjectQuestionScreen.Event.LoadExample -> {
+                    questions = SAMPLE_QUESTIONS
+                }
 
                 is NewProjectQuestionScreen.Event.QuestionChanged -> {
                     val oldValue = questions[event.index]
@@ -98,7 +103,7 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
                             projectParam = ProjectParam(
                                 company = basicInfo.companyName,
                                 companyTalent = basicInfo.talent,
-                                dueDate = LocalDate.of(2024, 12, 31), // TODO: due date 입력 폼 사양 미확정
+                                dueDate = basicInfo.dueDate,
                                 jobPosition = basicInfo.jobName,
                                 recruitNotice = basicInfo.jobDesc,
                                 questions = projectQuestions
@@ -106,6 +111,7 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
                         ).onSuccess {
                             val projectId = it.id
                             val chatScreen = screenProvider.chatScreen(projectId)
+                            navigator.resetRoot(screenProvider.homeScreen())
                             navigator.goTo(chatScreen)
                         }.onFailure {
                             Log.e(TAG, "createProject failed: $it")
@@ -133,5 +139,19 @@ class NewProjectQuestionPresenter @AssistedInject constructor(
 
     companion object {
         private val TAG = NewProjectQuestionPresenter::class.java.simpleName
+        private val SAMPLE_QUESTIONS = listOf(
+            ProjectQuestionParam(
+                question = "로짓(Logit)에 지원하게 된 동기와, 본인이 서비스 기획자로서 가진 차별화된 역량을 실제 경험을 바탕으로 기술해 주세요.",
+                maxLength = 800
+            ),
+            ProjectQuestionParam(
+                question = "기존의 방식이나 서비스에서 불편함을 포착하여, 논리적인 분석을 통해 실질적인 해결책을 제시하고 성과를 낸 경험을 구체적으로 기술해 주세요.",
+                maxLength = 700
+            ),
+            ProjectQuestionParam(
+                question = "다양한 이해관계자(개발자, 디자이너 등)와 협업하는 과정에서 의견 차이를 극복하고, 사용자의 관점에서 최선의 결과를 도출했던 경험을 기술해 주세요.",
+                maxLength = 600
+            )
+        )
     }
 }

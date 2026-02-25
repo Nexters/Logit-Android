@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.PopResult
 import com.useai.core.designsystem.R
 import com.useai.core.model.chat.ChattingHistory
 import com.useai.core.model.chat.Question
@@ -14,6 +15,11 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ChatScreen(val projectId: String): Screen {
+    @Parcelize
+    data class ProjectDeletedResult(
+        val projectId: String,
+    ) : PopResult
+
     sealed interface State : CircuitUiState {
 
         data class Success(
@@ -27,6 +33,7 @@ data class ChatScreen(val projectId: String): Screen {
             val userInput: String,
             val isHeaderUIExpanded: Boolean,
             val showExperienceModal: Boolean = false,
+            val showDeleteDialog: Boolean = false,
             val eventSink: (Event) -> Unit
         ) : State
         data class Loading(
@@ -41,11 +48,13 @@ data class ChatScreen(val projectId: String): Screen {
     sealed interface Event : CircuitUiEvent {
         data class ChangeQuestion(val question: Question) : Event
         data class ChangeCategory(val category: ChatScreenCategory) : Event
-        data object RefreshData : Event
+        data class RefreshData(val preferredQuestionId: String? = null) : Event
+        data class AddCreatedQuestion(val question: Question) : Event
         data class ApplyEditedQuestions(val questions: List<EditQuestionsScreen.EditedQuestionResult>) : Event
         data object EditQuestions : Event
         data object AddQuestion : Event
         data object TryUploadExperience : Event
+        data object ClickAddExperience : Event
         data class CompleteSelectExperience(val experienceIds: List<String>) : Event
         data class GenerateDraft(val experienceIds: List<String>) : Event
         data object DismissExperienceModal : Event
@@ -53,7 +62,11 @@ data class ChatScreen(val projectId: String): Screen {
         data class SendMessage(val message: String) : Event
         data class CopyMessage(val message: String) : Event
         data class UpdateLetter(val letter: String) : Event
-        data object DeleteProject : Event
+        data class SaveLetter(val letter: String) : Event
+        data object CompleteQuestion : Event
+        data object TryDeleteProject : Event
+        data object DismissDeleteDialog : Event
+        data object ConfirmDeleteProject : Event
         data object ExpandOrShrinkHeader : Event
         data object NavigateBack : Event
     }

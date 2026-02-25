@@ -1,18 +1,17 @@
 package com.useai.feature.experience
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.setValue
+import com.slack.circuit.foundation.rememberAnsweringNavigator
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.useai.core.data.repository.ExperienceRepository
-import com.useai.core.designsystem.R
-import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
-import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
-import com.useai.core.ui.reduce
+import com.useai.core.model.experience.Experience
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,59 +26,106 @@ class ExperienceDetailPresenter @AssistedInject constructor(
     @Composable
     override fun present(): ExperienceDetailScreen.State {
         val scope = rememberStableCoroutineScope()
-        val snackbarHostState = LocalLogitSnackbarHostState.current
-        val upcomingFeatureMessage = stringResource(R.string.experience_more_not_supported)
 
-        val state by produceRetainedState<ExperienceDetailScreen.State>(ExperienceDetailScreen.State.Loading) {
-            lateinit var fetchExperience: suspend () -> Unit
+        var uiState by rememberRetained { mutableStateOf<ExperienceDetailScreen.State>(ExperienceDetailScreen.State.Loading) }
+        var experience by rememberRetained { mutableStateOf<Experience?>(null) }
+        var isMenuExpanded by rememberRetained { mutableStateOf(false) }
+        var isDeleting by rememberRetained { mutableStateOf(false) }
+        var isInitialized by rememberRetained { mutableStateOf(false) }
+        var eventSink by rememberRetained { mutableStateOf<(ExperienceDetailScreen.Event) -> Unit>({}) }
 
-            val eventSink: (ExperienceDetailScreen.Event) -> Unit = { event ->
-                when (event) {
-                    ExperienceDetailScreen.Event.Retry -> {
-                        scope.launch {
-                            reduce { ExperienceDetailScreen.State.Loading }
-                            fetchExperience()
-                        }
+        fun publishSuccess() {
+            val current = experience ?: return
+            uiState = ExperienceDetailScreen.State.Success(
+                experience = current,
+                isMenuExpanded = isMenuExpanded,
+                isDeleting = isDeleting,
+                eventSink = eventSink
+            )
+        }
+
+        fun fetchExperience() {
+            scope.launch {
+                experienceRepository.getExperience(screen.experienceId)
+                    .onSuccess { item ->
+                        experience = item
+                        isMenuExpanded = false
+                        isDeleting = false
+                        publishSuccess()
                     }
-
-                    ExperienceDetailScreen.Event.Back -> {
-                        navigator.pop()
+                    .onFailure {
+                        uiState = ExperienceDetailScreen.State.LoadFailed(eventSink = eventSink)
                     }
+            }
+        }
 
-                    ExperienceDetailScreen.Event.ClickMore -> {
+        val editNavigator = rememberAnsweringNavigator<ExperienceCreateScreen.ExperienceSubmitResult>(
+            fallbackNavigator = navigator
+        ) { result ->
+            if (result.action == ExperienceCreateScreen.Action.UPDATED) {
+                fetchExperience()
+            }
+        }
+
+        eventSink = { event ->
+            when (event) {
+                ExperienceDetailScreen.Event.Retry -> {
+                    uiState = ExperienceDetailScreen.State.Loading
+                    fetchExperience()
+                }
+
+                ExperienceDetailScreen.Event.Back -> {
+                    navigator.pop()
+                }
+
+                ExperienceDetailScreen.Event.ClickMore -> {
+                    isMenuExpanded = true
+                    publishSuccess()
+                }
+
+                ExperienceDetailScreen.Event.DismissMenu -> {
+                    isMenuExpanded = false
+                    publishSuccess()
+                }
+
+                ExperienceDetailScreen.Event.ClickEdit -> {
+                    val current = experience
+                    if (current != null) {
+                        isMenuExpanded = false
+                        publishSuccess()
+                        editNavigator.goTo(ExperienceCreateScreen(current.id))
+                    }
+                }
+
+                ExperienceDetailScreen.Event.ClickDelete -> {
+                    val current = experience
+                    if (current != null) {
+                        isMenuExpanded = false
+                        isDeleting = true
+                        publishSuccess()
                         scope.launch {
-                            snackbarHostState.showLogitSnackbar(
-                                message = upcomingFeatureMessage,
-                                iconResId = R.drawable.ic_experience_default
-                            )
+                            experienceRepository.deleteExperience(current.id)
+                                .onSuccess {
+                                    navigator.pop(
+                                        ExperienceDetailScreen.ExperienceDeletedResult(current.id)
+                                    )
+                                }
+                                .onFailure {
+                                    isDeleting = false
+                                    publishSuccess()
+                                }
                         }
                     }
                 }
             }
+        }
 
-            fetchExperience = {
-                experienceRepository.getExperience(screen.experienceId)
-                    .onSuccess { experience ->
-                        reduce {
-                            ExperienceDetailScreen.State.Success(
-                                experience = experience,
-                                eventSink = eventSink
-                            )
-                        }
-                    }
-                    .onFailure {
-                        reduce {
-                            ExperienceDetailScreen.State.LoadFailed(
-                                eventSink = eventSink
-                            )
-                        }
-                    }
-            }
-
+        if (!isInitialized) {
+            isInitialized = true
             fetchExperience()
         }
 
-        return state
+        return uiState
     }
 
     @AssistedFactory

@@ -9,3 +9,7 @@ plugins {
 android {
     namespace = "com.useai.feature.experience"
 }
+
+dependencies {
+    implementation(projects.core.network)
+}

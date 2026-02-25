@@ -1,6 +1,5 @@
 package com.useai.core.data.repository
 
-import com.useai.core.common.extensions.toFormattedString
 import com.useai.core.model.experience.Experience
 import com.useai.core.model.experience.ExperienceParam
 import com.useai.core.model.experience.MatchingExperience
@@ -21,14 +20,16 @@ internal class ExperienceRepositoryImpl @Inject constructor(
         return runCatchingWith {
             experienceRemoteDataSource.createExperience(
                 CreateExperienceRequest(
-                    category = experience.category,
-                    date = experience.date.toFormattedString().orEmpty(),
+                    title = experience.title,
                     experienceType = experience.experienceType,
+                    formatType = experience.formatType,
+                    startDate = experience.startDate.toString(),
+                    endDate = experience.endDate?.toString(),
+                    tags = experience.tags,
                     situation = experience.situation,
                     task = experience.task,
                     action = experience.action,
-                    result = experience.result,
-                    title = experience.title
+                    result = experience.result
                 )
             ).toExperience()
         }

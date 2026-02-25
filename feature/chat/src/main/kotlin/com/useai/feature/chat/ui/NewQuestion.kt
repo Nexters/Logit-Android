@@ -30,13 +30,17 @@ fun NewQuestion(
     modifier: Modifier = Modifier,
     state: NewQuestionScreen.State,
 ) {
-    BackHandler {
+    BackHandler(enabled = !state.isSubmitting) {
         state.eventSink(NewQuestionScreen.Event.Back)
     }
 
     InputFormContainer(
         modifier = modifier.statusBarsPadding(),
-        onClickBackButton = { state.eventSink(NewQuestionScreen.Event.Back) },
+        onClickBackButton = {
+            if (!state.isSubmitting) {
+                state.eventSink(NewQuestionScreen.Event.Back)
+            }
+        },
         bottomButtonText = stringResource(R.string.question_form_confirm),
         onClickBottomButton = { state.eventSink(NewQuestionScreen.Event.ConfirmClicked) },
         bottomButtonEnabled = state.isButtonEnabled,
@@ -108,6 +112,7 @@ private fun NewQuestionPreview() {
             state = NewQuestionScreen.State(
                 question = "",
                 maxLength = 0,
+                isSubmitting = false,
                 isButtonEnabled = false,
             )
         )

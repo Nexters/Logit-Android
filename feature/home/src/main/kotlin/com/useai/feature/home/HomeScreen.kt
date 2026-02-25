@@ -2,12 +2,21 @@ package com.useai.feature.home
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
@@ -21,6 +30,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -29,12 +39,18 @@ data object HomeScreen : Screen {
         val userProfile: UserProfile,
         val bannerItems: List<ExperienceBannerItem>,
         val projects: List<ProjectListItem>,
+        val openedProjectMenuId: String?,
+        val isDeletingProject: Boolean,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
 
     sealed interface Event : CircuitUiEvent {
         data object NewProjectClicked : Event
         data class ProjectClicked(val projectId: String) : Event
+        data class ProjectMoreClicked(val projectId: String) : Event
+        data object DismissProjectMenu : Event
+        data class EditProjectClicked(val projectId: String) : Event
+        data class DeleteProjectClicked(val projectId: String) : Event
         data object AccountClicked : Event
     }
 }
@@ -46,6 +62,8 @@ class HomePresenter @AssistedInject constructor(
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
+        val scope = rememberStableCoroutineScope()
+        val lifecycleOwner = LocalLifecycleOwner.current
         val userProfile by produceRetainedState(initialValue = UserProfile("", "")) {
             accountRepository.getUser()
                 .onSuccess {
@@ -55,37 +73,43 @@ class HomePresenter @AssistedInject constructor(
                     Log.e(TAG, "getUser failed: $it")
                 }
         }
-        val dummyBannerItems = listOf(
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Leadership,
-                experienceCount = 7,
-            ),
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Expertise,
-                experienceCount = 1,
-            ),
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Analysis,
-                experienceCount = 3,
-            ),
-            ExperienceBannerItem(
-                experienceType = ExperienceType.Creativity,
-                experienceCount = 30,
-            ),
-        )
-        val projects by produceRetainedState(initialValue = emptyList()) {
-            projectRepository.getProjects() // TODO: 페이징 사용, 화면 진입 시마다 요청하지 않도록 개선 필요
-                .onSuccess { value = it }
-                .onFailure {
-                    Log.e(TAG, "getProjects failed: $it")
-                }
-        }
+        var projects by rememberRetained { mutableStateOf<List<ProjectListItem>>(emptyList()) }
+        var openedProjectMenuId by rememberRetained { mutableStateOf<String?>(null) }
+        var isDeletingProject by rememberRetained { mutableStateOf(false) }
         val screenProvider = LocalScreenProvider.current
+
+        fun fetchProjects() {
+            scope.launch {
+                projectRepository.getProjects() // TODO: paging
+                    .onSuccess {
+                        projects = it
+                        openedProjectMenuId = null
+                        isDeletingProject = false
+                    }
+                    .onFailure {
+                        Log.e(TAG, "getProjects failed: $it")
+                    }
+            }
+        }
+
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    fetchProjects()
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
 
         return HomeScreen.State(
             userProfile = userProfile,
-            bannerItems = dummyBannerItems,
-            projects = projects
+            bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
+            projects = projects,
+            openedProjectMenuId = openedProjectMenuId,
+            isDeletingProject = isDeletingProject,
         ) { event ->
             when (event) {
                 HomeScreen.Event.NewProjectClicked -> navigator.goTo(
@@ -93,10 +117,38 @@ class HomePresenter @AssistedInject constructor(
                 )
 
                 is HomeScreen.Event.ProjectClicked -> navigator.goTo(
-                    screenProvider.chatScreen(
-                        event.projectId
-                    )
+                    screenProvider.chatScreen(event.projectId)
                 )
+
+                is HomeScreen.Event.ProjectMoreClicked -> {
+                    openedProjectMenuId = if (openedProjectMenuId == event.projectId) {
+                        null
+                    } else {
+                        event.projectId
+                    }
+                }
+
+                HomeScreen.Event.DismissProjectMenu -> {
+                    openedProjectMenuId = null
+                }
+
+                is HomeScreen.Event.EditProjectClicked -> {
+                    openedProjectMenuId = null
+                    navigator.goTo(screenProvider.editQuestionsScreen(event.projectId))
+                }
+
+                is HomeScreen.Event.DeleteProjectClicked -> {
+                    openedProjectMenuId = null
+                    isDeletingProject = true
+                    scope.launch {
+                        projectRepository.deleteProject(event.projectId)
+                            .onSuccess { fetchProjects() }
+                            .onFailure {
+                                isDeletingProject = false
+                                Log.e(TAG, "deleteProject failed: $it")
+                            }
+                    }
+                }
 
                 HomeScreen.Event.AccountClicked -> navigator.goTo(
                     screenProvider.accountScreen()

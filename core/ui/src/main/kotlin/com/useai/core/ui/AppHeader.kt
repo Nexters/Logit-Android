@@ -35,6 +35,7 @@ fun AppHeader(
     onIconClick: () -> Unit,
     paddingValues: PaddingValues = PaddingValues(
         horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+        vertical = 12.dp,
     )
 ) {
     Row(

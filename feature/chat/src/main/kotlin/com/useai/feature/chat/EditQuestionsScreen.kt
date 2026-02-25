@@ -83,7 +83,6 @@ class EditQuestionsPresenter @AssistedInject constructor(
         val snackbarHostState = LocalLogitSnackbarHostState.current
 
         val invalidInputMessage = stringResource(R.string.chat_edit_questions_invalid)
-        val saveSuccessMessage = stringResource(R.string.chat_edit_questions_success)
         val saveFailedMessage = stringResource(R.string.chat_edit_questions_failed)
         val minCountMessage = stringResource(R.string.chat_edit_questions_min_count)
         val maxCountMessage = stringResource(R.string.chat_edit_questions_max_count)
@@ -206,85 +205,98 @@ class EditQuestionsPresenter @AssistedInject constructor(
                         } else {
                             isSubmitting = true
                             scope.launch {
-                                val remainingIds = normalized.mapNotNull { it.id.takeIf(String::isNotBlank) }.toSet()
-                                val deletedIds = initialQuestionIds - remainingIds
-                                val savedQuestions = mutableListOf<EditQuestionsScreen.EditedQuestionResult>()
+                                try {
+                                    val remainingIds =
+                                        normalized.mapNotNull { it.id.takeIf(String::isNotBlank) }.toSet()
+                                    val deletedIds = initialQuestionIds - remainingIds
+                                    val savedQuestions =
+                                        mutableListOf<EditQuestionsScreen.EditedQuestionResult>()
 
-                                for (questionId in deletedIds) {
-                                    val deleteResult = questionRepository.deleteQuestion(
-                                        projectId = screen.projectId,
-                                        questionId = questionId,
-                                    )
-                                    if (deleteResult.isFailure) {
-                                        Log.e(TAG, "deleteQuestion failed: ${deleteResult.exceptionOrNull()}")
-                                        snackbarHostState.showLogitSnackbar(
-                                            message = saveFailedMessage,
-                                            iconResId = R.drawable.ic_alert,
-                                        )
-                                        isSubmitting = false
-                                        return@launch
-                                    }
-                                }
-
-                                for (question in normalized) {
-                                    if (question.id.isBlank()) {
-                                        val createResult = questionRepository.createQuestion(
+                                    for (questionId in deletedIds) {
+                                        val deleteResult = questionRepository.deleteQuestion(
                                             projectId = screen.projectId,
-                                            question = ProjectQuestionParam(
-                                                question = question.title,
-                                                maxLength = question.maxLength,
-                                            )
+                                            questionId = questionId,
                                         )
-                                        val createdId = createResult.getOrNull()
-                                        if (createdId == null) {
-                                            Log.e(TAG, "createQuestion failed: ${createResult.exceptionOrNull()}")
+                                        if (deleteResult.isFailure) {
+                                            Log.e(
+                                                TAG,
+                                                "deleteQuestion failed: ${deleteResult.exceptionOrNull()}"
+                                            )
                                             snackbarHostState.showLogitSnackbar(
                                                 message = saveFailedMessage,
                                                 iconResId = R.drawable.ic_alert,
                                             )
-                                            isSubmitting = false
                                             return@launch
                                         }
-                                        savedQuestions += EditQuestionsScreen.EditedQuestionResult(
-                                            id = createdId,
-                                            title = question.title,
-                                            maxLength = question.maxLength,
-                                            letter = question.letter,
-                                        )
-                                    } else {
-                                        val updateResult = questionRepository.updateQuestion(
-                                            projectId = screen.projectId,
-                                            question = Question(
+                                    }
+
+                                    for (question in normalized) {
+                                        if (question.id.isBlank()) {
+                                            val createResult = questionRepository.createQuestion(
+                                                projectId = screen.projectId,
+                                                question = ProjectQuestionParam(
+                                                    question = question.title,
+                                                    maxLength = question.maxLength,
+                                                )
+                                            )
+                                            val createdId = createResult.getOrNull()
+                                            if (createdId == null) {
+                                                Log.e(
+                                                    TAG,
+                                                    "createQuestion failed: ${createResult.exceptionOrNull()}"
+                                                )
+                                                snackbarHostState.showLogitSnackbar(
+                                                    message = saveFailedMessage,
+                                                    iconResId = R.drawable.ic_alert,
+                                                )
+                                                return@launch
+                                            }
+                                            savedQuestions += EditQuestionsScreen.EditedQuestionResult(
+                                                id = createdId,
+                                                title = question.title,
+                                                maxLength = question.maxLength,
+                                                letter = question.letter,
+                                            )
+                                        } else {
+                                            val updateResult = questionRepository.updateQuestion(
+                                                projectId = screen.projectId,
+                                                question = Question(
+                                                    id = question.id,
+                                                    title = question.title,
+                                                    maxLength = question.maxLength,
+                                                    letter = question.letter,
+                                                )
+                                            )
+                                            if (updateResult.isFailure) {
+                                                Log.e(
+                                                    TAG,
+                                                    "updateQuestion failed: ${updateResult.exceptionOrNull()}"
+                                                )
+                                                snackbarHostState.showLogitSnackbar(
+                                                    message = saveFailedMessage,
+                                                    iconResId = R.drawable.ic_alert,
+                                                )
+                                                return@launch
+                                            }
+                                            savedQuestions += EditQuestionsScreen.EditedQuestionResult(
                                                 id = question.id,
                                                 title = question.title,
                                                 maxLength = question.maxLength,
                                                 letter = question.letter,
                                             )
-                                        )
-                                        if (updateResult.isFailure) {
-                                            Log.e(TAG, "updateQuestion failed: ${updateResult.exceptionOrNull()}")
-                                            snackbarHostState.showLogitSnackbar(
-                                                message = saveFailedMessage,
-                                                iconResId = R.drawable.ic_alert,
-                                            )
-                                            isSubmitting = false
-                                            return@launch
                                         }
-                                        savedQuestions += EditQuestionsScreen.EditedQuestionResult(
-                                            id = question.id,
-                                            title = question.title,
-                                            maxLength = question.maxLength,
-                                            letter = question.letter,
-                                        )
                                     }
-                                }
 
-                                snackbarHostState.showLogitSnackbar(
-                                    message = saveSuccessMessage,
-                                    iconResId = R.drawable.ic_alert,
-                                )
-                                isSubmitting = false
-                                navigator.pop(EditQuestionsScreen.QuestionsEditedResult(savedQuestions))
+                                    navigator.pop(EditQuestionsScreen.QuestionsEditedResult(savedQuestions))
+                                } catch (t: Throwable) {
+                                    Log.e(TAG, "submit edit questions failed", t)
+                                    snackbarHostState.showLogitSnackbar(
+                                        message = saveFailedMessage,
+                                        iconResId = R.drawable.ic_alert,
+                                    )
+                                } finally {
+                                    isSubmitting = false
+                                }
                             }
                         }
                     }

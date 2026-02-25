@@ -1,19 +1,32 @@
-package com.useai.feature.projects.ui
+﻿package com.useai.feature.projects.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -21,8 +34,9 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.ui.AppHeader
+import com.useai.core.ui.project.ProjectDueStatusChip
 import com.useai.core.ui.project.EmptyProjectList
-import com.useai.core.ui.project.projectList
+import com.useai.core.ui.project.resolveProjectDueStatus
 import com.useai.feature.projects.ProjectsScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import java.time.LocalDate
@@ -34,66 +48,122 @@ fun Projects(
     modifier: Modifier = Modifier,
     state: ProjectsScreen.State,
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize().systemBarsPadding(),
-        contentPadding = PaddingValues(
-            bottom = dimensionResource(R.dimen.screen_common_padding_bottom),
-        )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
     ) {
-        item {
-            AppHeader(
-                title = {
-                    Text(
-                        text = stringResource(R.string.home_project_list_title),
-                        style = LogitTheme.typography.body1,
-                        color = LogitTheme.colors.black,
-                    )
-                },
-                iconPainter = painterResource(R.drawable.ic_tab_add),
-                iconDescription = stringResource(R.string.content_description_add_project),
-                iconSize = 16.dp,
-                onIconClick = {
-                    state.eventSink(ProjectsScreen.Event.NewProjectClicked)
-                },
-                paddingValues = PaddingValues(
-                    start = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                ),
-            )
-        }
-
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                        vertical = 6.dp
-                    ),
-            ) {
+        AppHeader(
+            title = {
                 Text(
-                    text = stringResource(R.string.projects_count_format, state.projects.size),
-                    style = LogitTheme.typography.body8_1,
-                    color = LogitTheme.colors.gray200,
+                    text = stringResource(R.string.home_project_list_title),
+                    style = LogitTheme.typography.body1,
+                    color = LogitTheme.colors.black,
                 )
-            }
+            },
+            iconPainter = painterResource(R.drawable.ic_tab_add),
+            iconDescription = stringResource(R.string.content_description_add_project),
+            iconSize = 16.dp,
+            onIconClick = {
+                state.eventSink(ProjectsScreen.Event.NewProjectClicked)
+            },
+            paddingValues = PaddingValues(
+                start = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                top = 12.dp,
+            ),
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                    vertical = 6.dp
+                ),
+        ) {
+            Text(
+                text = stringResource(R.string.projects_count_format, state.projects.size),
+                style = LogitTheme.typography.body8_1,
+                color = LogitTheme.colors.gray200,
+            )
         }
 
         if (state.projects.isEmpty()) {
-            item {
-                EmptyProjectList(
-                    onClickCreateProject = {
-                        state.eventSink(ProjectsScreen.Event.NewProjectClicked)
-                    }
-                )
-            }
-        } else {
-            this@LazyColumn.projectList(
-                projects = state.projects,
-                onClickProject = {
-                    state.eventSink(ProjectsScreen.Event.ProjectClicked(it))
-                },
+            EmptyProjectList(
+                modifier = Modifier.weight(1f),
+                onClickCreateProject = {
+                    state.eventSink(ProjectsScreen.Event.NewProjectClicked)
+                }
             )
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(
+                    bottom = dimensionResource(R.dimen.screen_common_padding_bottom),
+                )
+            ) {
+                itemsIndexed(
+                    items = state.projects,
+                    key = { _, item -> item.id }
+                ) { index, item ->
+                    ProjectListItemRow(
+                        item = item,
+                        onClick = { state.eventSink(ProjectsScreen.Event.ProjectClicked(item.id)) },
+                    )
+                    if (index < state.projects.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(
+                                horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal)
+                            ),
+                            thickness = 1.dp,
+                            color = LogitTheme.colors.gray70,
+                        )
+                    }
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun ProjectListItemRow(
+    item: ProjectListItem,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(
+                horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                vertical = 16.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val dueStatus = item.resolveProjectDueStatus()
+
+        Box(
+            modifier = Modifier
+                .size(width = 3.dp, height = 24.dp)
+                .background(
+                    color = LogitTheme.colors.primary70,
+                    shape = RoundedCornerShape(9.dp)
+                )
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Text(
+            text = stringResource(R.string.home_project_list_item_title_format, item.company, item.jobPosition),
+            style = LogitTheme.typography.body6_2,
+            color = LogitTheme.colors.black,
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
+        ProjectDueStatusChip(status = dueStatus)
     }
 }
 
@@ -110,8 +180,8 @@ private fun ProjectsPreview() {
                     projects = listOf(
                         ProjectListItem(
                             id = "1",
-                            company = "카카오페이",
-                            jobPosition = "디자인 어시스턴트 어쩌구 저쩌구 어쩌구 저쩌구",
+                            company = "KakaoPay",
+                            jobPosition = "Designer Assistant",
                             dueDate = LocalDate.of(2026, 1, 7),
                             questionId = "",
                             totalQuestions = 0,
@@ -120,8 +190,8 @@ private fun ProjectsPreview() {
                         ),
                         ProjectListItem(
                             id = "2",
-                            company = "네이버",
-                            jobPosition = "프론트엔드 개발",
+                            company = "Naver",
+                            jobPosition = "Frontend Developer",
                             dueDate = LocalDate.of(2026, 1, 7),
                             questionId = "",
                             totalQuestions = 0,
@@ -130,8 +200,8 @@ private fun ProjectsPreview() {
                         ),
                         ProjectListItem(
                             id = "3",
-                            company = "토스",
-                            jobPosition = "iOS 개발",
+                            company = "Toss",
+                            jobPosition = "iOS Developer",
                             dueDate = LocalDate.of(2026, 1, 7),
                             questionId = "",
                             totalQuestions = 0,

@@ -51,6 +51,12 @@ internal class QuestionRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun completeQuestion(projectId: String, questionId: String): Result<Question> {
+        return runCatchingWith {
+            questionRemoteDataSource.completeQuestion(projectId, questionId).toQuestion()
+        }
+    }
+
     override suspend fun deleteQuestion(projectId: String, questionId: String): Result<Unit> {
         return runCatchingWith {
             questionRemoteDataSource.deleteQuestion(projectId, questionId)

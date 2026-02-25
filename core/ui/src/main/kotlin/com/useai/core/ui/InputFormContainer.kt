@@ -27,6 +27,7 @@ fun InputFormContainer(
     bottomButtonText: String,
     onClickBottomButton: () -> Unit,
     bottomButtonEnabled: Boolean,
+    contentScrollEnabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     Scaffold(
@@ -46,10 +47,18 @@ fun InputFormContainer(
                 .padding(paddingValues)
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
+                modifier = (
+                    if (contentScrollEnabled) {
+                        Modifier.verticalScroll(rememberScrollState())
+                    } else {
+                        Modifier
+                    }
+                )
+                    .then(
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
                     .padding(
                         horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
                         vertical = dimensionResource(R.dimen.spacing_form_vertical)
