@@ -6,6 +6,8 @@ import com.useai.core.model.account.User
 interface AccountRepository {
     suspend fun getAccessToken(): String?
 
+    suspend fun isLoggedIn(): Boolean
+
     suspend fun requestLogin(idToken: String): Result<Login>
 
     suspend fun setAccessToken(token: String): Result<Unit>

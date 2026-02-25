@@ -8,6 +8,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.feature.onboarding)
     implementation(projects.feature.home)
     implementation(projects.feature.account)
     implementation(projects.feature.projects)

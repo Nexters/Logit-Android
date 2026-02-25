@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.appbar.PopUpTitle
@@ -84,5 +85,18 @@ fun InputFormContainer(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun InputFormContainerPreview() {
+    LogitTheme {
+        InputFormContainer(
+            onClickBackButton = {},
+            bottomButtonText = "다음으로",
+            onClickBottomButton = {},
+            bottomButtonEnabled = true,
+        ) { }
     }
 }

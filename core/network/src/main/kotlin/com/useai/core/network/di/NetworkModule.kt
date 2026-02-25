@@ -189,7 +189,7 @@ internal object NetworkModule {
                     Log.e("Auth", "Refresh token failed: ${e.message}", e)
                     null
                 }
-            }
+            }?.accessToken
 
             // 6. 결과 처리
             if (newAccessToken == null) {

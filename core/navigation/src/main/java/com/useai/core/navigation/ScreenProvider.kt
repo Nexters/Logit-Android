@@ -4,6 +4,7 @@ import com.slack.circuit.runtime.screen.Screen
 import java.time.LocalDate
 
 interface ScreenProvider {
+    fun onboardingScreen(): Screen
     fun rootScreen(): Screen
     fun homeScreen(): Screen
     fun accountScreen(): Screen
