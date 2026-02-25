@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -24,14 +27,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -48,11 +52,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.ime
-import androidx.compose.material3.rememberModalBottomSheetState
 import com.slack.circuit.retained.rememberRetained
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.button.LogitPrimaryButton
@@ -70,10 +69,10 @@ import com.useai.feature.chat.ChatScreenCategory
 import com.useai.feature.chat.ChattingStreamingStatus
 import com.useai.feature.chat.ui.ChatInputRow
 import com.useai.feature.chat.ui.chatCommonStickyHeader
-import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -520,6 +519,56 @@ private fun ChatLoadingItem(
 
 @Composable
 @Preview(showBackground = true)
+private fun ChatChattingUIWithNoHistoryPreview() {
+    ChatChattingUI(
+        state = ChatScreen.State.Success(
+            chattingHistory = ChattingHistory(
+                chattings = emptyList(),
+                projectCreatedAt = LocalDateTime.now(),
+                experienceIds = emptySet(),
+                questionId = "q1",
+                projectName = "Test Project",
+                questionTitle = "Test Question",
+                nextCursor = null,
+                hasMore = false,
+                remainingChats = 0,
+            ),
+            userInput = "",
+            streamingStatus = ChattingStreamingStatus.Idle,
+            questions = listOf(
+                Question(
+                    "q1",
+                    "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요",
+                    1000,
+                    ""
+                ),
+                Question("q2", "Question 2", 1000, "")
+            ),
+            currentQuestion = Question(
+                "q1",
+                "[필수] 본 직무에 지원하게 된 동기와 본인이 이 포지션에 가장 적합한 후보라고 생각하는 이유를 작성해 주세요",
+                1000,
+                ""
+            ),
+            eventSink = {},
+            currentCategory = ChatScreenCategory.CHATTING,
+            isHeaderUIExpanded = false,
+            project = Project(
+                id = "p1",
+                company = "네이버",
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+                dueDate = LocalDate.now(),
+                jobPosition = "안드로이드 개발자",
+                recruitNotice = "채용공고",
+            ),
+            matchingExperiences = listOf(),
+        )
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
 private fun ChatChattingUIPreview() {
     ChatChattingUI(
         state = ChatScreen.State.Success(
@@ -528,26 +577,26 @@ private fun ChatChattingUIPreview() {
                     ChattingContent.AI(
                         message = "안녕하세요 자소서 대신 써드립니다",
                         isLetter = false,
-                        id = "",
+                        id = "1",
                         createdAt = LocalDateTime.MIN
                     ),
                     ChattingContent.User(
                         message = "으아아아아아ㅏ아아아아아",
-                        id = "",
+                        id = "2",
                         createdAt = LocalDateTime.MIN
                     ),
                     ChattingContent.AI(
                         message = "그러면 도와드릴 수 없습니다.",
                         isLetter = false,
-                        id = "",
-createdAt = LocalDateTime.MIN
+                        id = "3",
+                        createdAt = LocalDateTime.MIN
                     ),
-                    ChattingContent.User(message = "써줘", id = "", createdAt = LocalDateTime.MIN),
+                    ChattingContent.User(message = "써줘", id = "4", createdAt = LocalDateTime.MIN),
                     ChattingContent.AI(
                         message = "저는 코딩을 잘하구여 책임감이 뛰어나구요 성실합니다. " +
                                 "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 ",
                         isLetter = true,
-                        id = "",
+                        id = "5",
                         createdAt = LocalDateTime.MIN
                     ),
                 ),
