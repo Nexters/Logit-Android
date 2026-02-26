@@ -5,29 +5,41 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFieldLabel
+import com.useai.core.ui.LogitDateInputField
 import com.useai.core.ui.LogitInputField
 import com.useai.core.ui.LogitStepper
+import com.useai.core.ui.ProgressCheckBox
 import com.useai.feature.experience.ExperienceCreateDefaults
+import com.useai.feature.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceCreateStep
 
 @Composable
 internal fun ExperienceCreateBasicInfoStep(
+    modifier: Modifier = Modifier,
     state: ExperienceCreateScreen.State,
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier,
+    ) {
         stickyHeader {
             Column(
                 modifier = Modifier
@@ -68,14 +80,35 @@ internal fun ExperienceCreateBasicInfoStep(
                 isRequired = true,
             )
             Spacer(modifier = Modifier.padding(top = 10.dp))
-            ExperienceDateInputField(
-                value = state.startDate,
-                onValueChange = { state.eventSink(ExperienceCreateScreen.Event.ChangeStartDate(it)) },
-                placeholder = "YYYY. MM. DD",
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                LogitDateInputField(
+                    modifier = Modifier.weight(1f),
+                    dueDate = state.startDate,
+                    enabled = true,
+                    onDateSelected = {
+                        state.eventSink(ExperienceCreateScreen.Event.ChangeStartDate(it))
+                    }
+                )
+                Text(
+                    text = "~",
+                    modifier = Modifier.width(28.dp),
+                    color = LogitTheme.colors.gray200,
+                    textAlign = TextAlign.Center,
+                )
+                LogitDateInputField(
+                    modifier = Modifier.weight(1f),
+                    dueDate = state.endDate,
+                    enabled = state.isInProgress.not(),
+                    onDateSelected = {
+                        state.eventSink(ExperienceCreateScreen.Event.ChangeEndDate(it))
+                    }
+                )
+            }
 
-            com.useai.core.ui.ProgressCheckBox(
+            ProgressCheckBox(
                 checked = state.isInProgress,
                 text = "진행 중",
                 onCheckedChange = { state.eventSink(ExperienceCreateScreen.Event.ToggleInProgress) },
@@ -101,5 +134,31 @@ internal fun ExperienceCreateBasicInfoStep(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ExperienceCreateBasicInfoStepPreview() {
+    LogitTheme {
+        ExperienceCreateBasicInfoStep(
+            modifier = Modifier.background(LogitTheme.colors.white),
+            state = ExperienceCreateScreen.State(
+                currentStep = ExperienceCreateStep.BASIC_INFO,
+                isEditMode = false,
+                title = "",
+                startDate = null,
+                endDate = null,
+                isInProgress = false,
+                selectedExperienceType = null,
+                selectedFormatType = ExperienceCreateFormatType.STAR,
+                situation = "",
+                task = "",
+                action = "",
+                result = "",
+                isSubmitting = false,
+                eventSink = {}
+            )
+        )
     }
 }

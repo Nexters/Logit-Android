@@ -22,9 +22,6 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
-import java.util.Locale
 
 class ExperienceCreatePresenter @AssistedInject constructor(
     private val experienceRepository: ExperienceRepository,
@@ -41,7 +38,8 @@ class ExperienceCreatePresenter @AssistedInject constructor(
 
         var currentStep by rememberRetained { mutableStateOf(ExperienceCreateStep.BASIC_INFO) }
         var title by rememberRetained { mutableStateOf("") }
-        var startDate by rememberRetained { mutableStateOf("") }
+        var startDate by rememberRetained { mutableStateOf<LocalDate?>(null) }
+        var endDate by rememberRetained { mutableStateOf<LocalDate?>(null) }
         var isInProgress by rememberRetained { mutableStateOf(false) }
         var selectedExperienceType by rememberRetained { mutableStateOf<String?>(null) }
         var selectedFormatType by rememberRetained { mutableStateOf(ExperienceCreateFormatType.STAR) }
@@ -61,7 +59,8 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                 experienceRepository.getExperience(screen.experienceId)
                     .onSuccess { experience ->
                         title = experience.title
-                        startDate = experience.startDate.format(DATE_INPUT_FORMATTER)
+                        startDate = experience.startDate
+                        endDate = experience.endDate
                         isInProgress = experience.endDate == null
                         selectedExperienceType = experience.experienceType
                         selectedFormatType = experience.formatType.toFormatType()
@@ -92,7 +91,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                     when (currentStep) {
                         ExperienceCreateStep.BASIC_INFO -> {
                             title = ExperienceCreateDefaults.sampleTitle
-                            startDate = "2022. 04. 06"
+                            startDate = LocalDate.of(2022, 4, 6)
                             isInProgress = true
                             selectedExperienceType = ExperienceCreateDefaults.experienceTypes.first()
                         }
@@ -148,13 +147,14 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                     )
                                 }
                             } else {
-                                val parsedStartDate = parseDate(startDate)
-                                val parsedEndDate = if (isInProgress) null else parsedStartDate
+                                val startDateSnapshot = startDate
+                                val endDateSnapshot = if (isInProgress) null else endDate
+
                                 if (
                                     !isStep2Valid(selectedFormatType, situation, task, action, result) ||
-                                    parsedStartDate == null ||
+                                    startDateSnapshot == null ||
                                     selectedExperienceType == null ||
-                                    (!isInProgress && parsedEndDate == null)
+                                    (!isInProgress && endDateSnapshot == null)
                                 ) {
                                     scope.launch {
                                         snackbarHostState.showLogitSnackbar(
@@ -179,8 +179,8 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                                     title = title.trim(),
                                                     experienceType = selectedExperienceType.orEmpty(),
                                                     formatType = selectedFormatType.requestValue,
-                                                    startDate = parsedStartDate,
-                                                    endDate = parsedEndDate,
+                                                    startDate = startDateSnapshot,
+                                                    endDate = endDateSnapshot,
                                                     tags = "",
                                                     situation = formattedInput.situation,
                                                     task = formattedInput.task,
@@ -209,8 +209,8 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                                     title = title.trim(),
                                                     experienceType = selectedExperienceType,
                                                     formatType = selectedFormatType.requestValue,
-                                                    startDate = parsedStartDate.toString(),
-                                                    endDate = parsedEndDate?.toString(),
+                                                    startDate = startDateSnapshot.toString(),
+                                                    endDate = endDateSnapshot?.toString(),
                                                     tags = "",
                                                     situation = formattedInput.situation,
                                                     task = formattedInput.task,
@@ -263,6 +263,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
 
                 is ExperienceCreateScreen.Event.ChangeTitle -> title = event.value
                 is ExperienceCreateScreen.Event.ChangeStartDate -> startDate = event.value
+                is ExperienceCreateScreen.Event.ChangeEndDate -> endDate = event.value
                 ExperienceCreateScreen.Event.ToggleInProgress -> isInProgress = !isInProgress
 
                 is ExperienceCreateScreen.Event.SelectExperienceType -> selectedExperienceType = event.value
@@ -337,6 +338,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
             isEditMode = screen.experienceId != null,
             title = title,
             startDate = startDate,
+            endDate = endDate,
             isInProgress = isInProgress,
             selectedExperienceType = selectedExperienceType,
             selectedFormatType = selectedFormatType,
@@ -366,10 +368,10 @@ class ExperienceCreatePresenter @AssistedInject constructor(
 
     private fun isBasicInfoValid(
         title: String,
-        startDate: String,
+        startDate: LocalDate?,
         selectedExperienceType: String?,
     ): Boolean {
-        return title.isNotBlank() && parseDate(startDate) != null && selectedExperienceType != null
+        return title.isNotBlank() && startDate != null && selectedExperienceType != null
     }
 
     private fun isStep2Valid(
@@ -431,14 +433,6 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         }
     }
 
-    private fun parseDate(raw: String): LocalDate? {
-        return try {
-            LocalDate.parse(raw.trim(), DATE_INPUT_FORMATTER)
-        } catch (_: DateTimeParseException) {
-            null
-        }
-    }
-
     private fun ExperienceCreateStep.previous(): ExperienceCreateStep = when (this) {
         ExperienceCreateStep.BASIC_INFO -> ExperienceCreateStep.BASIC_INFO
         ExperienceCreateStep.STAR -> ExperienceCreateStep.BASIC_INFO
@@ -469,6 +463,5 @@ class ExperienceCreatePresenter @AssistedInject constructor(
 
     companion object {
         private const val MIN_INPUT_LENGTH = 50
-        private val DATE_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy. MM. dd", Locale.KOREA)
     }
 }

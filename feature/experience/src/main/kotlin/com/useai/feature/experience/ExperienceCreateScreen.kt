@@ -5,6 +5,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.screen.PopResult
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDate
 
 @Parcelize
 data class ExperienceCreateScreen(
@@ -25,7 +26,8 @@ data class ExperienceCreateScreen(
         val currentStep: ExperienceCreateStep,
         val isEditMode: Boolean,
         val title: String,
-        val startDate: String,
+        val startDate: LocalDate?,
+        val endDate: LocalDate?,
         val isInProgress: Boolean,
         val selectedExperienceType: String?,
         val selectedFormatType: ExperienceCreateFormatType,
@@ -42,7 +44,8 @@ data class ExperienceCreateScreen(
         data object Next : Event
         data object LoadExample : Event
         data class ChangeTitle(val value: String) : Event
-        data class ChangeStartDate(val value: String) : Event
+        data class ChangeStartDate(val value: LocalDate?) : Event
+        data class ChangeEndDate(val value: LocalDate?) : Event
         data object ToggleInProgress : Event
         data class SelectExperienceType(val value: String) : Event
         data class SelectFormatType(val value: ExperienceCreateFormatType) : Event
