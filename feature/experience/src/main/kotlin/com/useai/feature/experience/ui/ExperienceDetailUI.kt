@@ -232,7 +232,7 @@ private fun ExperienceDetailLabel(
 @Composable
 private fun ExperienceDetailPeriodLabel(
     startDate: LocalDate,
-    endDate: LocalDate,
+    endDate: LocalDate?,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -249,7 +249,7 @@ private fun ExperienceDetailPeriodLabel(
                 append("~")
                 pop()
                 append(" ")
-                append(endDate.toDisplayDate())
+                append(endDate?.toDisplayDate() ?: stringResource(R.string.experience_detail_period_in_progress))
             },
             style = LogitTheme.typography.body6_1,
             color = LogitTheme.colors.black,

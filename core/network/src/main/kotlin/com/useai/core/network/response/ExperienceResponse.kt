@@ -49,7 +49,7 @@ fun ExperienceResponse.toExperience() = Experience(
         else -> throw IllegalArgumentException("Invalid category: $category")
     },
     startDate = startDate.toLocalDate() ?: LocalDate.MIN,
-    endDate = endDate.toLocalDate() ?: LocalDate.MIN,
+    endDate = endDate.toLocalDate(),
     experienceType = experienceType,
     formatType = formatType,
     title = title
