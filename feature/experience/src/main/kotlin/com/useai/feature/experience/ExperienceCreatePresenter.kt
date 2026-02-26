@@ -15,6 +15,7 @@ import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
 import com.useai.core.model.experience.ExperienceParam
+import com.useai.core.model.experience.ExperienceType
 import com.useai.core.network.request.UpdateExperienceRequest
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -41,7 +42,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
         var startDate by rememberRetained { mutableStateOf<LocalDate?>(null) }
         var endDate by rememberRetained { mutableStateOf<LocalDate?>(null) }
         var isInProgress by rememberRetained { mutableStateOf(false) }
-        var selectedExperienceType by rememberRetained { mutableStateOf<String?>(null) }
+        var selectedExperienceType by rememberRetained { mutableStateOf<ExperienceType?>(null) }
         var selectedFormatType by rememberRetained { mutableStateOf(ExperienceCreateFormatType.STAR) }
         var situation by rememberRetained { mutableStateOf("") }
         var task by rememberRetained { mutableStateOf("") }
@@ -93,7 +94,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                             title = ExperienceCreateDefaults.sampleTitle
                             startDate = LocalDate.of(2022, 4, 6)
                             isInProgress = true
-                            selectedExperienceType = ExperienceCreateDefaults.experienceTypes.first()
+                            selectedExperienceType = ExperienceType.entries.first()
                         }
 
                         ExperienceCreateStep.STAR -> {
@@ -177,7 +178,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                             experienceRepository.createExperience(
                                                 ExperienceParam(
                                                     title = title.trim(),
-                                                    experienceType = selectedExperienceType.orEmpty(),
+                                                    experienceType = selectedExperienceType?.typeName ?: "",
                                                     formatType = selectedFormatType.requestValue,
                                                     startDate = startDateSnapshot,
                                                     endDate = endDateSnapshot,
@@ -207,7 +208,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                                 experienceId = experienceId,
                                                 request = UpdateExperienceRequest(
                                                     title = title.trim(),
-                                                    experienceType = selectedExperienceType,
+                                                    experienceType = selectedExperienceType?.typeName ?: "",
                                                     formatType = selectedFormatType.requestValue,
                                                     startDate = startDateSnapshot.toString(),
                                                     endDate = endDateSnapshot?.toString(),
@@ -369,7 +370,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
     private fun isBasicInfoValid(
         title: String,
         startDate: LocalDate?,
-        selectedExperienceType: String?,
+        selectedExperienceType: ExperienceType?,
     ): Boolean {
         return title.isNotBlank() && startDate != null && selectedExperienceType != null
     }

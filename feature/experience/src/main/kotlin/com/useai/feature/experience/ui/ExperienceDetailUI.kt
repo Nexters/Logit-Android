@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -36,6 +35,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
+import com.useai.core.model.experience.ExperienceType
 import com.useai.core.ui.LogitDropdownMenu
 import com.useai.core.ui.LogitDropdownMenuItem
 import com.useai.core.ui.experience.CategoryChip
@@ -155,7 +155,7 @@ private fun ExperienceDetailContent(
 
         ExperienceDetailLabel(
             title = stringResource(R.string.experience_detail_type_label),
-            value = experience.experienceType,
+            value = experience.experienceType.displayName,
             modifier = Modifier.padding(top = 32.dp)
         )
 
@@ -303,7 +303,7 @@ private fun ExperienceDetailSuccessPreview() {
                     category = com.useai.core.model.experience.ExperienceCategory.COLLABORATIVE_COMMUNICATION,
                     startDate = LocalDate.of(2022, 4, 6),
                     endDate = LocalDate.of(2022, 4, 6),
-                    experienceType = "인턴",
+                    experienceType = ExperienceType.Intern,
                     formatType = "STAR",
                     title = "로짓 데이터 분석을 통한 이탈률 개선"
                 ),

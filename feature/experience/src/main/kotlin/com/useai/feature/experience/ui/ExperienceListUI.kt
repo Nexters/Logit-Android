@@ -9,6 +9,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
 import com.useai.core.model.experience.ExperienceCategory
+import com.useai.core.model.experience.ExperienceType
 import com.useai.feature.experience.ExperienceScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
 import java.time.LocalDate
@@ -113,7 +114,7 @@ private val previewExperiences = List(4) { index ->
         category = ExperienceCategory.COLLABORATIVE_COMMUNICATION,
         startDate = LocalDate.MIN,
         endDate = null,
-        experienceType = "",
+        experienceType = ExperienceType.DefaultType,
         formatType = "STAR",
         title = "넥스트즈 AI 자소서 프로젝트 경험 UI 구현"
     )

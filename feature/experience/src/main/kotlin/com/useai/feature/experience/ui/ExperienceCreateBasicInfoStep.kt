@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.model.experience.ExperienceType
 import com.useai.core.ui.InputFieldLabel
 import com.useai.core.ui.LogitDateInputField
 import com.useai.core.ui.LogitInputField
 import com.useai.core.ui.LogitStepper
 import com.useai.core.ui.ProgressCheckBox
-import com.useai.feature.experience.ExperienceCreateDefaults
 import com.useai.feature.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceCreateStep
@@ -125,9 +125,9 @@ internal fun ExperienceCreateBasicInfoStep(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                ExperienceCreateDefaults.experienceTypes.fastForEach { type ->
+                ExperienceType.entries.fastForEach { type ->
                     ExperienceSelectableChip(
-                        text = type,
+                        text = type.displayName,
                         selected = state.selectedExperienceType == type,
                         onClick = { state.eventSink(ExperienceCreateScreen.Event.SelectExperienceType(type)) }
                     )
