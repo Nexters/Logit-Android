@@ -62,7 +62,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                     .onSuccess { experience ->
                         title = experience.title
                         startDate = experience.startDate.format(DATE_INPUT_FORMATTER)
-                        isInProgress = experience.endDate == LocalDate.MIN
+                        isInProgress = experience.endDate == null
                         selectedExperienceType = experience.experienceType
                         selectedFormatType = experience.formatType.toFormatType()
                         situation = experience.situation

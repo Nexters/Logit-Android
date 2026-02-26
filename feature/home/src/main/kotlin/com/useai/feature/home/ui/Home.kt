@@ -42,85 +42,89 @@ fun Home(
     modifier: Modifier = Modifier,
     state: HomeScreen.State,
 ) {
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding(),
-        contentPadding = PaddingValues(bottom = 20.dp)
     ) {
-        item {
-            AppHeader(
-                title = {
-                    Image(
-                        painter = painterResource(R.drawable.ic_symbol_word),
-                        contentDescription = stringResource(R.string.content_description_app_logo),
-                        modifier = Modifier
-                            .height(28.dp)
-                            .width(85.dp),
-                    )
-                },
-                // TODO: coil 사용해서 URL 로딩
-                iconPainter = painterResource(R.drawable.ic_app_user),
-                iconDescription = stringResource(R.string.content_description_user_profile),
-                iconSize = dimensionResource(R.dimen.app_header_user_profile_image_size),
-                onIconClick = {
-                    state.eventSink(HomeScreen.Event.AccountClicked)
-                }
-            )
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                        end = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                        top = 22.dp,
-                    ),
-            ) {
-                LogitFormTitle(
-                    title = stringResource(R.string.home_experience_type_title_format),
+        AppHeader(
+            title = {
+                Image(
+                    painter = painterResource(R.drawable.ic_symbol_word),
+                    contentDescription = stringResource(R.string.content_description_app_logo),
+                    modifier = Modifier
+                        .height(28.dp)
+                        .width(85.dp),
                 )
-                Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
-                LogitExperienceBanner(state.bannerItems)
-                Spacer(Modifier.height(43.dp))
-                LogitFormTitle(
-                    title = "프로젝트 목록",
-                )
-                Spacer(Modifier.height(16.dp))
+            },
+            iconModel = state.userProfile.userImageUrl.ifEmpty { R.drawable.ic_app_user },
+            placeholder = painterResource(R.drawable.ic_app_user),
+            iconDescription = stringResource(R.string.content_description_user_profile),
+            iconSize = dimensionResource(R.dimen.app_header_user_profile_image_size),
+            onIconClick = {
+                state.eventSink(HomeScreen.Event.AccountClicked)
             }
-        }
+        )
 
-        if (state.projects.isEmpty()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            contentPadding = PaddingValues(bottom = 20.dp)
+        ) {
             item {
-                EmptyProjectList(
-                    onClickCreateProject = {
-                        state.eventSink(HomeScreen.Event.NewProjectClicked)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                            end = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                            top = 22.dp,
+                        ),
+                ) {
+                    LogitFormTitle(
+                        title = stringResource(R.string.home_experience_type_title_format),
+                    )
+                    Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
+                    LogitExperienceBanner(state.bannerItems)
+                    Spacer(Modifier.height(43.dp))
+                    LogitFormTitle(
+                        title = "프로젝트 목록",
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
+            }
+
+            if (state.projects.isEmpty()) {
+                item {
+                    EmptyProjectList(
+                        onClickCreateProject = {
+                            state.eventSink(HomeScreen.Event.NewProjectClicked)
+                        },
+                    )
+                }
+            } else {
+                projectList(
+                    projects = state.projects,
+                    onClickProject = { projectId ->
+                        state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
+                    },
+                    openedProjectMenuId = state.openedProjectMenuId,
+                    isDeleting = state.isDeletingProject,
+                    onClickProjectMore = { projectId ->
+                        state.eventSink(HomeScreen.Event.ProjectMoreClicked(projectId))
+                    },
+                    onDismissProjectMenu = {
+                        state.eventSink(HomeScreen.Event.DismissProjectMenu)
+                    },
+                    onClickEditProject = { projectId ->
+                        state.eventSink(HomeScreen.Event.EditProjectClicked(projectId))
+                    },
+                    onClickDeleteProject = { projectId ->
+                        state.eventSink(HomeScreen.Event.DeleteProjectClicked(projectId))
                     },
                 )
             }
-        } else {
-            projectList(
-                projects = state.projects,
-                onClickProject = { projectId ->
-                    state.eventSink(HomeScreen.Event.ProjectClicked(projectId))
-                },
-                openedProjectMenuId = state.openedProjectMenuId,
-                isDeleting = state.isDeletingProject,
-                onClickProjectMore = { projectId ->
-                    state.eventSink(HomeScreen.Event.ProjectMoreClicked(projectId))
-                },
-                onDismissProjectMenu = {
-                    state.eventSink(HomeScreen.Event.DismissProjectMenu)
-                },
-                onClickEditProject = { projectId ->
-                    state.eventSink(HomeScreen.Event.EditProjectClicked(projectId))
-                },
-                onClickDeleteProject = { projectId ->
-                    state.eventSink(HomeScreen.Event.DeleteProjectClicked(projectId))
-                },
-            )
         }
     }
 }

@@ -2,6 +2,8 @@ package com.useai.feature.account.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -54,7 +55,7 @@ fun Login(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .statusBarsPadding()
+                .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(
                     horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
@@ -62,63 +63,72 @@ fun Login(
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(294.dp))
-            Image(
-                painter = painterResource(R.drawable.ic_app_logo_symbol_3d),
-                contentDescription = stringResource(R.string.content_description_app_logo),
-                modifier = Modifier.size(70.dp),
-            )
-            Spacer(Modifier.height(dimensionResource(R.dimen.spacing_launcher_heading_vertical)))
-            Image(
-                painter = painterResource(R.drawable.ic_app_logo_wordmark),
-                contentDescription = stringResource(R.string.content_description_app_logo),
-                modifier = Modifier.size(width = 71.dp, height = 36.dp),
-            )
-            Spacer(Modifier.height(dimensionResource(R.dimen.spacing_launcher_heading_vertical)))
-            Text(
-                text = stringResource(R.string.launcher_phrase),
-                style = LogitTheme.typography.body3_2,
-                color = LogitTheme.colors.gray100,
-            )
-            Spacer(Modifier.weight(1f))
-            Button(
-                onClick = {
-                    state.eventSink(LoginScreen.Event.GoogleLoginClicked)
-                },
-                modifier = Modifier
-                    .height(52.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonColors(
-                    containerColor = LogitTheme.colors.white,
-                    contentColor = LogitTheme.colors.black,
-                    disabledContainerColor = LogitTheme.colors.white,
-                    disabledContentColor = LogitTheme.colors.gray70,
-                ),
-                border = BorderStroke(1.dp, LogitTheme.colors.gray100),
-                contentPadding = PaddingValues(
-                    vertical = 10.dp,
-                    horizontal = 22.dp,
-                ),
+            Box(
+                modifier = Modifier.weight(1f),
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_google),
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
+                        painter = painterResource(R.drawable.ic_app_logo_symbol_3d),
+                        contentDescription = stringResource(R.string.content_description_app_logo),
+                        modifier = Modifier.size(70.dp),
                     )
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.height(dimensionResource(R.dimen.spacing_launcher_heading_vertical)))
+                    Image(
+                        painter = painterResource(R.drawable.ic_app_logo_wordmark),
+                        contentDescription = stringResource(R.string.content_description_app_logo),
+                        modifier = Modifier.size(width = 71.dp, height = 36.dp),
+                    )
+                    Spacer(Modifier.height(dimensionResource(R.dimen.spacing_launcher_heading_vertical)))
                     Text(
-                        text = "Google로 시작하기",
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center,
-                        style = LogitTheme.typography.body6_1,
-                        color = LogitTheme.colors.black,
+                        text = stringResource(R.string.launcher_phrase),
+                        style = LogitTheme.typography.body3_2,
+                        color = LogitTheme.colors.gray100,
                     )
-                    Spacer(Modifier.width(32.dp))
+                }
+                Button(
+                    onClick = {
+                        state.eventSink(LoginScreen.Event.GoogleLoginClicked)
+                    },
+                    modifier = Modifier
+                        .height(52.dp)
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonColors(
+                        containerColor = LogitTheme.colors.white,
+                        contentColor = LogitTheme.colors.black,
+                        disabledContainerColor = LogitTheme.colors.white,
+                        disabledContentColor = LogitTheme.colors.gray70,
+                    ),
+                    border = BorderStroke(1.dp, LogitTheme.colors.gray100),
+                    contentPadding = PaddingValues(
+                        vertical = 10.dp,
+                        horizontal = 22.dp,
+                    ),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_google),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = "Google로 시작하기",
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center,
+                            style = LogitTheme.typography.body6_1,
+                            color = LogitTheme.colors.black,
+                        )
+                        Spacer(Modifier.width(32.dp))
+                    }
                 }
             }
             Spacer(Modifier.height(38.dp))

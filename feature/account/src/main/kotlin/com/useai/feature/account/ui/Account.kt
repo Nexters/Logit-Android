@@ -13,17 +13,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.appbar.PopUpTitle
@@ -90,11 +94,15 @@ fun Account(
                 ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // TODO: AsyncImage로 Google 프로필 이미지 표시
-                Image(
-                    painter = painterResource(R.drawable.ic_app_user),
+                AsyncImage(
+                    model = state.userProfile.userImageUrl,
                     contentDescription = stringResource(R.string.content_description_user_profile),
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape),
+                    placeholder = painterResource(R.drawable.ic_app_user),
+                    error = painterResource(R.drawable.ic_app_user),
+                    contentScale = ContentScale.Crop,
                 )
                 Spacer(Modifier.width(20.dp))
                 Text(

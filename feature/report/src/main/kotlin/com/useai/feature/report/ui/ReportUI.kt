@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -108,69 +109,76 @@ private fun ReportSuccessUI(
     val topCategory = summary.categoryCounts.maxByOrNull { it.count }
     val displayName = userName.ifBlank { stringResource(R.string.report_default_user_name) }
 
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .padding(top = 12.dp)
-            .background(LogitTheme.colors.gray20),
-        contentPadding = PaddingValues(bottom = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .background(LogitTheme.colors.gray20)
     ) {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillParentMaxWidth()
-                    .background(LogitTheme.colors.white)
-                    .padding(vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.report_profile_title_with_user, displayName),
-                    style = LogitTheme.typography.body1,
-                    color = LogitTheme.colors.black,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
-                if(topCategory?.category != null)
-                    ReportProfileIntroCard(
-                        category = topCategory.category,
-                        modifier = Modifier.padding(horizontal = 20.dp)
+        Text(
+            text = stringResource(R.string.report_profile_title_with_user, displayName),
+            style = LogitTheme.typography.body1,
+            color = LogitTheme.colors.black,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(LogitTheme.colors.white)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
+        )
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillParentMaxWidth()
+                        .background(LogitTheme.colors.white)
+                        .padding(bottom = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    if (topCategory?.category != null)
+                        ReportProfileIntroCard(
+                            category = topCategory.category,
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+                    ReportTopInsightCard(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        title = stringResource(R.string.report_top_insight_title_with_user, displayName),
+                        description = stringResource(
+                            topCategory?.category.reportTopInsightDescriptionResOrDefault()
+                        ),
+                        chips = summary.categoryCounts
+                            .sortedByDescending { it.count }
+                            .map { it.category }
                     )
-                ReportTopInsightCard(
+                }
+            }
+
+            item {
+                ReportTypeVerticalChartSection(
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    title = stringResource(R.string.report_top_insight_title_with_user, displayName),
-                    description = stringResource(
-                        topCategory?.category.reportTopInsightDescriptionResOrDefault()
-                    ),
-                    chips = summary.categoryCounts
-                        .sortedByDescending { it.count }
-                        .map { it.category }
+                    data = summary.categoryCounts.toVerticalChartData(maxSize = 6),
+                    colors = chartColors
                 )
             }
-        }
 
-        item {
-            ReportTypeVerticalChartSection(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.categoryCounts.toVerticalChartData(maxSize = 6),
-                colors = chartColors
-            )
-        }
+            item {
+                ReportTagDonutChartSection(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    data = summary.tagCounts.toDonutChartData(maxSize = 6),
+                    colors = chartColors
+                )
+            }
 
-        item {
-            ReportTagDonutChartSection(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.tagCounts.toDonutChartData(maxSize = 6),
-                colors = chartColors
-            )
-        }
-
-        item {
-            ReportCategoryHorizontalChartSection(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                data = summary.typeCounts.toHorizontalChartData(maxSize = 6),
-                colors = chartColors
-            )
+            item {
+                ReportCategoryHorizontalChartSection(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    data = summary.typeCounts.toHorizontalChartData(maxSize = 6),
+                    colors = chartColors
+                )
+            }
         }
     }
 }
