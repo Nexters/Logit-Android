@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiState
@@ -73,13 +74,12 @@ class SplashPresenter @AssistedInject constructor(
 @Composable
 fun SplashUi(
     modifier: Modifier = Modifier,
-    state: SplashScreen.State,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .background(LogitTheme.colors.white),
+            .background(LogitTheme.colors.white)
+            .statusBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         Image(
@@ -87,5 +87,13 @@ fun SplashUi(
             contentDescription = null,
             modifier = Modifier.size(width = 174.dp, height = 60.dp)
         )
+    }
+}
+
+@Preview
+@Composable
+private fun SplashUiPreview() {
+    LogitTheme {
+        SplashUi()
     }
 }
