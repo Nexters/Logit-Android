@@ -5,5 +5,5 @@ enum class ExperienceCreateFormatType(
 ) {
     STAR("STAR"),
     PSI("PSI"),
-    FREEFORM("FREEFORM")
+    FREEFORM("FREE")
 }

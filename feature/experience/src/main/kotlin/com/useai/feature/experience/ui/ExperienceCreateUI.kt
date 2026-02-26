@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
+import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFormContainer
 import com.useai.feature.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
@@ -52,7 +54,7 @@ private fun isBottomButtonEnabled(state: ExperienceCreateScreen.State): Boolean 
     return when (state.currentStep) {
         ExperienceCreateStep.BASIC_INFO -> {
             state.title.isNotBlank() &&
-                isDateFormatValid(state.startDate) &&
+                state.startDate != null &&
                 state.selectedExperienceType != null
         }
 
@@ -76,10 +78,27 @@ private fun isBottomButtonEnabled(state: ExperienceCreateScreen.State): Boolean 
     }
 }
 
-private val DATE_INPUT_REGEX by lazy {
-    Regex("^\\d{4}\\.\\s\\d{2}\\.\\s\\d{2}$")
-}
-
-private fun isDateFormatValid(value: String): Boolean {
-    return DATE_INPUT_REGEX.matches(value.trim())
+@Preview
+@Composable
+private fun ExperienceCreateUIPreview() {
+    LogitTheme {
+        ExperienceCreateUI(
+            state = ExperienceCreateScreen.State(
+                currentStep = ExperienceCreateStep.BASIC_INFO,
+                isEditMode = false,
+                title = "",
+                startDate = null,
+                endDate = null,
+                isInProgress = false,
+                selectedExperienceType = null,
+                selectedFormatType = ExperienceCreateFormatType.STAR,
+                situation = "",
+                task = "",
+                action = "",
+                result = "",
+                isSubmitting = false,
+                eventSink = {}
+            )
+        )
+    }
 }

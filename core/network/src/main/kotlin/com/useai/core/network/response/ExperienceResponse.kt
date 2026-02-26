@@ -3,6 +3,7 @@
 import com.useai.core.common.extensions.toLocalDate
 import com.useai.core.model.experience.Experience
 import com.useai.core.model.experience.ExperienceCategory
+import com.useai.core.model.experience.ExperienceType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -50,7 +51,7 @@ fun ExperienceResponse.toExperience() = Experience(
     },
     startDate = startDate.toLocalDate() ?: LocalDate.MIN,
     endDate = endDate.toLocalDate(),
-    experienceType = experienceType,
+    experienceType = ExperienceType.fromTypeName(experienceType) ?: ExperienceType.DefaultType,
     formatType = formatType,
     title = title
 )
@@ -85,4 +86,3 @@ private fun ExperienceResponse.resolvedResult(): String {
         else -> result.orEmpty()
     }
 }
-

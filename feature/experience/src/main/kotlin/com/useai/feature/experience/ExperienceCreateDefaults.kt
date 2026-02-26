@@ -1,19 +1,6 @@
 ﻿package com.useai.feature.experience
 
 object ExperienceCreateDefaults {
-    val experienceTypes = listOf(
-        "아르바이트",
-        "정규직",
-        "인턴",
-        "계약직",
-        "봉사 활동",
-        "동아리 활동",
-        "연구 활동",
-        "군복무",
-        "수상경력",
-        "개인활동",
-    )
-
     const val sampleTitle = "콘텐츠 타겟 최적화를 통한 전환율 개선 경험"
     const val sampleSituation =
         "반려동물 용품 커머스 스타트업에서 인턴으로 근무하며 신제품 자동 급식기 SNS 광고 캠페인을 집행했습니다. 초기 광고비 200만 원을 투입했지만 클릭률은 0.8%에 불과했고 전환율도 낮아 예산 낭비가 우려되는 상황이었습니다."

@@ -98,7 +98,7 @@ fun LogitOutlinedTextField(
                     Text(
                         text = placeholder.orEmpty(),
                         style = textStyle,
-                        color = LogitTheme.colors.gray100
+                        color = LogitTheme.colors.gray200
                     )
                 }
                 field()
