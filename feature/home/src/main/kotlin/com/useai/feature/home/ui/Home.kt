@@ -59,8 +59,8 @@ fun Home(
                             .width(85.dp),
                     )
                 },
-                // TODO: coil 사용해서 URL 로딩
-                iconPainter = painterResource(R.drawable.ic_app_user),
+                iconModel = state.userProfile.userImageUrl.ifEmpty { R.drawable.ic_app_user },
+                placeholder = painterResource(R.drawable.ic_app_user),
                 iconDescription = stringResource(R.string.content_description_user_profile),
                 iconSize = dimensionResource(R.dimen.app_header_user_profile_image_size),
                 onIconClick = {
