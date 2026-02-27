@@ -170,10 +170,8 @@ private fun ProjectItem(
             LogitDropdownMenu(
                 expanded = isMenuExpanded,
                 onDismissRequest = onDismissMenu,
-                modifier = Modifier.widthIn(min = 132.dp),
             ) {
                 LogitDropdownMenuItem(
-                    modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.chat_delete),
                     icon = ImageVector.vectorResource(R.drawable.ic_trash_drop),
                     enabled = !isDeleting,
