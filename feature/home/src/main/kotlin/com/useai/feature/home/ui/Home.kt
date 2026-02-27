@@ -110,7 +110,7 @@ fun Home(
                         ),
                 ) {
                     LogitFormTitle(
-                        title = "프로젝트 목록",
+                        title = stringResource(R.string.home_project_list_title),
                     )
                     Spacer(Modifier.height(16.dp))
                 }

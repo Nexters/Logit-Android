@@ -54,7 +54,7 @@ fun Projects(
         AppHeader(
             title = {
                 Text(
-                    text = stringResource(R.string.home_project_list_title),
+                    text = stringResource(R.string.project_list_title),
                     style = LogitTheme.typography.body1,
                     color = LogitTheme.colors.black,
                 )
