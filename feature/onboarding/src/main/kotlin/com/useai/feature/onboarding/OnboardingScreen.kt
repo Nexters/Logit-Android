@@ -121,7 +121,7 @@ class OnboardingPresenter @AssistedInject constructor(
         val eventSink: (OnboardingScreen.Event) -> Unit = { event: OnboardingScreen.Event ->
             when (event) {
                 OnboardingScreen.Event.SkipClicked -> {
-                    navigator.goTo(screenProvider.rootScreen())
+                    navigator.resetRoot(screenProvider.rootScreen())
                 }
 
                 is OnboardingScreen.Event.NextClicked -> {
