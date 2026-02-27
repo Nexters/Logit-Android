@@ -36,13 +36,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.report.ExperienceCategoryCount
 import com.useai.core.model.report.ExperienceTagCount
 import com.useai.core.model.report.ExperienceTypeCount
 import com.useai.core.ui.description
 import com.useai.core.ui.displayName
-import com.useai.core.ui.fullName
 import com.useai.core.ui.simpleName
 import kotlin.math.PI
 import kotlin.math.cos
@@ -79,13 +79,19 @@ internal fun ReportTypeVerticalChartSection(
 
     ReportWhiteSection(modifier = modifier) {
         Text(
-            text = "${maxItem?.category?.simpleName ?: "-"}이 두드러져요",
+            text = stringResource(
+                R.string.report_experience_title_format,
+                maxItem?.category?.simpleName ?: "-"
+            ),
             style = LogitTheme.typography.body3_1,
             color = LogitTheme.colors.black
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "${minItem?.category?.simpleName ?: "-"}을 보완하면 더 균형 잡힌 역량의 인재로 보일 수 있어요!",
+            text = stringResource(
+                R.string.report_experience_desc_format,
+                maxItem?.category?.simpleName ?: "-"
+            ),
             style = LogitTheme.typography.body6_1,
             color = LogitTheme.colors.gray300
         )

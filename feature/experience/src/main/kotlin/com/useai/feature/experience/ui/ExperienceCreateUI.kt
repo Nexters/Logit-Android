@@ -1,16 +1,19 @@
 package com.useai.feature.experience.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFormContainer
-import com.useai.feature.experience.ExperienceCreateFormatType
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceCreateStep
 import dagger.hilt.android.components.ActivityRetainedComponent
@@ -21,12 +24,20 @@ fun ExperienceCreateUI(
     state: ExperienceCreateScreen.State,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
+
     BackHandler {
         state.eventSink(ExperienceCreateScreen.Event.Back)
     }
 
     InputFormContainer(
-        modifier = modifier.statusBarsPadding(),
+        modifier = modifier
+            .statusBarsPadding()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            },
         onClickBackButton = {
             state.eventSink(ExperienceCreateScreen.Event.Back)
         },

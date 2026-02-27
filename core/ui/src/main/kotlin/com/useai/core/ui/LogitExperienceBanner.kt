@@ -4,10 +4,8 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
@@ -30,7 +28,7 @@ import com.useai.core.designsystem.theme.LogitTheme
 
 @Composable
 fun LogitExperienceBanner(
-    items: List<ExperienceBannerItem>,
+    items: List<ExperienceType>,
     modifier: Modifier = Modifier,
 ) {
     if (items.isEmpty()) return
@@ -47,20 +45,28 @@ fun LogitExperienceBanner(
         HorizontalPager(
             state = pagerState,
             pageSpacing = 20.dp,
+            contentPadding = PaddingValues(
+                horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+            ),
+            beyondViewportPageCount = 1,
         ) { page ->
             val index = page % items.size
-            BannerContent(item = items[index])
+            BannerContent(type = items[index])
         }
 
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .clip(RoundedCornerShape(12.dp))
-                .padding(vertical = 19.dp, horizontal = 18.dp)
-                .background(color = Color.Black.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
-                .padding(vertical = 3.dp, horizontal = 17.dp),
+                .padding(vertical = 19.dp, horizontal = 40.dp)
         ) {
-            Row {
+            Row(
+                modifier = Modifier
+                    .background(
+                        color = Color.Black.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(vertical = 3.dp, horizontal = 17.dp),
+            ) {
                 Text(
                     text = (pagerState.currentPage % items.size + 1).toString(),
                     style = LogitTheme.typography.body7_1,
@@ -78,12 +84,12 @@ fun LogitExperienceBanner(
 
 @Composable
 private fun BannerContent(
-    item: ExperienceBannerItem,
+    type: ExperienceType,
     modifier: Modifier = Modifier,
 ) {
     Image(
-        painter = painterResource(item.experienceType.bannerImage),
-        contentDescription = item.experienceType.title,
+        painter = painterResource(type.bannerImage),
+        contentDescription = type.title,
         modifier = modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(20.dp))
@@ -92,22 +98,25 @@ private fun BannerContent(
     )
 }
 
-data class ExperienceBannerItem(
-    val experienceType: ExperienceType,
-    val experienceCount: Int,
-)
-
 enum class ExperienceType(
     val title: String,
     @get:DrawableRes val bannerImage: Int,
 ) {
-    Leadership(
-        title = "주도적 실행력",
-        bannerImage = R.drawable.banner_execution,
+    CustomerFocus(
+        title = "고객 가치 지향",
+        bannerImage = R.drawable.banner_value_orientation,
     ),
     Expertise(
         title = "기술적 전문성",
         bannerImage = R.drawable.banner_expertise,
+    ),
+    Communication(
+        title = "협력적 소통",
+        bannerImage = R.drawable.banner_communication,
+    ),
+    Leadership(
+        title = "주도적 실행력",
+        bannerImage = R.drawable.banner_execution,
     ),
     Analysis(
         title = "논리적 분석력",
@@ -117,37 +126,22 @@ enum class ExperienceType(
         title = "창의적 문제해결",
         bannerImage = R.drawable.banner_problem_solving,
     ),
-    Communication(
-        title = "협력적 소통",
-        bannerImage = R.drawable.banner_communication,
+    Adaptability(
+        title = "유연한 적응력",
+        bannerImage = R.drawable.banner_adaptability,
     ),
     Accountability(
         title = "끈기 있는 책임감",
         bannerImage = R.drawable.banner_responsibility,
     ),
-    Adaptability(
-        title = "유연한 적응력",
-        bannerImage = R.drawable.banner_adaptability,
-    ),
-    CustomerFocus(
-        title = "고객 가치 지향",
-        bannerImage = R.drawable.banner_value_orientation,
-    ),
 }
-
-private const val BANNER_ASPECT_RATIO = 261f / 190f
 
 @Preview
 @Composable
 private fun LogitExperienceBannerPreview() {
     LogitTheme {
         LogitExperienceBanner(
-            items = listOf(
-                ExperienceBannerItem(ExperienceType.Leadership, 7),
-                ExperienceBannerItem(ExperienceType.Expertise, 1),
-                ExperienceBannerItem(ExperienceType.Analysis, 3),
-                ExperienceBannerItem(ExperienceType.Creativity, 30),
-            ),
+            items = ExperienceType.entries,
         )
     }
 }

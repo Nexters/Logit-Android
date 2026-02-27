@@ -35,7 +35,7 @@ import com.useai.core.ui.LogitDropdownMenu
 import com.useai.core.ui.LogitInputField
 import com.useai.core.ui.LogitStepper
 import com.useai.core.ui.noRippleClickable
-import com.useai.feature.experience.ExperienceCreateFormatType
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceCreateStep
 
@@ -233,7 +233,7 @@ private val ExperienceCreateFormatType.labelRes: Int
 private val ExperienceCreateFormatType.firstLabelRes: Int
     get() = when (this) {
         ExperienceCreateFormatType.STAR -> R.string.experience_detail_situation
-        ExperienceCreateFormatType.PSI -> R.string.experience_create_problem
+        ExperienceCreateFormatType.PSI -> R.string.experience_detail_problem
         ExperienceCreateFormatType.FREEFORM -> R.string.experience_create_freeform_input
     }
 
@@ -257,7 +257,7 @@ private val ExperienceCreateFormatType.requiresSecondField: Boolean
 private val ExperienceCreateFormatType.secondLabelRes: Int
     get() = when (this) {
         ExperienceCreateFormatType.STAR -> R.string.experience_detail_task
-        ExperienceCreateFormatType.PSI -> R.string.experience_create_solution
+        ExperienceCreateFormatType.PSI -> R.string.experience_detail_solution
         ExperienceCreateFormatType.FREEFORM -> R.string.experience_detail_task
     }
 
@@ -281,7 +281,7 @@ private val ExperienceCreateFormatType.requiresThirdField: Boolean
 private val ExperienceCreateFormatType.thirdLabelRes: Int
     get() = when (this) {
         ExperienceCreateFormatType.STAR -> R.string.experience_detail_action
-        ExperienceCreateFormatType.PSI -> R.string.experience_create_insight
+        ExperienceCreateFormatType.PSI -> R.string.experience_detail_insight
         ExperienceCreateFormatType.FREEFORM -> R.string.experience_detail_action
     }
 

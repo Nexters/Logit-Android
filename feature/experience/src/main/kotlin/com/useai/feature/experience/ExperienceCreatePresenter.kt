@@ -14,6 +14,7 @@ import com.useai.core.data.repository.ExperienceRepository
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.core.model.experience.ExperienceParam
 import com.useai.core.model.experience.ExperienceType
 import com.useai.core.network.request.UpdateExperienceRequest
@@ -64,7 +65,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                         endDate = experience.endDate
                         isInProgress = experience.endDate == null
                         selectedExperienceType = experience.experienceType
-                        selectedFormatType = experience.formatType.toFormatType()
+                        selectedFormatType = experience.formatType
                         situation = experience.situation
                         task = experience.task
                         action = experience.action
@@ -175,19 +176,54 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                                     scope.launch {
                                         val experienceId = screen.experienceId
                                         if (experienceId == null) {
+                                            val title = title.trim()
+                                            val experienceType = selectedExperienceType?.typeName ?: ""
+                                            val formatType = selectedFormatType.requestValue
+                                            val experienceParam = when (selectedFormatType) {
+                                                ExperienceCreateFormatType.STAR -> {
+                                                    ExperienceParam(
+                                                        title = title,
+                                                        experienceType = experienceType,
+                                                        formatType = formatType,
+                                                        startDate = startDateSnapshot,
+                                                        endDate = endDateSnapshot,
+                                                        tags = "",
+                                                        situation = formattedInput.situation,
+                                                        task = formattedInput.task,
+                                                        action = formattedInput.action,
+                                                        result = formattedInput.result,
+                                                    )
+                                                }
+
+                                                ExperienceCreateFormatType.PSI -> {
+                                                    ExperienceParam(
+                                                        title = title,
+                                                        experienceType = experienceType,
+                                                        formatType = formatType,
+                                                        startDate = startDateSnapshot,
+                                                        endDate = endDateSnapshot,
+                                                        tags = "",
+                                                        problem = formattedInput.situation,
+                                                        solution = formattedInput.task,
+                                                        insight = formattedInput.action,
+                                                    )
+                                                }
+
+                                                ExperienceCreateFormatType.FREEFORM -> {
+                                                    ExperienceParam(
+                                                        title = title,
+                                                        experienceType = experienceType,
+                                                        formatType = formatType,
+                                                        startDate = startDateSnapshot,
+                                                        endDate = endDateSnapshot,
+                                                        tags = "",
+                                                        content = formattedInput.situation,
+                                                    )
+                                                }
+                                            }
+
                                             experienceRepository.createExperience(
-                                                ExperienceParam(
-                                                    title = title.trim(),
-                                                    experienceType = selectedExperienceType?.typeName ?: "",
-                                                    formatType = selectedFormatType.requestValue,
-                                                    startDate = startDateSnapshot,
-                                                    endDate = endDateSnapshot,
-                                                    tags = "",
-                                                    situation = formattedInput.situation,
-                                                    task = formattedInput.task,
-                                                    action = formattedInput.action,
-                                                    result = formattedInput.result
-                                                )
+                                                experience = experienceParam,
                                             ).onSuccess { created ->
                                                 isSubmitting = false
                                                 navigator.pop(

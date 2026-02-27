@@ -31,7 +31,6 @@ import com.useai.core.designsystem.theme.LogitTheme
 
 @Composable
 fun LogitDialog(
-    onDismissRequest: () -> Unit,
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -42,7 +41,7 @@ fun LogitDialog(
     properties: DialogProperties = DialogProperties()
 ) {
     Dialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onCancel,
         properties = properties
     ) {
         Column(
@@ -142,7 +141,6 @@ private fun ConfirmButton(
 private fun LogitDialogPreview() {
     LogitTheme {
         LogitDialog(
-            onDismissRequest = {},
             title = "프로젝트 생성을 취소하시겠어요?",
             confirmText = "그만하기",
             onConfirm = {},

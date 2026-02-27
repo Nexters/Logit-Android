@@ -54,6 +54,4 @@ interface ExperienceApi {
     suspend fun deleteExperience(
         @Path("experience_id") experienceId: String
     )
-
-
 }

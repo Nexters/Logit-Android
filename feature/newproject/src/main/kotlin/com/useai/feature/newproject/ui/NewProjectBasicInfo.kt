@@ -3,6 +3,7 @@ package com.useai.feature.newproject.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,13 +40,14 @@ fun NewProjectBasicInfo(
     state: NewProjectBasicInfoScreen.State,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
+
     BackHandler {
         state.eventSink(NewProjectBasicInfoScreen.Event.Back)
     }
 
     if (state.showExitDialog) {
         LogitDialog(
-            onDismissRequest = { state.eventSink(NewProjectBasicInfoScreen.Event.DismissExitDialog) },
             title = stringResource(R.string.project_exit_dialog_text),
             confirmText = stringResource(R.string.project_exit_dialog_confirm),
             onConfirm = { state.eventSink(NewProjectBasicInfoScreen.Event.ConfirmExit) },
@@ -58,7 +62,13 @@ fun NewProjectBasicInfo(
         (state.isAlwaysOpen || state.dueDate != null)
 
     InputFormContainer(
-        modifier = modifier.statusBarsPadding(),
+        modifier = modifier
+            .statusBarsPadding()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            },
         onClickBackButton = {
             state.eventSink(NewProjectBasicInfoScreen.Event.Back)
         },

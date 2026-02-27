@@ -1,14 +1,15 @@
 package com.useai.feature.experience.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
 import com.useai.core.model.experience.ExperienceCategory
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.core.model.experience.ExperienceType
 import com.useai.feature.experience.ExperienceScreen
 import dagger.hilt.android.components.ActivityRetainedComponent
@@ -65,6 +66,15 @@ fun ExperienceListUI(
                 onClickDeleteExperience = { experienceId ->
                     state.eventSink(ExperienceScreen.Event.ClickDeleteExperience(experienceId))
                 },
+                showDeleteDialog = state.showDeleteDialog,
+                onDeleteConfirm = {
+                    state.openedMenuExperienceId?.let {
+                        state.eventSink(ExperienceScreen.Event.ConfirmDeleteDialog(it))
+                    }
+                },
+                onDeleteCancel = {
+                    state.eventSink(ExperienceScreen.Event.DismissDeleteDialog)
+                },
                 modifier = modifier
                     .background(LogitTheme.colors.gray20)
                     .statusBarsPadding()
@@ -81,6 +91,7 @@ private fun ExperienceListUIPreview() {
             state = ExperienceScreen.State.Success(
                 experiences = previewExperiences,
                 openedMenuExperienceId = null,
+                showDeleteDialog = false,
                 isDeleting = false,
                 eventSink = {}
             )
@@ -96,6 +107,7 @@ private fun ExperienceEmptyUIPreview() {
             state = ExperienceScreen.State.Success(
                 experiences = emptyList(),
                 openedMenuExperienceId = null,
+                showDeleteDialog = false,
                 isDeleting = false,
                 eventSink = {}
             )
@@ -115,7 +127,7 @@ private val previewExperiences = List(4) { index ->
         startDate = LocalDate.MIN,
         endDate = null,
         experienceType = ExperienceType.DefaultType,
-        formatType = "STAR",
+        formatType = ExperienceCreateFormatType.STAR,
         title = "넥스트즈 AI 자소서 프로젝트 경험 UI 구현"
     )
 }

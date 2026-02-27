@@ -12,6 +12,7 @@ data object ExperienceScreen : Screen {
         data class Success(
             val experiences: List<Experience>,
             val openedMenuExperienceId: String?,
+            val showDeleteDialog: Boolean,
             val isDeleting: Boolean,
             val eventSink: (Event) -> Unit,
         ) : State
@@ -32,5 +33,7 @@ data object ExperienceScreen : Screen {
         data object DismissExperienceMenu : Event
         data class ClickEditExperience(val experienceId: String) : Event
         data class ClickDeleteExperience(val experienceId: String) : Event
+        data class ConfirmDeleteDialog(val experienceId: String): Event
+        data object DismissDeleteDialog : Event
     }
 }

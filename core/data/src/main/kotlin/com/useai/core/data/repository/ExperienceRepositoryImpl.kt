@@ -18,8 +18,8 @@ internal class ExperienceRepositoryImpl @Inject constructor(
 
     override suspend fun createExperience(experience: ExperienceParam): Result<Experience> {
         return runCatchingWith {
-            experienceRemoteDataSource.createExperience(
-                CreateExperienceRequest(
+            val createExperienceRequest = when (experience.formatType) {
+                "STAR" -> CreateExperienceRequest(
                     title = experience.title,
                     experienceType = experience.experienceType,
                     formatType = experience.formatType,
@@ -29,9 +29,52 @@ internal class ExperienceRepositoryImpl @Inject constructor(
                     situation = experience.situation,
                     task = experience.task,
                     action = experience.action,
-                    result = experience.result
+                    result = experience.result,
                 )
-            ).toExperience()
+
+                "PSI" -> {
+                    CreateExperienceRequest(
+                        title = experience.title,
+                        experienceType = experience.experienceType,
+                        formatType = experience.formatType,
+                        startDate = experience.startDate.toString(),
+                        endDate = experience.endDate?.toString(),
+                        tags = experience.tags,
+                        problem = experience.problem,
+                        solution = experience.solution,
+                        insight = experience.insight,
+                    )
+                }
+
+                "FREEFORM" -> CreateExperienceRequest(
+                    title = experience.title,
+                    experienceType = experience.experienceType,
+                    formatType = experience.formatType,
+                    startDate = experience.startDate.toString(),
+                    endDate = experience.endDate?.toString(),
+                    tags = experience.tags,
+                    content = experience.content,
+                )
+
+                else -> CreateExperienceRequest(
+                    title = experience.title,
+                    experienceType = experience.experienceType,
+                    formatType = experience.formatType,
+                    startDate = experience.startDate.toString(),
+                    endDate = experience.endDate?.toString(),
+                    tags = experience.tags,
+                    situation = experience.situation,
+                    task = experience.task,
+                    action = experience.action,
+                    result = experience.result,
+                    problem = experience.problem,
+                    solution = experience.solution,
+                    insight = experience.insight,
+                    content = experience.content,
+                )
+            }
+
+            experienceRemoteDataSource.createExperience(createExperienceRequest).toExperience()
         }
     }
 

@@ -3,6 +3,7 @@
 import com.useai.core.common.extensions.toLocalDate
 import com.useai.core.model.experience.Experience
 import com.useai.core.model.experience.ExperienceCategory
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.core.model.experience.ExperienceType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -52,37 +53,39 @@ fun ExperienceResponse.toExperience() = Experience(
     startDate = startDate.toLocalDate() ?: LocalDate.MIN,
     endDate = endDate.toLocalDate(),
     experienceType = ExperienceType.fromTypeName(experienceType) ?: ExperienceType.DefaultType,
-    formatType = formatType,
+    formatType = formatType?.let {
+        ExperienceCreateFormatType.fromRequestValue(it)
+    } ?: ExperienceCreateFormatType.FREEFORM,
     title = title
 )
 
 private fun ExperienceResponse.resolvedSituation(): String {
     return when (formatType?.trim()?.uppercase()) {
-        "PSI" -> problem.orEmpty()
-        "FREEFORM" -> content.orEmpty()
+        ExperienceCreateFormatType.PSI.requestValue -> problem.orEmpty()
+        ExperienceCreateFormatType.FREEFORM.requestValue -> content.orEmpty()
         else -> situation.orEmpty()
     }
 }
 
 private fun ExperienceResponse.resolvedTask(): String {
     return when (formatType?.trim()?.uppercase()) {
-        "PSI" -> solution.orEmpty()
-        "FREEFORM" -> ""
+        ExperienceCreateFormatType.PSI.requestValue -> solution.orEmpty()
+        ExperienceCreateFormatType.FREEFORM.requestValue -> ""
         else -> task.orEmpty()
     }
 }
 
 private fun ExperienceResponse.resolvedAction(): String {
     return when (formatType?.trim()?.uppercase()) {
-        "PSI" -> insight.orEmpty()
-        "FREEFORM" -> ""
+        ExperienceCreateFormatType.PSI.requestValue -> insight.orEmpty()
+        ExperienceCreateFormatType.FREEFORM.requestValue -> ""
         else -> action.orEmpty()
     }
 }
 
 private fun ExperienceResponse.resolvedResult(): String {
     return when (formatType?.trim()?.uppercase()) {
-        "FREEFORM" -> ""
+        ExperienceCreateFormatType.FREEFORM.requestValue -> ""
         else -> result.orEmpty()
     }
 }

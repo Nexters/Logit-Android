@@ -51,7 +51,6 @@ fun Account(
 
     if (state.showLogoutDialog) {
         LogitDialog(
-            onDismissRequest = { state.eventSink(AccountScreen.Event.DismissLogoutDialog) },
             title = stringResource(R.string.account_dialog_logout_title),
             confirmText = stringResource(R.string.account_dialog_logout),
             onConfirm = { state.eventSink(AccountScreen.Event.ConfirmLogout) },
@@ -60,7 +59,6 @@ fun Account(
         )
     } else if (state.showWithdrawDialog) {
         LogitDialog(
-            onDismissRequest = { state.eventSink(AccountScreen.Event.DismissWithdrawDialog) },
             title = stringResource(R.string.account_dialog_withdraw_title),
             description = stringResource(R.string.account_dialog_withdraw_desc),
             confirmText = stringResource(R.string.account_dialog_withdraw),

@@ -25,8 +25,8 @@ import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.ui.AppHeader
-import com.useai.core.ui.ExperienceBannerItem
 import com.useai.core.ui.ExperienceType
+import com.useai.core.ui.LogitDialog
 import com.useai.core.ui.LogitExperienceBanner
 import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.project.EmptyProjectList
@@ -42,6 +42,17 @@ fun Home(
     modifier: Modifier = Modifier,
     state: HomeScreen.State,
 ) {
+    if (state.showProjectDeleteDialog && state.openedProjectMenuId != null) {
+        LogitDialog(
+            title = stringResource(R.string.project_delete_dialog_title),
+            description = stringResource(R.string.project_delete_dialog_desc),
+            confirmText = stringResource(R.string.project_delete_dialog_confirm),
+            onConfirm = { state.eventSink(HomeScreen.Event.DeleteProjectConfirmed(state.openedProjectMenuId)) },
+            cancelText = stringResource(R.string.project_delete_dialog_cancel),
+            onCancel = { state.eventSink(HomeScreen.Event.DeleteProjectCanceled) }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -74,22 +85,31 @@ fun Home(
         ) {
             item {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                            end = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                            top = 22.dp,
-                        ),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
+                    Spacer(Modifier.height(22.dp))
                     LogitFormTitle(
+                        modifier = Modifier.padding(
+                            horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                        ),
                         title = stringResource(R.string.home_experience_type_title_format),
                     )
                     Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
                     LogitExperienceBanner(state.bannerItems)
                     Spacer(Modifier.height(43.dp))
+                }
+            }
+
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                        ),
+                ) {
                     LogitFormTitle(
-                        title = "프로젝트 목록",
+                        title = stringResource(R.string.home_project_list_title),
                     )
                     Spacer(Modifier.height(16.dp))
                 }
@@ -117,9 +137,6 @@ fun Home(
                     onDismissProjectMenu = {
                         state.eventSink(HomeScreen.Event.DismissProjectMenu)
                     },
-                    onClickEditProject = { projectId ->
-                        state.eventSink(HomeScreen.Event.EditProjectClicked(projectId))
-                    },
                     onClickDeleteProject = { projectId ->
                         state.eventSink(HomeScreen.Event.DeleteProjectClicked(projectId))
                     },
@@ -140,9 +157,10 @@ private fun HomeWithEmptyProjectPreview() {
                 modifier = Modifier.padding(paddingValues),
                 state = HomeScreen.State(
                     userProfile = UserProfile("로짓", ""),
-                    bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
+                    bannerItems = ExperienceType.entries,
                     projects = emptyList(),
                     openedProjectMenuId = null,
+                    showProjectDeleteDialog = false,
                     isDeletingProject = false,
                 ),
             )
@@ -163,7 +181,7 @@ private fun HomePreview() {
                     .padding(paddingValues),
                 state = HomeScreen.State(
                     userProfile = UserProfile("로짓", ""),
-                    bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
+                    bannerItems = ExperienceType.entries,
                     projects = listOf(
                         ProjectListItem(
                             id = "1",
@@ -195,9 +213,9 @@ private fun HomePreview() {
                             completedQuestions = 0,
                             updatedAt = LocalDateTime.now()
                         ),
-                    )
-                    ,
+                    ),
                     openedProjectMenuId = null,
+                    showProjectDeleteDialog = false,
                     isDeletingProject = false,
                 ),
             )
