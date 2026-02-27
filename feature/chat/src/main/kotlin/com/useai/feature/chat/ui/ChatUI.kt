@@ -2,6 +2,7 @@ package com.useai.feature.chat.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -9,6 +10,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
@@ -24,10 +27,18 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 @CircuitInject(ChatScreen::class, ActivityRetainedComponent::class)
 @Composable
 fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
-
+    val focusManager = LocalFocusManager.current
     val chattingListState = rememberLazyListState()
 
-    Column(modifier = modifier.systemBarsPadding()) {
+    Column(
+        modifier = modifier
+            .systemBarsPadding()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            },
+    ) {
         when (state) {
             is ChatScreen.State.Success -> {
                 if (state.showDeleteDialog) {
