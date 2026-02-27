@@ -59,10 +59,12 @@ class ExperiencePresenter @AssistedInject constructor(
             }
         }
 
-        val detailNavigator = rememberAnsweringNavigator<ExperienceDetailScreen.ExperienceDeletedResult>(
+        val detailNavigator = rememberAnsweringNavigator<ExperienceDetailScreen.ExperienceDetailResult>(
             fallbackNavigator = navigator
-        ) {
-            fetchExperiences()
+        ) { result ->
+            if (result.shouldRefresh) {
+                fetchExperiences()
+            }
         }
 
         val createExperienceNavigator = rememberAnsweringNavigator<ExperienceCreateScreen.ExperienceSubmitResult>(
@@ -70,6 +72,7 @@ class ExperiencePresenter @AssistedInject constructor(
         ) { result ->
             when (result.action) {
                 ExperienceCreateScreen.Action.CREATED -> {
+                    fetchExperiences()
                     detailNavigator.goTo(screenProvider.experienceDetailScreen(result.experienceId))
                 }
 

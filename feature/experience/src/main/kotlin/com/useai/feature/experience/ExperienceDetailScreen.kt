@@ -12,8 +12,8 @@ data class ExperienceDetailScreen(
     val experienceId: String,
 ) : Screen {
     @Parcelize
-    data class ExperienceDeletedResult(
-        val experienceId: String,
+    data class ExperienceDetailResult(
+        val shouldRefresh: Boolean,
     ) : PopResult
 
     sealed interface State : CircuitUiState {

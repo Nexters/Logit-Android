@@ -335,24 +335,27 @@ class ChatPresenter @AssistedInject constructor(
                                 }
                                 is ChatScreen.Event.SendMessage -> {
                                     value.runOn<ChatScreen.State.Success> {
+                                        val sendingQuestion = currentQuestion
                                         scope.launch {
                                             chattingRepository.startChattingStream(
-                                                questionId = currentQuestion.id,
+                                                questionId = sendingQuestion.id,
                                                 sendingMessage = event.message,
                                                 experienceIds = chattingHistory.experienceIds.toList()
                                             ).onStart {
                                                 value.runOn<ChatScreen.State.Success> {
+                                                    val updatedChatHistory = chattingHistory.copy(
+                                                        chattings = chattingHistory.chattings + ChattingContent.User(
+                                                            id = LocalDateTime.now().toString(),
+                                                            message = event.message,
+                                                            createdAt = LocalDateTime.now()
+                                                        )
+                                                    )
+                                                    this@ChatPresenter.chattingHistories[sendingQuestion] = updatedChatHistory
                                                     reduce {
                                                         copy(
                                                             streamingStatus = ChattingStreamingStatus.Loading,
                                                             userInput = "",
-                                                            chattingHistory = chattingHistory.copy(
-                                                                chattings = chattingHistory.chattings + ChattingContent.User(
-                                                                    id = LocalDateTime.now().toString(),
-                                                                    message = event.message,
-                                                                    createdAt = LocalDateTime.now()
-                                                                )
-                                                            )
+                                                            chattingHistory = updatedChatHistory
                                                         )
                                                     }
                                                 }
@@ -378,17 +381,21 @@ class ChatPresenter @AssistedInject constructor(
 
                                                     is ChattingStreaming.Done -> {
                                                         value.runOn<ChatScreen.State.Success> {
+                                                            val baseHistory = this@ChatPresenter.chattingHistories[sendingQuestion]
+                                                                ?: chattingHistory
+                                                            val updatedChatHistory = baseHistory.copy(
+                                                                chattings = baseHistory.chattings + ChattingContent.AI(
+                                                                    id = streaming.chatId,
+                                                                    message = streamingChatStringBuilder.toString(),
+                                                                    createdAt = LocalDateTime.now(),
+                                                                    isLetter = streaming.isDraft
+                                                                )
+                                                            )
+                                                            this@ChatPresenter.chattingHistories[sendingQuestion] = updatedChatHistory
                                                             reduce {
                                                                 copy(
                                                                     streamingStatus = ChattingStreamingStatus.Idle,
-                                                                    chattingHistory = chattingHistory.copy(
-                                                                        chattings = chattingHistory.chattings + ChattingContent.AI(
-                                                                            id = streaming.chatId,
-                                                                            message = streamingChatStringBuilder.toString(),
-                                                                            createdAt = LocalDateTime.now(),
-                                                                            isLetter = streaming.isDraft
-                                                                        )
-                                                                    )
+                                                                    chattingHistory = updatedChatHistory
                                                                 )
                                                             }
                                                         }
@@ -543,6 +550,7 @@ class ChatPresenter @AssistedInject constructor(
                                 }
                                 is ChatScreen.Event.GenerateDraft -> {
                                     value.runOn<ChatScreen.State.Success> {
+                                        val draftQuestion = currentQuestion
                                         val currentChatHistory = chattingHistories[currentQuestion]
                                         val updatedChatHistory =
                                             currentChatHistory?.copy(experienceIds = event.experienceIds.toSet())
@@ -558,22 +566,24 @@ class ChatPresenter @AssistedInject constructor(
 
                                         scope.launch {
                                             chattingRepository.startChattingStream(
-                                                questionId = currentQuestion.id,
+                                                questionId = draftQuestion.id,
                                                 sendingMessage = DRAFT_GENERATION_MESSAGE,
                                                 experienceIds = event.experienceIds
                                             ).onStart {
                                                 value.runOn<ChatScreen.State.Success> {
+                                                    val nextHistory = updatedChatHistory.copy(
+                                                        chattings = updatedChatHistory.chattings + ChattingContent.User(
+                                                            id = LocalDateTime.now().toString(),
+                                                            message = DRAFT_GENERATION_MESSAGE,
+                                                            createdAt = LocalDateTime.now()
+                                                        )
+                                                    )
+                                                    this@ChatPresenter.chattingHistories[draftQuestion] = nextHistory
                                                     reduce {
                                                         copy(
                                                             streamingStatus = ChattingStreamingStatus.Loading,
                                                             userInput = "",
-                                                            chattingHistory = updatedChatHistory.copy(
-                                                                chattings = updatedChatHistory.chattings + ChattingContent.User(
-                                                                    id = LocalDateTime.now().toString(),
-                                                                    message = DRAFT_GENERATION_MESSAGE,
-                                                                    createdAt = LocalDateTime.now()
-                                                                )
-                                                            )
+                                                            chattingHistory = nextHistory
                                                         )
                                                     }
                                                 }
@@ -599,17 +609,21 @@ class ChatPresenter @AssistedInject constructor(
 
                                                     is ChattingStreaming.Done -> {
                                                         value.runOn<ChatScreen.State.Success> {
+                                                            val baseHistory = this@ChatPresenter.chattingHistories[draftQuestion]
+                                                                ?: chattingHistory
+                                                            val nextHistory = baseHistory.copy(
+                                                                chattings = baseHistory.chattings + ChattingContent.AI(
+                                                                    id = streaming.chatId,
+                                                                    message = streamingChatStringBuilder.toString(),
+                                                                    createdAt = LocalDateTime.now(),
+                                                                    isLetter = streaming.isDraft
+                                                                )
+                                                            )
+                                                            this@ChatPresenter.chattingHistories[draftQuestion] = nextHistory
                                                             reduce {
                                                                 copy(
                                                                     streamingStatus = ChattingStreamingStatus.Idle,
-                                                                    chattingHistory = chattingHistory.copy(
-                                                                        chattings = chattingHistory.chattings + ChattingContent.AI(
-                                                                            id = streaming.chatId,
-                                                                            message = streamingChatStringBuilder.toString(),
-                                                                            createdAt = LocalDateTime.now(),
-                                                                            isLetter = streaming.isDraft
-                                                                        )
-                                                                    )
+                                                                    chattingHistory = nextHistory
                                                                 )
                                                             }
                                                         }

@@ -75,7 +75,9 @@ class ExperienceDetailPresenter @AssistedInject constructor(
                 }
 
                 ExperienceDetailScreen.Event.Back -> {
-                    navigator.pop()
+                    navigator.pop(
+                        ExperienceDetailScreen.ExperienceDetailResult(shouldRefresh = true)
+                    )
                 }
 
                 ExperienceDetailScreen.Event.ClickMore -> {
@@ -107,7 +109,7 @@ class ExperienceDetailPresenter @AssistedInject constructor(
                             experienceRepository.deleteExperience(current.id)
                                 .onSuccess {
                                     navigator.pop(
-                                        ExperienceDetailScreen.ExperienceDeletedResult(current.id)
+                                        ExperienceDetailScreen.ExperienceDetailResult(shouldRefresh = true)
                                     )
                                 }
                                 .onFailure {

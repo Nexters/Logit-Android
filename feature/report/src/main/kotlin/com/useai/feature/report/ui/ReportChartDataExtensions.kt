@@ -7,12 +7,12 @@ import com.useai.core.model.report.ExperienceTagCount
 import com.useai.core.model.report.ExperienceTypeCount
 
 private val verticalChartPaddingPriority = listOf(
-    ExperienceCategory.CUSTOMER_VALUE_ORIENTATION,   // 고객 중심
-    ExperienceCategory.TECHNICAL_EXPERTISE,          // 전문성
-    ExperienceCategory.COLLABORATIVE_COMMUNICATION,  // 소통력
-    ExperienceCategory.PROACTIVE_EXECUTION,          // 실행력
-    ExperienceCategory.LOGICAL_ANALYSIS,             // 분석력
-    ExperienceCategory.CREATIVE_PROBLEM_SOLVING,     // 문제해결력
+    ExperienceCategory.CUSTOMER_VALUE_ORIENTATION,
+    ExperienceCategory.TECHNICAL_EXPERTISE,
+    ExperienceCategory.COLLABORATIVE_COMMUNICATION,
+    ExperienceCategory.PROACTIVE_EXECUTION,
+    ExperienceCategory.LOGICAL_ANALYSIS,
+    ExperienceCategory.CREATIVE_PROBLEM_SOLVING,
 )
 
 internal fun List<ExperienceCategoryCount>.toVerticalChartData(maxSize: Int = 6): List<ExperienceCategoryCount> {
@@ -32,12 +32,12 @@ internal fun List<ExperienceCategoryCount>.toVerticalChartData(maxSize: Int = 6)
 }
 
 private val horizontalChartPaddingPriority = listOf(
-    ExperienceReportType.PART_TIME, // 아르바이트
-    ExperienceReportType.FULL_TIME, // 정규직
-    ExperienceReportType.INTERN,    // 인턴
-    ExperienceReportType.CONTRACT,  // 계약직
-    ExperienceReportType.VOLUNTEER, // 봉사 활동
-    ExperienceReportType.CLUB,      // 동아리 활동
+    ExperienceReportType.PART_TIME,
+    ExperienceReportType.FULL_TIME,
+    ExperienceReportType.INTERN,
+    ExperienceReportType.CONTRACT,
+    ExperienceReportType.VOLUNTEER,
+    ExperienceReportType.CLUB,
 )
 
 internal fun List<ExperienceTypeCount>.toHorizontalChartData(maxSize: Int = 6): List<ExperienceTypeCount> {
@@ -57,7 +57,7 @@ internal fun List<ExperienceTypeCount>.toHorizontalChartData(maxSize: Int = 6): 
 }
 
 private val donutChartPaddingPriority = listOf(
-    "앱개발",
+    "백엔드",
     "DB 설계",
     "AI/LLM",
     "코드리뷰",
@@ -65,20 +65,14 @@ private val donutChartPaddingPriority = listOf(
     "문제해결",
 )
 
-private fun String.normalizeTagKey(): String = lowercase().replace(" ", "")
-
 internal fun List<ExperienceTagCount>.toDonutChartData(maxSize: Int = 6): List<ExperienceTagCount> {
-    val base = sortedByDescending { it.count }.take(maxSize)
-    if (base.size >= maxSize) return base
+    if (isEmpty()) {
+        return donutChartPaddingPriority
+            .take(maxSize)
+            .map { tag -> ExperienceTagCount(tag = tag, count = 0) }
+    }
 
-    val includedTagKeys = base.map { it.tag.normalizeTagKey() }.toSet()
-    val needed = maxSize - base.size
-    val padding = donutChartPaddingPriority
-        .asSequence()
-        .filter { it.normalizeTagKey() !in includedTagKeys }
-        .map { tag -> ExperienceTagCount(tag = tag, count = 0) }
-        .take(needed)
-        .toList()
-
-    return base + padding
+    return sortedByDescending { it.count }
+        .filter { it.count > 0 }
+        .take(maxSize)
 }

@@ -13,6 +13,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
 import com.useai.core.data.repository.ReportRepository
 import com.useai.core.model.report.ExperienceSummary
+import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.ui.reduce
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -39,6 +40,7 @@ data object ReportScreen : Screen {
 
     sealed interface Event : CircuitUiEvent {
         data object Retry : Event
+        data object AddExperience : Event
     }
 }
 
@@ -50,6 +52,7 @@ class ReportPresenter @AssistedInject constructor(
     @Composable
     override fun present(): ReportScreen.State {
         val scope = rememberStableCoroutineScope()
+        val screenProvider = LocalScreenProvider.current
         val state by produceRetainedState<ReportScreen.State>(ReportScreen.State.Loading) {
             lateinit var fetchSummary: suspend () -> Unit
 
@@ -60,6 +63,10 @@ class ReportPresenter @AssistedInject constructor(
                             reduce { ReportScreen.State.Loading }
                             fetchSummary()
                         }
+                    }
+
+                    ReportScreen.Event.AddExperience -> {
+                        navigator.goTo(screenProvider.experienceCreateScreen())
                     }
                 }
             }

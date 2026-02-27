@@ -137,6 +137,8 @@ internal fun ReportTagDonutChartSection(
     colors: List<Color>,
     modifier: Modifier = Modifier,
 ) {
+    val chartData = data.toDonutChartData(maxSize = 6)
+
     var startAnimation by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { startAnimation = true }
     val progress by animateFloatAsState(
@@ -145,8 +147,9 @@ internal fun ReportTagDonutChartSection(
         label = "donutProgress"
     )
 
-    val maxItem = data.maxByOrNull { it.count }
-    val total = data.sumOf { it.count }.takeIf { it > 0 } ?: 1
+    val maxItem = chartData.maxByOrNull { it.count }
+    val totalCount = chartData.sumOf { it.count }
+    val total = totalCount.takeIf { it > 0 } ?: 1
 
     ReportWhiteSection(modifier = modifier) {
         Text(
@@ -190,7 +193,7 @@ internal fun ReportTagDonutChartSection(
                     typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
                 }
 
-                data.forEachIndexed { index, item ->
+                chartData.forEachIndexed { index, item ->
                     val segmentSweep = item.count.toFloat() / total.toFloat() * 360f
                     val visibleSegmentSweep = min(segmentSweep, remainingSweep).coerceAtLeast(0f)
                     val drawSweep = (visibleSegmentSweep - visualGap - (2f * capAngle)).coerceAtLeast(0f)
@@ -232,7 +235,7 @@ internal fun ReportTagDonutChartSection(
                     color = LogitTheme.colors.primary500
                 )
                 Text(
-                    text = "${summaryCountText(total)} 집계",
+                    text = "${summaryCountText(totalCount)} 집계",
                     style = LogitTheme.typography.body9_2,
                     color = LogitTheme.colors.gray200
                 )
@@ -240,7 +243,7 @@ internal fun ReportTagDonutChartSection(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        ReportChartLegend(labels = data.map { it.tag }, colors = colors)
+        ReportChartLegend(labels = chartData.map { it.tag }, colors = colors)
     }
 }
 
@@ -322,3 +325,5 @@ internal fun ReportCategoryHorizontalChartSection(
         ReportChartLegend(labels = data.map { it.type.displayName }, colors = colors)
     }
 }
+
+
