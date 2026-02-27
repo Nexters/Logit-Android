@@ -159,7 +159,6 @@
     <string name="account_dialog_logout">로그아웃</string>
     <string name="account_dialog_withdraw">탈퇴하기</string>
 
-    <string name="report_loading">리포트를 불러오는 중…</string>
     <string name="report_load_failed">리포트를 불러오지 못했어요</string>
     <string name="report_retry">다시 시도</string>
     <string name="report_profile_title_with_user">%1$s님의 프로파일</string>
@@ -174,11 +173,8 @@
     <string name="report_top_insight_desc_flexible_adaptability">변화하는 환경에 기민하게 대처하며 빠르게 성장하는 \'성장형 인재\'의 강점이 두드러집니다.</string>
     <string name="report_top_insight_desc_customer_value_orientation">사용자의 관점에서 깊게 고민하고 불편함을 해결하는 \'공감형 기획자\'시군요.</string>
     <string name="report_top_insight_desc_default">경험 분포를 바탕으로 강점이 두드러지는 영역을 분석했어요.</string>
-    <string name="report_insight_title">%s이 가장 두드러져요</string>
-    <string name="report_type_chart_subtitle">경험 유형별 개수 기반</string>
-    <string name="report_category_chart_subtitle">핵심 역량 분포를 반영한 강점 기반</string>
-    <string name="report_tag_chart_subtitle">AI 생성 역량 태그 기반</string>
-    <string name="report_total_count">경험 %d개</string>
+    <string name="report_experience_title_format">%s이 두드러져요</string>
+    <string name="report_experience_desc_format">현재 경험 유형이 %s 중심으로 구성되어 있어요. 경험 유형을 다양화하면 더 입체적인 자소서가 될 거예요!</string>
     <string name="report_tag_desc_common">업무의 기초가 되는 %1$s 역량이 탄탄하게 갖춰져 있습니다.</string>
     <string name="report_tag_desc_it_tech">%1$s 기술을 바탕으로 복잡한 문제를 해결하는 기술 전문가입니다.</string>
     <string name="report_tag_desc_design_art">%1$s를 통해 사용자 중심의 가치를 시각적으로 구현하는 디자이너입니다.</string>
