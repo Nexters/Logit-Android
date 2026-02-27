@@ -102,13 +102,21 @@ enum class ExperienceType(
     val title: String,
     @get:DrawableRes val bannerImage: Int,
 ) {
-    Leadership(
-        title = "주도적 실행력",
-        bannerImage = R.drawable.banner_execution,
+    CustomerFocus(
+        title = "고객 가치 지향",
+        bannerImage = R.drawable.banner_value_orientation,
     ),
     Expertise(
         title = "기술적 전문성",
         bannerImage = R.drawable.banner_expertise,
+    ),
+    Communication(
+        title = "협력적 소통",
+        bannerImage = R.drawable.banner_communication,
+    ),
+    Leadership(
+        title = "주도적 실행력",
+        bannerImage = R.drawable.banner_execution,
     ),
     Analysis(
         title = "논리적 분석력",
@@ -118,21 +126,13 @@ enum class ExperienceType(
         title = "창의적 문제해결",
         bannerImage = R.drawable.banner_problem_solving,
     ),
-    Communication(
-        title = "협력적 소통",
-        bannerImage = R.drawable.banner_communication,
-    ),
-    Accountability(
-        title = "끈기 있는 책임감",
-        bannerImage = R.drawable.banner_responsibility,
-    ),
     Adaptability(
         title = "유연한 적응력",
         bannerImage = R.drawable.banner_adaptability,
     ),
-    CustomerFocus(
-        title = "고객 가치 지향",
-        bannerImage = R.drawable.banner_value_orientation,
+    Accountability(
+        title = "끈기 있는 책임감",
+        bannerImage = R.drawable.banner_responsibility,
     ),
 }
 
@@ -141,12 +141,7 @@ enum class ExperienceType(
 private fun LogitExperienceBannerPreview() {
     LogitTheme {
         LogitExperienceBanner(
-            items = listOf(
-                ExperienceType.Leadership,
-                ExperienceType.Expertise,
-                ExperienceType.Analysis,
-                ExperienceType.Creativity,
-            ),
+            items = ExperienceType.entries,
         )
     }
 }
