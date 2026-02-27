@@ -99,7 +99,6 @@ fun ProjectLibrary(
         is ProjectLibraryScreen.State.Success -> {
             if (state.showDeleteDialog) {
                 LogitDialog(
-                    onDismissRequest = { state.eventSink(ProjectLibraryScreen.Event.DismissDeleteDialog) },
                     title = stringResource(R.string.project_library_delete_question_dialog_text),
                     description = stringResource(R.string.project_library_delete_question_dialog_description),
                     confirmText = stringResource(R.string.project_library_delete_question_dialog_confirm),

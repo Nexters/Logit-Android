@@ -43,7 +43,6 @@ fun NewProjectBasicInfo(
 
     if (state.showExitDialog) {
         LogitDialog(
-            onDismissRequest = { state.eventSink(NewProjectBasicInfoScreen.Event.DismissExitDialog) },
             title = stringResource(R.string.project_exit_dialog_text),
             confirmText = stringResource(R.string.project_exit_dialog_confirm),
             onConfirm = { state.eventSink(NewProjectBasicInfoScreen.Event.ConfirmExit) },

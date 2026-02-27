@@ -32,7 +32,6 @@ fun ChatUI(state: ChatScreen.State, modifier: Modifier) {
             is ChatScreen.State.Success -> {
                 if (state.showDeleteDialog) {
                     LogitDialog(
-                        onDismissRequest = { state.eventSink(ChatScreen.Event.DismissDeleteDialog) },
                         title = stringResource(R.string.chat_delete_project_dialog_text),
                         confirmText = stringResource(R.string.chat_delete_project_dialog_confirm),
                         onConfirm = { state.eventSink(ChatScreen.Event.ConfirmDeleteProject) },
