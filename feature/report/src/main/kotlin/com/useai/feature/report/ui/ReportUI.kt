@@ -2,18 +2,27 @@ package com.useai.feature.report.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -52,7 +61,8 @@ fun ReportUI(
             ReportSuccessUI(
                 modifier = modifier,
                 userName = state.userName,
-                summary = state.summary
+                summary = state.summary,
+                onClickAddExperience = { state.eventSink(ReportScreen.Event.AddExperience) },
             )
         }
     }
@@ -63,7 +73,9 @@ private fun ReportLoading(
     modifier: Modifier = Modifier,
 ) {
     LogitPageLoadingView(
-        modifier = modifier.fillMaxSize().statusBarsPadding()
+        modifier = modifier
+            .fillMaxSize()
+            .statusBarsPadding()
     )
 }
 
@@ -76,17 +88,17 @@ private fun ReportLoadFailed(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = stringResource(R.string.report_load_failed),
             style = LogitTheme.typography.body6_2,
-            color = LogitTheme.colors.gray300
+            color = LogitTheme.colors.gray300,
         )
         LogitPrimaryButton(
             text = stringResource(R.string.report_retry),
             onClick = onRetry,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 16.dp),
         )
     }
 }
@@ -95,25 +107,27 @@ private fun ReportLoadFailed(
 private fun ReportSuccessUI(
     userName: String,
     summary: ExperienceSummary,
+    onClickAddExperience: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val chartColors = listOf(
-        androidx.compose.ui.graphics.Color(0xFFBFEFEC),
-        androidx.compose.ui.graphics.Color(0xFFC5ECF8),
-        androidx.compose.ui.graphics.Color(0xFFDDE1FF),
-        androidx.compose.ui.graphics.Color(0xFFE4DAF8),
-        androidx.compose.ui.graphics.Color(0xFFEDD8F3),
-        androidx.compose.ui.graphics.Color(0xFFF4D8E9),
+        Color(0xFFBFEFEC),
+        Color(0xFFC5ECF8),
+        Color(0xFFDDE1FF),
+        Color(0xFFE4DAF8),
+        Color(0xFFEDD8F3),
+        Color(0xFFF4D8E9),
     )
 
     val topCategory = summary.categoryCounts.maxByOrNull { it.count }
     val displayName = userName.ifBlank { stringResource(R.string.report_default_user_name) }
+    val hasNoExperience = summary.total <= 0
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .background(LogitTheme.colors.gray20)
+            .background(LogitTheme.colors.gray20),
     ) {
         Text(
             text = stringResource(R.string.report_profile_title_with_user, displayName),
@@ -122,13 +136,21 @@ private fun ReportSuccessUI(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(LogitTheme.colors.white)
-                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .padding(horizontal = 20.dp, vertical = 10.dp),
         )
+
+        if (hasNoExperience) {
+            ReportEmptyExperienceFrame(
+                onClickAddExperience = onClickAddExperience,
+                modifier = Modifier.fillMaxSize().background(LogitTheme.colors.white),
+            )
+            return@Column
+        }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item {
                 Column(
@@ -136,22 +158,21 @@ private fun ReportSuccessUI(
                         .fillParentMaxWidth()
                         .background(LogitTheme.colors.white)
                         .padding(bottom = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
-                    if (topCategory?.category != null)
+                    if (topCategory?.category != null) {
                         ReportProfileIntroCard(
                             category = topCategory.category,
-                            modifier = Modifier.padding(horizontal = 20.dp)
+                            modifier = Modifier.padding(horizontal = 20.dp),
                         )
+                    }
                     ReportTopInsightCard(
                         modifier = Modifier.padding(horizontal = 20.dp),
                         title = stringResource(R.string.report_top_insight_title_with_user, displayName),
-                        description = stringResource(
-                            topCategory?.category.reportTopInsightDescriptionResOrDefault()
-                        ),
+                        description = stringResource(topCategory?.category.reportTopInsightDescriptionResOrDefault()),
                         chips = summary.categoryCounts
                             .sortedByDescending { it.count }
-                            .map { it.category }
+                            .map { it.category },
                     )
                 }
             }
@@ -160,7 +181,7 @@ private fun ReportSuccessUI(
                 ReportTypeVerticalChartSection(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     data = summary.categoryCounts.toVerticalChartData(maxSize = 6),
-                    colors = chartColors
+                    colors = chartColors,
                 )
             }
 
@@ -168,7 +189,7 @@ private fun ReportSuccessUI(
                 ReportTagDonutChartSection(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     data = summary.tagCounts.toDonutChartData(maxSize = 6),
-                    colors = chartColors
+                    colors = chartColors,
                 )
             }
 
@@ -176,9 +197,44 @@ private fun ReportSuccessUI(
                 ReportCategoryHorizontalChartSection(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     data = summary.typeCounts.toHorizontalChartData(maxSize = 6),
-                    colors = chartColors
+                    colors = chartColors,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ReportEmptyExperienceFrame(
+    onClickAddExperience: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(bottom = 72.dp),
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_logit_empty),
+                tint = Color.Unspecified,
+                contentDescription = null,
+            )
+            Text(
+                text = stringResource(R.string.experience_empty),
+                style = LogitTheme.typography.body5_5,
+                color = LogitTheme.colors.gray100,
+                modifier = Modifier.padding(top = 12.dp),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LogitPrimaryButton(
+                text = stringResource(R.string.experience_register),
+                textStyle = LogitTheme.typography.body5_2,
+                onClick = onClickAddExperience,
+                modifier = Modifier.width(170.dp),
+            )
         }
     }
 }
@@ -191,7 +247,7 @@ private fun ReportUIPreview() {
             ReportUI(
                 modifier = Modifier.padding(padding),
                 state = ReportScreen.State.Success(
-                    userName = "로짓",
+                    userName = "사용자",
                     summary = ExperienceSummary(
                         typeCounts = listOf(
                             ExperienceTypeCount(ExperienceReportType.INTERN, 6),
@@ -214,13 +270,13 @@ private fun ReportUIPreview() {
                             ExperienceTagCount("AI/LLM", 4),
                             ExperienceTagCount("백엔드", 4),
                             ExperienceTagCount("API연동", 4),
-                            ExperienceTagCount("퍼포먼스마케팅", 3),
+                            ExperienceTagCount("퍼포먼스개선", 3),
                             ExperienceTagCount("광고집행", 3),
                         ),
-                        total = 18
+                        total = 18,
                     ),
-                    eventSink = {}
-                )
+                    eventSink = {},
+                ),
             )
         }
     }
