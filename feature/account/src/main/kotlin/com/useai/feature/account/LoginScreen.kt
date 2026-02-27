@@ -78,8 +78,7 @@ class LoginPresenter @AssistedInject constructor(
                                     } else {
                                         screenProvider.rootScreen()
                                     }
-//                                    navigator.resetRoot(newRoot)
-                                    navigator.resetRoot(screenProvider.onboardingScreen())
+                                    navigator.resetRoot(newRoot)
                                 }
                             }
                         )
