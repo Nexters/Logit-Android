@@ -27,6 +27,7 @@ import com.useai.core.model.project.ProjectListItem
 import com.useai.core.ui.AppHeader
 import com.useai.core.ui.ExperienceBannerItem
 import com.useai.core.ui.ExperienceType
+import com.useai.core.ui.LogitDialog
 import com.useai.core.ui.LogitExperienceBanner
 import com.useai.core.ui.LogitFormTitle
 import com.useai.core.ui.project.EmptyProjectList
@@ -42,6 +43,17 @@ fun Home(
     modifier: Modifier = Modifier,
     state: HomeScreen.State,
 ) {
+    if (state.showProjectDeleteDialog && state.openedProjectMenuId != null) {
+        LogitDialog(
+            title = stringResource(R.string.project_delete_dialog_title),
+            description = stringResource(R.string.project_delete_dialog_desc),
+            confirmText = stringResource(R.string.project_delete_dialog_confirm),
+            onConfirm = { state.eventSink(HomeScreen.Event.DeleteProjectConfirmed(state.openedProjectMenuId)) },
+            cancelText = stringResource(R.string.project_delete_dialog_cancel),
+            onCancel = { state.eventSink(HomeScreen.Event.DeleteProjectCanceled) }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -149,6 +161,7 @@ private fun HomeWithEmptyProjectPreview() {
                     bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
                     projects = emptyList(),
                     openedProjectMenuId = null,
+                    showProjectDeleteDialog = false,
                     isDeletingProject = false,
                 ),
             )
@@ -201,9 +214,9 @@ private fun HomePreview() {
                             completedQuestions = 0,
                             updatedAt = LocalDateTime.now()
                         ),
-                    )
-                    ,
+                    ),
                     openedProjectMenuId = null,
+                    showProjectDeleteDialog = false,
                     isDeletingProject = false,
                 ),
             )

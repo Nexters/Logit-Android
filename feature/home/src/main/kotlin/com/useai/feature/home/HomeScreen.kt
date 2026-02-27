@@ -39,6 +39,7 @@ data object HomeScreen : Screen {
         val bannerItems: List<ExperienceBannerItem>,
         val projects: List<ProjectListItem>,
         val openedProjectMenuId: String?,
+        val showProjectDeleteDialog: Boolean,
         val isDeletingProject: Boolean,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
@@ -49,6 +50,8 @@ data object HomeScreen : Screen {
         data class ProjectMoreClicked(val projectId: String) : Event
         data object DismissProjectMenu : Event
         data class DeleteProjectClicked(val projectId: String) : Event
+        data class DeleteProjectConfirmed(val projectId: String) : Event
+        data object DeleteProjectCanceled : Event
         data object AccountClicked : Event
     }
 }
@@ -73,6 +76,7 @@ class HomePresenter @AssistedInject constructor(
         }
         var projects by rememberRetained { mutableStateOf<List<ProjectListItem>>(emptyList()) }
         var openedProjectMenuId by rememberRetained { mutableStateOf<String?>(null) }
+        var showProjectDeleteDialog by rememberRetained { mutableStateOf(false) }
         var isDeletingProject by rememberRetained { mutableStateOf(false) }
         val screenProvider = LocalScreenProvider.current
 
@@ -107,6 +111,7 @@ class HomePresenter @AssistedInject constructor(
             bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
             projects = projects,
             openedProjectMenuId = openedProjectMenuId,
+            showProjectDeleteDialog = showProjectDeleteDialog,
             isDeletingProject = isDeletingProject,
         ) { event ->
             when (event) {
@@ -131,8 +136,13 @@ class HomePresenter @AssistedInject constructor(
                 }
 
                 is HomeScreen.Event.DeleteProjectClicked -> {
+                    showProjectDeleteDialog = true
+                }
+
+                is HomeScreen.Event.DeleteProjectConfirmed -> {
                     openedProjectMenuId = null
                     isDeletingProject = true
+                    showProjectDeleteDialog = false
                     scope.launch {
                         projectRepository.deleteProject(event.projectId)
                             .onSuccess { fetchProjects() }
@@ -141,6 +151,11 @@ class HomePresenter @AssistedInject constructor(
                                 Log.e(TAG, "deleteProject failed: $it")
                             }
                     }
+                }
+
+                HomeScreen.Event.DeleteProjectCanceled -> {
+                    openedProjectMenuId = null
+                    showProjectDeleteDialog = false
                 }
 
                 HomeScreen.Event.AccountClicked -> navigator.goTo(
