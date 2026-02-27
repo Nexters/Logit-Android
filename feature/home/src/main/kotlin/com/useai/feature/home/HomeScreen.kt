@@ -23,7 +23,6 @@ import com.useai.core.data.repository.ProjectRepository
 import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.navigation.LocalScreenProvider
-import com.useai.core.ui.ExperienceBannerItem
 import com.useai.core.ui.ExperienceType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -36,7 +35,7 @@ import kotlinx.parcelize.Parcelize
 data object HomeScreen : Screen {
     data class State(
         val userProfile: UserProfile,
-        val bannerItems: List<ExperienceBannerItem>,
+        val bannerItems: List<ExperienceType>,
         val projects: List<ProjectListItem>,
         val openedProjectMenuId: String?,
         val showProjectDeleteDialog: Boolean,
@@ -108,7 +107,7 @@ class HomePresenter @AssistedInject constructor(
 
         return HomeScreen.State(
             userProfile = userProfile,
-            bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
+            bannerItems = ExperienceType.entries,
             projects = projects,
             openedProjectMenuId = openedProjectMenuId,
             showProjectDeleteDialog = showProjectDeleteDialog,

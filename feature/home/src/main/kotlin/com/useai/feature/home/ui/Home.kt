@@ -25,7 +25,6 @@ import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.ui.AppHeader
-import com.useai.core.ui.ExperienceBannerItem
 import com.useai.core.ui.ExperienceType
 import com.useai.core.ui.LogitDialog
 import com.useai.core.ui.LogitExperienceBanner
@@ -158,7 +157,7 @@ private fun HomeWithEmptyProjectPreview() {
                 modifier = Modifier.padding(paddingValues),
                 state = HomeScreen.State(
                     userProfile = UserProfile("로짓", ""),
-                    bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
+                    bannerItems = ExperienceType.entries,
                     projects = emptyList(),
                     openedProjectMenuId = null,
                     showProjectDeleteDialog = false,
@@ -182,7 +181,7 @@ private fun HomePreview() {
                     .padding(paddingValues),
                 state = HomeScreen.State(
                     userProfile = UserProfile("로짓", ""),
-                    bannerItems = ExperienceType.entries.map { ExperienceBannerItem(it, 0) },
+                    bannerItems = ExperienceType.entries,
                     projects = listOf(
                         ProjectListItem(
                             id = "1",

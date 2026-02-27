@@ -28,7 +28,7 @@ import com.useai.core.designsystem.theme.LogitTheme
 
 @Composable
 fun LogitExperienceBanner(
-    items: List<ExperienceBannerItem>,
+    items: List<ExperienceType>,
     modifier: Modifier = Modifier,
 ) {
     if (items.isEmpty()) return
@@ -51,7 +51,7 @@ fun LogitExperienceBanner(
             beyondViewportPageCount = 1,
         ) { page ->
             val index = page % items.size
-            BannerContent(item = items[index])
+            BannerContent(type = items[index])
         }
 
         Box(
@@ -84,12 +84,12 @@ fun LogitExperienceBanner(
 
 @Composable
 private fun BannerContent(
-    item: ExperienceBannerItem,
+    type: ExperienceType,
     modifier: Modifier = Modifier,
 ) {
     Image(
-        painter = painterResource(item.experienceType.bannerImage),
-        contentDescription = item.experienceType.title,
+        painter = painterResource(type.bannerImage),
+        contentDescription = type.title,
         modifier = modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(20.dp))
@@ -97,11 +97,6 @@ private fun BannerContent(
         contentScale = ContentScale.Fit,
     )
 }
-
-data class ExperienceBannerItem(
-    val experienceType: ExperienceType,
-    val experienceCount: Int,
-)
 
 enum class ExperienceType(
     val title: String,
@@ -147,10 +142,10 @@ private fun LogitExperienceBannerPreview() {
     LogitTheme {
         LogitExperienceBanner(
             items = listOf(
-                ExperienceBannerItem(ExperienceType.Leadership, 7),
-                ExperienceBannerItem(ExperienceType.Expertise, 1),
-                ExperienceBannerItem(ExperienceType.Analysis, 3),
-                ExperienceBannerItem(ExperienceType.Creativity, 30),
+                ExperienceType.Leadership,
+                ExperienceType.Expertise,
+                ExperienceType.Analysis,
+                ExperienceType.Creativity,
             ),
         )
     }
