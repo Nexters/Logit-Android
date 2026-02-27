@@ -28,7 +28,7 @@ import com.useai.core.ui.LogitDateInputField
 import com.useai.core.ui.LogitInputField
 import com.useai.core.ui.LogitStepper
 import com.useai.core.ui.ProgressCheckBox
-import com.useai.feature.experience.ExperienceCreateFormatType
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceCreateStep
 

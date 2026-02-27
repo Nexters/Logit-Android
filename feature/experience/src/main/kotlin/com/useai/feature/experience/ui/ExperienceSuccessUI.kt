@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.core.model.experience.ExperienceType
 import com.useai.core.ui.LogitDialog
 import java.time.LocalDate
@@ -115,7 +116,7 @@ private fun ExperienceSuccessUIPreview() {
                     startDate = LocalDate.of(2022, 4, 6),
                     endDate = LocalDate.of(2022, 4, 6),
                     experienceType = ExperienceType.Intern,
-                    formatType = "STAR",
+                    formatType = ExperienceCreateFormatType.STAR,
                     title = "로짓 데이터 분석을 통한 이탈률 개선"
                 ),
             ),

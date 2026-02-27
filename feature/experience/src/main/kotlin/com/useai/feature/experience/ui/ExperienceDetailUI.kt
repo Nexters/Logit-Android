@@ -4,7 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -35,6 +37,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.experience.Experience
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.core.model.experience.ExperienceType
 import com.useai.core.ui.LogitDropdownMenu
 import com.useai.core.ui.LogitDropdownMenuItem
@@ -118,7 +121,7 @@ private fun ExperienceDetailContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            androidx.compose.foundation.layout.Box {
+            Box {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
                     tint = LogitTheme.colors.gray300,
@@ -185,26 +188,24 @@ private fun ExperienceDetailContent(
             }
         }
 
-        ExperienceDetailSection(
-            title = stringResource(R.string.experience_detail_situation),
-            content = experience.situation,
-            modifier = Modifier.padding(top = 56.dp)
-        )
-        ExperienceDetailSection(
-            title = stringResource(R.string.experience_detail_task),
-            content = experience.task,
-            modifier = Modifier.padding(top = 40.dp)
-        )
-        ExperienceDetailSection(
-            title = stringResource(R.string.experience_detail_action),
-            content = experience.action,
-            modifier = Modifier.padding(top = 40.dp)
-        )
-        ExperienceDetailSection(
-            title = stringResource(R.string.experience_detail_result),
-            content = experience.result,
-            modifier = Modifier.padding(top = 40.dp)
-        )
+        when (experience.formatType) {
+            ExperienceCreateFormatType.STAR -> ExperienceWithStarForm(
+                situation = experience.situation,
+                task = experience.task,
+                action = experience.action,
+                result = experience.result,
+            )
+
+            ExperienceCreateFormatType.PSI -> ExperienceWithPsiForm(
+                problem = experience.situation,
+                solution = experience.task,
+                insight = experience.action,
+            )
+
+            ExperienceCreateFormatType.FREEFORM -> ExperienceWithFreeForm(
+                content = experience.situation,
+            )
+        }
     }
 }
 
@@ -287,6 +288,69 @@ private fun LocalDate.toDisplayDate(): String = String.format(
     dayOfMonth
 )
 
+@Composable
+private fun ColumnScope.ExperienceWithStarForm(
+    situation: String,
+    task: String,
+    action: String,
+    result: String,
+) {
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_situation),
+        content = situation,
+        modifier = Modifier.padding(top = 56.dp)
+    )
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_task),
+        content = task,
+        modifier = Modifier.padding(top = 40.dp)
+    )
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_action),
+        content = action,
+        modifier = Modifier.padding(top = 40.dp)
+    )
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_result),
+        content = result,
+        modifier = Modifier.padding(top = 40.dp)
+    )
+}
+
+@Composable
+private fun ColumnScope.ExperienceWithPsiForm(
+    problem: String,
+    solution: String,
+    insight: String,
+) {
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_problem),
+        content = problem,
+        modifier = Modifier.padding(top = 56.dp)
+    )
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_solution),
+        content = solution,
+        modifier = Modifier.padding(top = 40.dp)
+    )
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_insight),
+        content = insight,
+        modifier = Modifier.padding(top = 40.dp)
+    )
+}
+
+@Composable
+private fun ColumnScope.ExperienceWithFreeForm(
+    content: String,
+) {
+    ExperienceDetailSection(
+        title = stringResource(R.string.experience_detail_content),
+        content = content,
+        modifier = Modifier.padding(top = 56.dp)
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun ExperienceDetailSuccessPreview() {
@@ -304,7 +368,7 @@ private fun ExperienceDetailSuccessPreview() {
                     startDate = LocalDate.of(2022, 4, 6),
                     endDate = LocalDate.of(2022, 4, 6),
                     experienceType = ExperienceType.Intern,
-                    formatType = "STAR",
+                    formatType = ExperienceCreateFormatType.STAR,
                     title = "로짓 데이터 분석을 통한 이탈률 개선"
                 ),
                 isMenuExpanded = false,

@@ -14,6 +14,7 @@ import com.useai.core.data.repository.ExperienceRepository
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.core.model.experience.ExperienceParam
 import com.useai.core.model.experience.ExperienceType
 import com.useai.core.network.request.UpdateExperienceRequest
@@ -64,7 +65,7 @@ class ExperienceCreatePresenter @AssistedInject constructor(
                         endDate = experience.endDate
                         isInProgress = experience.endDate == null
                         selectedExperienceType = experience.experienceType
-                        selectedFormatType = experience.formatType.toFormatType()
+                        selectedFormatType = experience.formatType
                         situation = experience.situation
                         task = experience.task
                         action = experience.action

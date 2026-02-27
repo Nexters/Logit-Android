@@ -72,6 +72,10 @@
     <string name="experience_detail_task">Task (과제/목표)</string>
     <string name="experience_detail_action">Action (행동)</string>
     <string name="experience_detail_result">Result (결과)</string>
+    <string name="experience_detail_problem">Problem (문제)</string>
+    <string name="experience_detail_solution">Solution (해결)</string>
+    <string name="experience_detail_insight">Insight (인사이트)</string>
+    <string name="experience_detail_content">경험</string>
     <string name="experience_create_step1_title">경험 정보 입력</string>
     <string name="experience_create_step1_desc">등록하는 경험의 정보를 알려주세요</string>
     <string name="experience_create_step2_title">경험 정리</string>
@@ -80,9 +84,6 @@
     <string name="experience_create_format_star">STAR</string>
     <string name="experience_create_format_psi">PSI</string>
     <string name="experience_create_format_freeform">자유형식</string>
-    <string name="experience_create_problem">Problem (문제)</string>
-    <string name="experience_create_solution">Solution (해결)</string>
-    <string name="experience_create_insight">Insight (인사이트)</string>
     <string name="experience_create_problem_placeholder">해결해야 할 문제를 구체적으로 작성해 주세요.</string>
     <string name="experience_create_solution_placeholder">문제를 해결하기 위해 시도한 방법을 작성해 주세요.</string>
     <string name="experience_create_insight_placeholder">결과를 통해 얻은 인사이트를 작성해 주세요.</string>

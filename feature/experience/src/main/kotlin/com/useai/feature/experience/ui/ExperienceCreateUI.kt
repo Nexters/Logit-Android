@@ -10,7 +10,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.ui.InputFormContainer
-import com.useai.feature.experience.ExperienceCreateFormatType
+import com.useai.core.model.experience.ExperienceCreateFormatType
 import com.useai.feature.experience.ExperienceCreateScreen
 import com.useai.feature.experience.ExperienceCreateStep
 import dagger.hilt.android.components.ActivityRetainedComponent
