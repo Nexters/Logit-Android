@@ -4,10 +4,8 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.useai.core.designsystem.R
@@ -47,6 +45,10 @@ fun LogitExperienceBanner(
         HorizontalPager(
             state = pagerState,
             pageSpacing = 20.dp,
+            contentPadding = PaddingValues(
+                horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+            ),
+            beyondViewportPageCount = 1,
         ) { page ->
             val index = page % items.size
             BannerContent(item = items[index])
@@ -55,12 +57,16 @@ fun LogitExperienceBanner(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .clip(RoundedCornerShape(12.dp))
-                .padding(vertical = 19.dp, horizontal = 18.dp)
-                .background(color = Color.Black.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
-                .padding(vertical = 3.dp, horizontal = 17.dp),
+                .padding(vertical = 19.dp, horizontal = 40.dp)
         ) {
-            Row {
+            Row(
+                modifier = Modifier
+                    .background(
+                        color = Color.Black.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(vertical = 3.dp, horizontal = 17.dp),
+            ) {
                 Text(
                     text = (pagerState.currentPage % items.size + 1).toString(),
                     style = LogitTheme.typography.body7_1,
@@ -134,8 +140,6 @@ enum class ExperienceType(
         bannerImage = R.drawable.banner_value_orientation,
     ),
 }
-
-private const val BANNER_ASPECT_RATIO = 261f / 190f
 
 @Preview
 @Composable

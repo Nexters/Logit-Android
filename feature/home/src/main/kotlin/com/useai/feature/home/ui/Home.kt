@@ -74,20 +74,29 @@ fun Home(
         ) {
             item {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                            end = dimensionResource(R.dimen.screen_common_padding_horizontal),
-                            top = 22.dp,
-                        ),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
+                    Spacer(Modifier.height(22.dp))
                     LogitFormTitle(
+                        modifier = Modifier.padding(
+                            horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                        ),
                         title = stringResource(R.string.home_experience_type_title_format),
                     )
                     Spacer(Modifier.height(dimensionResource(R.dimen.spacing_form_vertical)))
                     LogitExperienceBanner(state.bannerItems)
                     Spacer(Modifier.height(43.dp))
+                }
+            }
+
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = dimensionResource(R.dimen.screen_common_padding_horizontal),
+                        ),
+                ) {
                     LogitFormTitle(
                         title = "프로젝트 목록",
                     )
