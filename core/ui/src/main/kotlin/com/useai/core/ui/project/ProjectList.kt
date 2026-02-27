@@ -46,7 +46,6 @@ fun LazyListScope.projectList(
     isDeleting: Boolean,
     onClickProjectMore: (String) -> Unit,
     onDismissProjectMenu: () -> Unit,
-    onClickEditProject: (String) -> Unit,
     onClickDeleteProject: (String) -> Unit,
 ) {
     itemsIndexed(
@@ -65,9 +64,6 @@ fun LazyListScope.projectList(
                 onClickProjectMore(project.id)
             },
             onDismissMenu = onDismissProjectMenu,
-            onClickEdit = {
-                onClickEditProject(project.id)
-            },
             onClickDelete = {
                 onClickDeleteProject(project.id)
             },
@@ -93,7 +89,6 @@ private fun ProjectItem(
     onClick: () -> Unit,
     onClickMore: () -> Unit,
     onDismissMenu: () -> Unit,
-    onClickEdit: () -> Unit,
     onClickDelete: () -> Unit,
 ) {
     val dueStatus = project.resolveProjectDueStatus()
@@ -194,10 +189,9 @@ private fun ActionStatusIcon(
     )
 }
 
-private fun ProjectListItem.isCompleted(): Boolean = totalQuestions > 0 && completedQuestions >= totalQuestions
+private fun ProjectListItem.isCompleted(): Boolean = totalQuestions in 1..completedQuestions
 
 private val DUE_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-private val CompletedIconTint = Color(0xFF20C05C)
 
 @Preview
 @Composable
@@ -254,13 +248,8 @@ private fun ProjectListPreview() {
                 isDeleting = false,
                 onClickProjectMore = {},
                 onDismissProjectMenu = {},
-                onClickEditProject = {},
                 onClickDeleteProject = {},
             )
         }
     }
 }
-
-
-
-

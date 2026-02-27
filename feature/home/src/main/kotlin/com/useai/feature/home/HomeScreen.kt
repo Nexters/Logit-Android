@@ -48,7 +48,6 @@ data object HomeScreen : Screen {
         data class ProjectClicked(val projectId: String) : Event
         data class ProjectMoreClicked(val projectId: String) : Event
         data object DismissProjectMenu : Event
-        data class EditProjectClicked(val projectId: String) : Event
         data class DeleteProjectClicked(val projectId: String) : Event
         data object AccountClicked : Event
     }
@@ -129,11 +128,6 @@ class HomePresenter @AssistedInject constructor(
 
                 HomeScreen.Event.DismissProjectMenu -> {
                     openedProjectMenuId = null
-                }
-
-                is HomeScreen.Event.EditProjectClicked -> {
-                    openedProjectMenuId = null
-                    navigator.goTo(screenProvider.editQuestionsScreen(event.projectId))
                 }
 
                 is HomeScreen.Event.DeleteProjectClicked -> {

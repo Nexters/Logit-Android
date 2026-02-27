@@ -126,9 +126,6 @@ fun Home(
                     onDismissProjectMenu = {
                         state.eventSink(HomeScreen.Event.DismissProjectMenu)
                     },
-                    onClickEditProject = { projectId ->
-                        state.eventSink(HomeScreen.Event.EditProjectClicked(projectId))
-                    },
                     onClickDeleteProject = { projectId ->
                         state.eventSink(HomeScreen.Event.DeleteProjectClicked(projectId))
                     },
