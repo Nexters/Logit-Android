@@ -101,6 +101,10 @@
     <string name="experience_create_invalid_input">입력값을 다시 확인해 주세요</string>
     <string name="experience_create_failed">경험 등록에 실패했어요</string>
     <string name="experience_create_load_example">예시 불러오기</string>
+    <string name="experience_delete_dialog_title">경험을 삭제하시겠어요?</string>
+    <string name="experience_delete_dialog_desc">경험 삭제 시 복구할 수 없어요</string>
+    <string name="experience_delete_dialog_cancel">취소하기</string>
+    <string name="experience_delete_dialog_confirm">삭제하기</string>
 
     <string name="question_form_confirm">확인</string>
     <string name="question_form_title">추가 문항 입력</string>

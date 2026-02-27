@@ -1,9 +1,9 @@
 package com.useai.feature.experience.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.theme.LogitTheme
@@ -65,6 +65,15 @@ fun ExperienceListUI(
                 onClickDeleteExperience = { experienceId ->
                     state.eventSink(ExperienceScreen.Event.ClickDeleteExperience(experienceId))
                 },
+                showDeleteDialog = state.showDeleteDialog,
+                onDeleteConfirm = {
+                    state.openedMenuExperienceId?.let {
+                        state.eventSink(ExperienceScreen.Event.ConfirmDeleteDialog(it))
+                    }
+                },
+                onDeleteCancel = {
+                    state.eventSink(ExperienceScreen.Event.DismissDeleteDialog)
+                },
                 modifier = modifier
                     .background(LogitTheme.colors.gray20)
                     .statusBarsPadding()
@@ -81,6 +90,7 @@ private fun ExperienceListUIPreview() {
             state = ExperienceScreen.State.Success(
                 experiences = previewExperiences,
                 openedMenuExperienceId = null,
+                showDeleteDialog = false,
                 isDeleting = false,
                 eventSink = {}
             )
@@ -96,6 +106,7 @@ private fun ExperienceEmptyUIPreview() {
             state = ExperienceScreen.State.Success(
                 experiences = emptyList(),
                 openedMenuExperienceId = null,
+                showDeleteDialog = false,
                 isDeleting = false,
                 eventSink = {}
             )

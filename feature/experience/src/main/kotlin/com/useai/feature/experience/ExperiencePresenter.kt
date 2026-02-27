@@ -31,6 +31,7 @@ class ExperiencePresenter @AssistedInject constructor(
         var uiState by rememberRetained { mutableStateOf<ExperienceScreen.State>(ExperienceScreen.State.Loading) }
         var experiences by rememberRetained { mutableStateOf<List<Experience>>(emptyList()) }
         var openedMenuExperienceId by rememberRetained { mutableStateOf<String?>(null) }
+        var showDeleteDialog by rememberRetained { mutableStateOf(false) }
         var isDeleting by rememberRetained { mutableStateOf(false) }
         var isInitialized by rememberRetained { mutableStateOf(false) }
         var eventSink by rememberRetained { mutableStateOf<(ExperienceScreen.Event) -> Unit>({}) }
@@ -39,6 +40,7 @@ class ExperiencePresenter @AssistedInject constructor(
             uiState = ExperienceScreen.State.Success(
                 experiences = experiences,
                 openedMenuExperienceId = openedMenuExperienceId,
+                showDeleteDialog = showDeleteDialog,
                 isDeleting = isDeleting,
                 eventSink = eventSink
             )
@@ -122,11 +124,13 @@ class ExperiencePresenter @AssistedInject constructor(
                 }
 
                 is ExperienceScreen.Event.ClickDeleteExperience -> {
-                    openedMenuExperienceId = null
-                    isDeleting = true
+                    showDeleteDialog = true
                     publishSuccess()
+                }
+
+                is ExperienceScreen.Event.ConfirmDeleteDialog -> {
                     scope.launch {
-                        experienceRepository.deleteExperience(event.experienceId)
+                        experienceRepository.deleteExperience(openedMenuExperienceId!!)
                             .onSuccess {
                                 fetchExperiences()
                             }
@@ -134,7 +138,15 @@ class ExperiencePresenter @AssistedInject constructor(
                                 isDeleting = false
                                 publishSuccess()
                             }
+                        showDeleteDialog = false
                     }
+                }
+
+                ExperienceScreen.Event.DismissDeleteDialog -> {
+                    openedMenuExperienceId = null
+                    isDeleting = false
+                    showDeleteDialog = false
+                    publishSuccess()
                 }
             }
         }
