@@ -2,6 +2,7 @@ package com.useai.feature.experience.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +46,7 @@ fun ExperienceListUI(
                 experiences = state.experiences,
                 openedMenuExperienceId = state.openedMenuExperienceId,
                 isDeleting = state.isDeleting,
+                scrollState = state.scrollState,
                 onClickAdd = {
                     state.eventSink(ExperienceScreen.Event.ClickAddExperience)
                 },
@@ -93,6 +95,7 @@ private fun ExperienceListUIPreview() {
                 openedMenuExperienceId = null,
                 showDeleteDialog = false,
                 isDeleting = false,
+                scrollState = rememberLazyListState(),
                 eventSink = {}
             )
         )
@@ -109,6 +112,7 @@ private fun ExperienceEmptyUIPreview() {
                 openedMenuExperienceId = null,
                 showDeleteDialog = false,
                 isDeleting = false,
+                scrollState = rememberLazyListState(),
                 eventSink = {}
             )
         )

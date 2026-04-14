@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,6 +29,7 @@ internal fun ExperienceSuccessUI(
     experiences: List<Experience>,
     openedMenuExperienceId: String?,
     isDeleting: Boolean,
+    scrollState: LazyListState,
     onClickAdd: () -> Unit,
     onClickRegister: () -> Unit,
     onClickExperienceCard: (String) -> Unit,
@@ -76,7 +79,8 @@ internal fun ExperienceSuccessUI(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 110.dp, start = 20.dp, end = 20.dp)
+                    .padding(top = 110.dp, start = 20.dp, end = 20.dp),
+                state = scrollState
             ) {
                 items(
                     items = experiences,
@@ -122,6 +126,7 @@ private fun ExperienceSuccessUIPreview() {
             ),
             openedMenuExperienceId = null,
             isDeleting = false,
+            scrollState = rememberLazyListState(),
             onClickAdd = {},
             onClickRegister = {},
             onClickExperienceCard = {},

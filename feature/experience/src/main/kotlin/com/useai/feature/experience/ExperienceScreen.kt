@@ -1,5 +1,6 @@
 package com.useai.feature.experience
 
+import androidx.compose.foundation.lazy.LazyListState
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
@@ -14,6 +15,7 @@ data object ExperienceScreen : Screen {
             val openedMenuExperienceId: String?,
             val showDeleteDialog: Boolean,
             val isDeleting: Boolean,
+            val scrollState: LazyListState,
             val eventSink: (Event) -> Unit,
         ) : State
 

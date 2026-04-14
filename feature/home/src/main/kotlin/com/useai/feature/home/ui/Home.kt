@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -81,6 +82,7 @@ fun Home(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
+            state = state.scrollState,
             contentPadding = PaddingValues(bottom = 20.dp)
         ) {
             item {
@@ -162,6 +164,7 @@ private fun HomeWithEmptyProjectPreview() {
                     openedProjectMenuId = null,
                     showProjectDeleteDialog = false,
                     isDeletingProject = false,
+                    scrollState = rememberLazyListState(),
                 ),
             )
         }
@@ -217,6 +220,7 @@ private fun HomePreview() {
                     openedProjectMenuId = null,
                     showProjectDeleteDialog = false,
                     isDeletingProject = false,
+                    scrollState = rememberLazyListState(),
                 ),
             )
         }
