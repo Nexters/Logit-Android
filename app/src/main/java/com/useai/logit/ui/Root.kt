@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import com.useai.core.designsystem.component.LogitNavigationBarItem
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
 import com.useai.core.designsystem.component.snackbar.LogitSnackbarHost
 import com.useai.core.designsystem.theme.LogitTheme
+import com.useai.core.ui.LocalTabScrollState
 import com.useai.feature.experience.ExperienceScreen
 import com.useai.feature.home.HomeScreen
 import com.useai.feature.newproject.NewProjectBasicInfoScreen
@@ -66,60 +68,62 @@ fun Root(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        snackbarHost = {
-            LogitSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .imePadding()
-                    .navigationBarsPadding()
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-            )
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        bottomBar = {
-            AnimatedVisibility(
-                visible = shouldShowBottomBar,
-                enter = EnterTransition.None,
-                exit = ExitTransition.None
-            ) {
-                LogitNavigationBar {
-                    screens.forEach { screen ->
-                        val navItem = TopLevelNavItem.fromScreen(screen)
-                        LogitNavigationBarItem(
-                            icon = {
-                                Icon(
-                                    painter = painterResource(navItem.unselectedIconId),
-                                    contentDescription = stringResource(navItem.titleTextId),
-                                )
-                            },
-                            selectedIcon = {
-                                Icon(
-                                    painter = painterResource(navItem.selectedIconId),
-                                    contentDescription = stringResource(navItem.titleTextId),
-                                )
-                            },
-                            labelText = stringResource(navItem.titleTextId),
-                            selected = screen == topScreen,
-                            alwaysShowLabel = true,
-                            onClick = {
-                                rootUiState.eventSink(RootScreen.RootEvent.ChangeScreen(screen))
-                            },
-                        )
+    CompositionLocalProvider(LocalTabScrollState provides rootUiState.scrollStates) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            snackbarHost = {
+                LogitSnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier
+                        .imePadding()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                )
+            },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            bottomBar = {
+                AnimatedVisibility(
+                    visible = shouldShowBottomBar,
+                    enter = EnterTransition.None,
+                    exit = ExitTransition.None
+                ) {
+                    LogitNavigationBar {
+                        screens.forEach { screen ->
+                            val navItem = TopLevelNavItem.fromScreen(screen)
+                            LogitNavigationBarItem(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(navItem.unselectedIconId),
+                                        contentDescription = stringResource(navItem.titleTextId),
+                                    )
+                                },
+                                selectedIcon = {
+                                    Icon(
+                                        painter = painterResource(navItem.selectedIconId),
+                                        contentDescription = stringResource(navItem.titleTextId),
+                                    )
+                                },
+                                labelText = stringResource(navItem.titleTextId),
+                                selected = screen == topScreen,
+                                alwaysShowLabel = true,
+                                onClick = {
+                                    rootUiState.eventSink(RootScreen.RootEvent.ChangeScreen(screen))
+                                },
+                            )
+                        }
                     }
                 }
-            }
-        },
-        containerColor = LogitTheme.colors.white,
-    ) { paddingValues ->
-        NavigableCircuitContent(
-            navigator = rootUiState.navigator,
-            backStack = rootUiState.backStack,
-            decoration = NavigatorDefaults.EmptyDecoration,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        )
+            },
+            containerColor = LogitTheme.colors.white,
+        ) { paddingValues ->
+            NavigableCircuitContent(
+                navigator = rootUiState.navigator,
+                backStack = rootUiState.backStack,
+                decoration = NavigatorDefaults.EmptyDecoration,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            )
+        }
     }
 }

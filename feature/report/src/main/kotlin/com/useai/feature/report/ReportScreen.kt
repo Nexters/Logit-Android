@@ -1,9 +1,11 @@
 package com.useai.feature.report
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -14,6 +16,7 @@ import com.useai.core.data.repository.AccountRepository
 import com.useai.core.data.repository.ReportRepository
 import com.useai.core.model.report.ExperienceSummary
 import com.useai.core.navigation.LocalScreenProvider
+import com.useai.core.ui.LocalTabScrollState
 import com.useai.core.ui.reduce
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -28,6 +31,7 @@ data object ReportScreen : Screen {
         data class Success(
             val userName: String,
             val summary: ExperienceSummary,
+            val scrollState: LazyListState,
             val eventSink: (Event) -> Unit,
         ) : State
 
@@ -53,6 +57,8 @@ class ReportPresenter @AssistedInject constructor(
     override fun present(): ReportScreen.State {
         val scope = rememberStableCoroutineScope()
         val screenProvider = LocalScreenProvider.current
+        val scrollState = LocalTabScrollState.current[ReportScreen] ?: rememberRetained { LazyListState() }
+        
         val state by produceRetainedState<ReportScreen.State>(ReportScreen.State.Loading) {
             lateinit var fetchSummary: suspend () -> Unit
 
@@ -83,6 +89,7 @@ class ReportPresenter @AssistedInject constructor(
                             ReportScreen.State.Success(
                                 userName = userName,
                                 summary = summary,
+                                scrollState = scrollState,
                                 eventSink = eventSink
                             )
                         }
@@ -99,7 +106,11 @@ class ReportPresenter @AssistedInject constructor(
             fetchSummary()
         }
 
-        return state
+        return if (state is ReportScreen.State.Success) {
+            (state as ReportScreen.State.Success).copy(scrollState = scrollState)
+        } else {
+            state
+        }
     }
 
     @AssistedFactory

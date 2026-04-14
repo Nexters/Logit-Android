@@ -1,6 +1,7 @@
 package com.useai.feature.home
 
 import android.util.Log
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.navigation.LocalScreenProvider
 import com.useai.core.ui.ExperienceType
+import com.useai.core.ui.LocalTabScrollState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -40,6 +42,7 @@ data object HomeScreen : Screen {
         val openedProjectMenuId: String?,
         val showProjectDeleteDialog: Boolean,
         val isDeletingProject: Boolean,
+        val scrollState: LazyListState,
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
 
@@ -64,6 +67,8 @@ class HomePresenter @AssistedInject constructor(
     override fun present(): HomeScreen.State {
         val scope = rememberStableCoroutineScope()
         val lifecycleOwner = LocalLifecycleOwner.current
+        val scrollState = LocalTabScrollState.current[HomeScreen] ?: rememberRetained { LazyListState() }
+        
         val userProfile by produceRetainedState(initialValue = UserProfile("", "")) {
             accountRepository.getUser()
                 .onSuccess {
@@ -112,6 +117,7 @@ class HomePresenter @AssistedInject constructor(
             openedProjectMenuId = openedProjectMenuId,
             showProjectDeleteDialog = showProjectDeleteDialog,
             isDeletingProject = isDeletingProject,
+            scrollState = scrollState,
         ) { event ->
             when (event) {
                 HomeScreen.Event.NewProjectClicked -> navigator.goTo(

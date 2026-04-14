@@ -1,5 +1,6 @@
 package com.useai.feature.experience
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.useai.core.data.repository.ExperienceRepository
 import com.useai.core.model.experience.Experience
 import com.useai.core.navigation.LocalScreenProvider
+import com.useai.core.ui.LocalTabScrollState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,6 +29,7 @@ class ExperiencePresenter @AssistedInject constructor(
     override fun present(): ExperienceScreen.State {
         val scope = rememberStableCoroutineScope()
         val screenProvider = LocalScreenProvider.current
+        val scrollState = LocalTabScrollState.current[ExperienceScreen] ?: rememberRetained { LazyListState() }
 
         var uiState by rememberRetained { mutableStateOf<ExperienceScreen.State>(ExperienceScreen.State.Loading) }
         var experiences by rememberRetained { mutableStateOf<List<Experience>>(emptyList()) }
@@ -42,6 +45,7 @@ class ExperiencePresenter @AssistedInject constructor(
                 openedMenuExperienceId = openedMenuExperienceId,
                 showDeleteDialog = showDeleteDialog,
                 isDeleting = isDeleting,
+                scrollState = scrollState,
                 eventSink = eventSink
             )
         }
@@ -156,7 +160,11 @@ class ExperiencePresenter @AssistedInject constructor(
             fetchExperiences()
         }
 
-        return uiState
+        return if (uiState is ExperienceScreen.State.Success) {
+            (uiState as ExperienceScreen.State.Success).copy(scrollState = scrollState)
+        } else {
+            uiState
+        }
     }
 
     @AssistedFactory

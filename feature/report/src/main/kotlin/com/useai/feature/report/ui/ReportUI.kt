@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -62,6 +64,7 @@ fun ReportUI(
                 modifier = modifier,
                 userName = state.userName,
                 summary = state.summary,
+                scrollState = state.scrollState,
                 onClickAddExperience = { state.eventSink(ReportScreen.Event.AddExperience) },
             )
         }
@@ -107,6 +110,7 @@ private fun ReportLoadFailed(
 private fun ReportSuccessUI(
     userName: String,
     summary: ExperienceSummary,
+    scrollState: LazyListState,
     onClickAddExperience: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -149,6 +153,7 @@ private fun ReportSuccessUI(
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
+            state = scrollState,
             contentPadding = PaddingValues(bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -275,6 +280,7 @@ private fun ReportUIPreview() {
                         ),
                         total = 18,
                     ),
+                    scrollState = rememberLazyListState(),
                     eventSink = {},
                 ),
             )

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
@@ -96,6 +97,7 @@ fun Projects(
         } else {
             LazyColumn(
                 modifier = Modifier.weight(1f),
+                state = state.scrollState,
                 contentPadding = PaddingValues(
                     bottom = dimensionResource(R.dimen.screen_common_padding_bottom),
                 )
@@ -207,6 +209,7 @@ private fun ProjectsPreview() {
                             updatedAt = LocalDateTime.now()
                         ),
                     ),
+                    scrollState = rememberLazyListState(),
                 ),
             )
         }
