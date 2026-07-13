@@ -10,7 +10,8 @@ data class ChattingStreamingResponse(
     @SerialName("content") val data: String? = null,
     @SerialName("chat_id") val chatId: String? = null,
     @SerialName("is_draft") val isDraft: Boolean? = null,
-    @SerialName("remaining_chats") val remainingChats: Int? = null
+    @SerialName("remaining_chats") val remainingChats: Int? = null,
+    @SerialName("tokens_used") val tokensUsed: Int? = null,
 )
 
 fun ChattingStreamingResponse.toChattingStreaming() : ChattingStreaming? {
@@ -19,7 +20,11 @@ fun ChattingStreamingResponse.toChattingStreaming() : ChattingStreaming? {
             ChattingStreaming.Streaming(data.orEmpty())
         }
         "done" -> {
-            ChattingStreaming.Done(chatId.orEmpty(), isDraft ?: false)
+            ChattingStreaming.Done(
+                chatId.orEmpty(),
+                isDraft ?: false,
+                tokensUsed ?: 0,
+            )
         }
         "ping" -> {
             null

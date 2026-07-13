@@ -24,7 +24,8 @@ sealed interface ChattingContent {
         override val id: String,
         override val message: String,
         override val createdAt: LocalDateTime,
-        val isLetter: Boolean
+        val isLetter: Boolean,
+        val tokensUsed: Int?,
     ) : ChattingContent
 
     data class User(

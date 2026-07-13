@@ -205,7 +205,8 @@ private fun AIChattingItemPreview(){
                     " 하고져 핧 따라미니라",
             isLetter = true,
             id = "",
-            createdAt = LocalDateTime.MIN
+            createdAt = LocalDateTime.MIN,
+            tokensUsed = null,
         ),
         onUpdateLetterClick = {},
         modifier = Modifier,
