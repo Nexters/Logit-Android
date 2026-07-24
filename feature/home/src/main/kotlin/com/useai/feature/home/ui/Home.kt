@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -22,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.useai.core.designsystem.R
+import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
+import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
 import com.useai.core.designsystem.theme.LogitTheme
 import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
@@ -43,6 +46,29 @@ fun Home(
     modifier: Modifier = Modifier,
     state: HomeScreen.State,
 ) {
+    val snackbarHostState = LocalLogitSnackbarHostState.current
+    val signupBonusMessage = stringResource(R.string.token_signup_bonus_banner)
+    val monthlyGrantMessage = stringResource(R.string.token_monthly_grant_banner)
+    val attendanceMessage = stringResource(R.string.token_attendance_banner)
+
+    LaunchedEffect(state.effects) {
+        state.effects.collect { effect ->
+            when (effect) {
+                is HomeScreen.Effect.TokenGranted -> {
+                    val message = when (effect.type) {
+                        HomeScreen.TokenGrantType.SIGNUP_BONUS -> signupBonusMessage.format(effect.amount)
+                        HomeScreen.TokenGrantType.MONTHLY_GRANT -> monthlyGrantMessage.format(effect.amount)
+                        HomeScreen.TokenGrantType.ATTENDANCE -> attendanceMessage.format(effect.amount)
+                    }
+                    snackbarHostState.showLogitSnackbar(
+                        message = message,
+                        iconResId = R.drawable.ic_complete,
+                    )
+                }
+            }
+        }
+    }
+
     if (state.showProjectDeleteDialog && state.openedProjectMenuId != null) {
         LogitDialog(
             title = stringResource(R.string.project_delete_dialog_title),

@@ -8,6 +8,7 @@ import com.useai.core.network.api.ExperienceApi
 import com.useai.core.network.api.ProjectApi
 import com.useai.core.network.api.QuestionApi
 import com.useai.core.network.api.ReportApi
+import com.useai.core.network.api.TokensApi
 import com.useai.core.network.api.UsersApi
 import dagger.Module
 import dagger.Provides
@@ -25,7 +26,7 @@ internal object ApiModule {
     @AuthClient
     fun providesAuthApi(
         @AuthClient retrofit: Retrofit
-    ) : AuthApi {
+    ): AuthApi {
         return retrofit.create<AuthApi>()
     }
 
@@ -34,7 +35,7 @@ internal object ApiModule {
     @RefreshClient
     fun providesRefreshAuthApi(
         @RefreshClient retrofit: Retrofit
-    ) : AuthApi {
+    ): AuthApi {
         return retrofit.create<AuthApi>()
     }
 
@@ -42,7 +43,7 @@ internal object ApiModule {
     @ActivityRetainedScoped
     fun providesUsersApi(
         @AuthClient retrofit: Retrofit
-    ) : UsersApi {
+    ): UsersApi {
         return retrofit.create<UsersApi>()
     }
 
@@ -50,7 +51,7 @@ internal object ApiModule {
     @ActivityRetainedScoped
     fun providesChattingApi(
         @AuthClient retrofit: Retrofit
-    ) : ChattingApi {
+    ): ChattingApi {
         return retrofit.create<ChattingApi>()
     }
 
@@ -58,7 +59,7 @@ internal object ApiModule {
     @ActivityRetainedScoped
     fun providesQuestionApi(
         @AuthClient retrofit: Retrofit
-    ) : QuestionApi {
+    ): QuestionApi {
         return retrofit.create<QuestionApi>()
     }
 
@@ -66,7 +67,7 @@ internal object ApiModule {
     @ActivityRetainedScoped
     fun providesExperienceApi(
         @AuthClient retrofit: Retrofit
-    ) : ExperienceApi {
+    ): ExperienceApi {
         return retrofit.create<ExperienceApi>()
     }
 
@@ -74,7 +75,7 @@ internal object ApiModule {
     @ActivityRetainedScoped
     fun providesProjectApi(
         @AuthClient retrofit: Retrofit
-    ) : ProjectApi {
+    ): ProjectApi {
         return retrofit.create<ProjectApi>()
     }
 
@@ -82,7 +83,15 @@ internal object ApiModule {
     @ActivityRetainedScoped
     fun providesReportApi(
         @AuthClient retrofit: Retrofit
-    ) : ReportApi {
+    ): ReportApi {
         return retrofit.create<ReportApi>()
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun providesTokensApi(
+        @AuthClient retrofit: Retrofit
+    ): TokensApi {
+        return retrofit.create<TokensApi>()
     }
 }
