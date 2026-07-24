@@ -16,6 +16,9 @@
     <string name="home_empty_project_phrase">자기소개서를 생성해보세요</string>
     <string name="home_new_project">자기소개서 작성</string>
     <string name="home_project_list_item_title_format">%s %s</string>
+    <string name="token_signup_bonus_banner">신규 가입 보너스로 +%1$d토큰이 지급되었어요</string>
+    <string name="token_monthly_grant_banner">이번 달 +%1$d토큰이 지급되었어요</string>
+    <string name="token_attendance_banner">출석체크로 +%1$d토큰이 지급되었어요</string>
 
     <string name="update_letter">자기소개서 업데이트</string>
     <string name="placeholder_message_input">어떤 내용을 만들어볼까요?</string>
@@ -34,6 +37,7 @@
     <string name="chat_letter_placeholder">아직 작성된 자기소개서가 없어요.\n경험을 선택하고 초안을 생성해보세요.</string>
     <string name="chat_letter_save">저장하기</string>
     <string name="chat_letter_complete">작성완료</string>
+    <string name="chat_used_token_for_letter">%s 토큰을 사용해 초안을 생성했어요</string>
     <string name="chat_letter_updated_message">자소서가 업데이트 됐어요</string>
     <string name="common_shortcut">바로가기</string>
     <string name="common_loading">로딩 중</string>
@@ -194,4 +198,3 @@
     <string name="content_description_user_profile">사용자 프로필</string>
     <string name="content_description_add_project">프로젝트 추가</string>
 </resources>
-

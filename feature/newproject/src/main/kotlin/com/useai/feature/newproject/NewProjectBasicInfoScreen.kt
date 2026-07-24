@@ -107,7 +107,7 @@ class NewProjectBasicInfoPresenter @AssistedInject constructor(
                 is NewProjectBasicInfoScreen.Event.DismissExitDialog -> showExitDialog = false
                 is NewProjectBasicInfoScreen.Event.ConfirmExit -> {
                     showExitDialog = false
-                    navigator.pop()
+                    navigator.resetRoot(screenProvider.homeScreen())
                 }
             }
         }

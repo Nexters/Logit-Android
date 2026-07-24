@@ -12,6 +12,8 @@ import com.useai.core.network.source.QuestionRemoteDataSource
 import com.useai.core.network.source.QuestionRemoteDataSourceImpl
 import com.useai.core.network.source.ReportRemoteDataSource
 import com.useai.core.network.source.ReportRemoteDataSourceImpl
+import com.useai.core.network.source.TokensRemoteDataSource
+import com.useai.core.network.source.TokensRemoteDataSourceImpl
 import com.useai.core.network.source.UsersRemoteDataSource
 import com.useai.core.network.source.UsersRemoteDataSourceImpl
 import dagger.Binds
@@ -64,4 +66,10 @@ internal interface DataSourceModule {
     fun bindsReportRemoteDataSource(
         reportRemoteDataSourceImpl: ReportRemoteDataSourceImpl
     ): ReportRemoteDataSource
+
+    @Binds
+    @ActivityRetainedScoped
+    fun bindsTokensRemoteDataSource(
+        tokensRemoteDataSourceImpl: TokensRemoteDataSourceImpl
+    ): TokensRemoteDataSource
 }

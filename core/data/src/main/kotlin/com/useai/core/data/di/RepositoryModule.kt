@@ -12,6 +12,8 @@ import com.useai.core.data.repository.QuestionRepository
 import com.useai.core.data.repository.QuestionRepositoryImpl
 import com.useai.core.data.repository.ReportRepository
 import com.useai.core.data.repository.ReportRepositoryImpl
+import com.useai.core.data.repository.TokenRepository
+import com.useai.core.data.repository.TokenRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -56,4 +58,10 @@ internal interface RepositoryModule {
     fun providesReportRepository(
         impl: ReportRepositoryImpl
     ) : ReportRepository
+
+    @Binds
+    @ActivityRetainedScoped
+    fun providesTokenRepository(
+        impl: TokenRepositoryImpl
+    ): TokenRepository
 }

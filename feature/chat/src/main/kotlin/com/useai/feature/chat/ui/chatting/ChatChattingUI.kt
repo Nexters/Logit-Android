@@ -53,6 +53,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.retained.rememberRetained
+import com.useai.core.common.extensions.formatTokenCount
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.button.LogitPrimaryButton
 import com.useai.core.designsystem.component.snackbar.LogitSnackbarHost
@@ -91,6 +92,7 @@ internal fun ChatChattingUI(
     val experienceBottomSheetSnackbarHostState = remember { SnackbarHostState() }
     val updateLetterSnackbarHostState = remember { SnackbarHostState() }
     val updateLetterSuccessMessage = stringResource(R.string.chat_letter_updated_message)
+    val usedTokenForLetter = stringResource(R.string.chat_used_token_for_letter)
     val updateLetterShortcutText = stringResource(R.string.common_shortcut)
     val density = LocalDensity.current
     val imeBottom = WindowInsets.ime.getBottom(density)
@@ -113,6 +115,10 @@ internal fun ChatChattingUI(
     var wasStreaming by remember { mutableStateOf(false) }
     var wasImeVisible by remember { mutableStateOf(false) }
     var fadingAiMessageId by remember { mutableStateOf<String?>(null) }
+    val shownSnackbarChatIds = remember { mutableSetOf<String>() }
+    val latestTokenUsageChat = state.chattingHistory.chattings
+        .filterIsInstance<ChattingContent.AI>()
+        .lastOrNull { it.tokensUsed != null }
     val currentLetterButtonCount = state.chattingHistory.chattings.count {
         it is ChattingContent.AI && it.isLetter
     }
@@ -181,6 +187,22 @@ internal fun ChatChattingUI(
             fadingAiMessageId = null
         }
     }
+    LaunchedEffect(latestTokenUsageChat?.id) {
+        val chat = latestTokenUsageChat ?: return@LaunchedEffect
+        val tokensUsed = chat.tokensUsed ?: return@LaunchedEffect
+        if (chat.id !in shownSnackbarChatIds) {
+            shownSnackbarChatIds.add(chat.id)
+            updateLetterSnackbarHostState.currentSnackbarData?.dismiss()
+            val snackbarResult = updateLetterSnackbarHostState.showLogitSnackbar(
+                message = usedTokenForLetter.format(tokensUsed.formatTokenCount()),
+                iconResId = R.drawable.ic_complete,
+            )
+            if (snackbarResult == SnackbarResult.ActionPerformed) {
+                state.eventSink(ChatScreen.Event.ChangeCategory(ChatScreenCategory.LETTER))
+            }
+        }
+    }
+
     if (state.showExperienceModal) {
         ModalBottomSheet(
             sheetState = rememberModalBottomSheetState(true),
@@ -432,7 +454,8 @@ internal fun ChatChattingUI(
                                 id = "",
                                 message = state.streamingStatus.data,
                                 createdAt = LocalDateTime.MIN,
-                                isLetter = false
+                                isLetter = false,
+                                tokensUsed = null,
                             ),
                             onUpdateLetterClick = { /* Do nothing */ },
                             modifier = Modifier.padding(horizontal = 20.dp),
@@ -578,7 +601,8 @@ private fun ChatChattingUIPreview() {
                         message = "안녕하세요 자소서 대신 써드립니다",
                         isLetter = false,
                         id = "1",
-                        createdAt = LocalDateTime.MIN
+                        createdAt = LocalDateTime.MIN,
+                        tokensUsed = null,
                     ),
                     ChattingContent.User(
                         message = "으아아아아아ㅏ아아아아아",
@@ -589,7 +613,8 @@ private fun ChatChattingUIPreview() {
                         message = "그러면 도와드릴 수 없습니다.",
                         isLetter = false,
                         id = "3",
-                        createdAt = LocalDateTime.MIN
+                        createdAt = LocalDateTime.MIN,
+                        tokensUsed = null,
                     ),
                     ChattingContent.User(message = "써줘", id = "4", createdAt = LocalDateTime.MIN),
                     ChattingContent.AI(
@@ -597,7 +622,8 @@ private fun ChatChattingUIPreview() {
                                 "그리고 초중고를 무사히 졸업했고 4년제 학교를 다녔으며 가리는 거 없이 대부분 잘 먹습니다 ",
                         isLetter = true,
                         id = "5",
-                        createdAt = LocalDateTime.MIN
+                        createdAt = LocalDateTime.MIN,
+                        tokensUsed = null,
                     ),
                 ),
                 projectCreatedAt = LocalDateTime.now(),

@@ -31,8 +31,8 @@ dependencies {
 
 fun LibraryDefaultConfig.configureBuildConfigs() {
     val localProperties = Properties()
-    val localPropertiesFile: File? = rootProject.file("local.properties")
-    if (localPropertiesFile?.exists() == true)
+    val localPropertiesFile: File = rootProject.file("local.properties")
+    if (localPropertiesFile.exists())
         localProperties.load(localPropertiesFile.inputStream())
 
     val baseUrl = localProperties.getProperty("BASE_URL") ?: error("local.properties에 BASE_URL을 선언해주세요")

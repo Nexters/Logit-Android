@@ -1,6 +1,5 @@
 package com.useai.core.network.response
 
-import com.useai.core.common.extensions.toLocalDate
 import com.useai.core.common.extensions.toLocalDateTime
 import com.useai.core.model.chat.ChattingContent
 import com.useai.core.model.chat.ChattingHistory
@@ -56,7 +55,8 @@ fun ChattingContentResponse.toChattingContent() : ChattingContent {
                 id = id,
                 message = content,
                 createdAt = createdAt.toLocalDateTime() ?: LocalDateTime.MIN,
-                isLetter = isDraft
+                isLetter = isDraft,
+                tokensUsed = null,
             )
         }
         else -> {

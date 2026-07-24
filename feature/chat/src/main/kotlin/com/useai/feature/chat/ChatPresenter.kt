@@ -388,7 +388,8 @@ class ChatPresenter @AssistedInject constructor(
                                                                     id = streaming.chatId,
                                                                     message = streamingChatStringBuilder.toString(),
                                                                     createdAt = LocalDateTime.now(),
-                                                                    isLetter = streaming.isDraft
+                                                                    isLetter = streaming.isDraft,
+                                                                    tokensUsed = streaming.tokensUsed,
                                                                 )
                                                             )
                                                             this@ChatPresenter.chattingHistories[sendingQuestion] = updatedChatHistory
@@ -616,7 +617,8 @@ class ChatPresenter @AssistedInject constructor(
                                                                     id = streaming.chatId,
                                                                     message = streamingChatStringBuilder.toString(),
                                                                     createdAt = LocalDateTime.now(),
-                                                                    isLetter = streaming.isDraft
+                                                                    isLetter = streaming.isDraft,
+                                                                    tokensUsed = streaming.tokensUsed,
                                                                 )
                                                             )
                                                             this@ChatPresenter.chattingHistories[draftQuestion] = nextHistory
