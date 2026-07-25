@@ -15,12 +15,17 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
+import com.useai.core.data.repository.TokenRepository
+import com.useai.core.model.account.TokenBalance
 import com.useai.core.model.account.UserProfile
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.transform
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -30,13 +35,29 @@ data object AccountScreen : Screen {
         val reportNotificationEnabled: Boolean,
         val showLogoutDialog: Boolean,
         val showWithdrawDialog: Boolean,
+        val showGuideWebView: Boolean,
+        val showProfileWebView: Boolean,
+        val tokenBalance: Int,
+        val tokenLimit: Int,
+        val isTokenBalanceLoaded: Boolean,
+        val effects: Flow<Effect> = emptyFlow(),
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
+
+    sealed interface Effect {
+        data class TokenGranted(
+            val amount: Int,
+        ) : Effect
+    }
 
     sealed interface Event : CircuitUiEvent {
         data object Back : Event
         data object ReportNotificationSettingUpdated : Event
         data object Contact : Event
+        data object AccountClicked : Event
+        data object GuideClicked : Event
+        data object DismissProfileWebView : Event
+        data object DismissGuideWebView : Event
         data object LogoutClicked : Event
         data object DismissLogoutDialog : Event
         data object ConfirmLogout : Event
@@ -49,9 +70,26 @@ data object AccountScreen : Screen {
 class AccountPresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
     private val accountRepository: AccountRepository,
+    private val tokenRepository: TokenRepository,
 ) : Presenter<AccountScreen.State> {
     @Composable
     override fun present(): AccountScreen.State {
+        val effects = rememberRetained {
+            tokenRepository.tokenGrants.transform { tokenGrant ->
+                val totalGrantedAmount = tokenGrant.signupBonusAmount +
+                    tokenGrant.monthlyGrantAmount +
+                    tokenGrant.attendanceAmount +
+                    tokenGrant.referralRewardAmount
+
+                if (totalGrantedAmount > 0) {
+                    emit(
+                        AccountScreen.Effect.TokenGranted(
+                            amount = totalGrantedAmount,
+                        )
+                    )
+                }
+            }
+        }
         val userProfile by produceRetainedState(initialValue = UserProfile("", "")) {
             accountRepository.getUser()
                 .onSuccess {
@@ -61,9 +99,20 @@ class AccountPresenter @AssistedInject constructor(
                     Log.e(TAG, "getUser failed: $it")
                 }
         }
+        val tokenBalance by produceRetainedState<TokenBalance?>(initialValue = null) {
+            tokenRepository.getTokenBalance()
+                .onSuccess {
+                    value = it
+                }
+                .onFailure {
+                    Log.e(TAG, "getTokenBalance failed: $it")
+                }
+        }
         var reportNotificationEnabled by rememberRetained { mutableStateOf(false) }
         var showLogoutDialog by rememberRetained { mutableStateOf(false) }
         var showWithdrawDialog by rememberRetained { mutableStateOf(false) }
+        var showGuideWebView by rememberRetained { mutableStateOf(false) }
+        var showProfileWebView by rememberRetained { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
 
         return AccountScreen.State(
@@ -71,6 +120,12 @@ class AccountPresenter @AssistedInject constructor(
             reportNotificationEnabled = reportNotificationEnabled,
             showLogoutDialog = showLogoutDialog,
             showWithdrawDialog = showWithdrawDialog,
+            showGuideWebView = showGuideWebView,
+            showProfileWebView = showProfileWebView,
+            tokenBalance = tokenBalance?.balance ?: 0,
+            tokenLimit = tokenBalance?.totalAmount ?: 0,
+            isTokenBalanceLoaded = tokenBalance != null,
+            effects = effects,
         ) { event ->
             when (event) {
                 AccountScreen.Event.Back -> navigator.pop()
@@ -89,6 +144,22 @@ class AccountPresenter @AssistedInject constructor(
 
                 AccountScreen.Event.Contact -> {
                     // TODO: 문의하기
+                }
+
+                AccountScreen.Event.AccountClicked -> {
+                    showProfileWebView = true
+                }
+
+                AccountScreen.Event.GuideClicked -> {
+                    showGuideWebView = true
+                }
+
+                AccountScreen.Event.DismissProfileWebView -> {
+                    showProfileWebView = false
+                }
+
+                AccountScreen.Event.DismissGuideWebView -> {
+                    showGuideWebView = false
                 }
 
                 AccountScreen.Event.LogoutClicked -> {
