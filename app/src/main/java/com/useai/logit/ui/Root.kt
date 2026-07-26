@@ -3,11 +3,11 @@ package com.useai.logit.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -15,6 +15,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,60 +70,63 @@ fun Root(
     }
 
     CompositionLocalProvider(LocalTabScrollState provides rootUiState.scrollStates) {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            snackbarHost = {
-                LogitSnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier
-                        .imePadding()
-                        .navigationBarsPadding()
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                )
-            },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            bottomBar = {
-                AnimatedVisibility(
-                    visible = shouldShowBottomBar,
-                    enter = EnterTransition.None,
-                    exit = ExitTransition.None
-                ) {
-                    LogitNavigationBar {
-                        screens.forEach { screen ->
-                            val navItem = TopLevelNavItem.fromScreen(screen)
-                            LogitNavigationBarItem(
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(navItem.unselectedIconId),
-                                        contentDescription = stringResource(navItem.titleTextId),
-                                    )
-                                },
-                                selectedIcon = {
-                                    Icon(
-                                        painter = painterResource(navItem.selectedIconId),
-                                        contentDescription = stringResource(navItem.titleTextId),
-                                    )
-                                },
-                                labelText = stringResource(navItem.titleTextId),
-                                selected = screen == topScreen,
-                                alwaysShowLabel = true,
-                                onClick = {
-                                    rootUiState.eventSink(RootScreen.RootEvent.ChangeScreen(screen))
-                                },
-                            )
+        Box(modifier = modifier.fillMaxSize()) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                bottomBar = {
+                    AnimatedVisibility(
+                        visible = shouldShowBottomBar,
+                        enter = EnterTransition.None,
+                        exit = ExitTransition.None
+                    ) {
+                        LogitNavigationBar {
+                            screens.forEach { screen ->
+                                val navItem = TopLevelNavItem.fromScreen(screen)
+                                LogitNavigationBarItem(
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(navItem.unselectedIconId),
+                                            contentDescription = stringResource(navItem.titleTextId),
+                                        )
+                                    },
+                                    selectedIcon = {
+                                        Icon(
+                                            painter = painterResource(navItem.selectedIconId),
+                                            contentDescription = stringResource(navItem.titleTextId),
+                                        )
+                                    },
+                                    labelText = stringResource(navItem.titleTextId),
+                                    selected = screen == topScreen,
+                                    alwaysShowLabel = true,
+                                    onClick = {
+                                        rootUiState.eventSink(
+                                            RootScreen.RootEvent.ChangeScreen(screen)
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
-                }
-            },
-            containerColor = LogitTheme.colors.white,
-        ) { paddingValues ->
-            NavigableCircuitContent(
-                navigator = rootUiState.navigator,
-                backStack = rootUiState.backStack,
-                decoration = NavigatorDefaults.EmptyDecoration,
+                },
+                containerColor = LogitTheme.colors.white,
+            ) { paddingValues ->
+                NavigableCircuitContent(
+                    navigator = rootUiState.navigator,
+                    backStack = rootUiState.backStack,
+                    decoration = NavigatorDefaults.EmptyDecoration,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                )
+            }
+
+            LogitSnackbarHost(
+                hostState = snackbarHostState,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                    .align(Alignment.TopCenter)
+                    .statusBarsPadding()
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
             )
         }
     }

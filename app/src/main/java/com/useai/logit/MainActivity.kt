@@ -16,6 +16,7 @@ import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.NavigatorDefaults
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.useai.core.data.repository.TokenGrantEventBus
 import com.useai.core.data.repository.TokenRepository
 import com.useai.core.designsystem.R
 import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
@@ -34,6 +35,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var tokenRepository: TokenRepository
+
+    @Inject
+    lateinit var tokenGrantEventBus: TokenGrantEventBus
 
     private val screenProvider: ScreenProvider = ScreenProviderImpl()
 
@@ -82,6 +86,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+                TokenGrantDebugMenu(tokenGrantEventBus)
             }
         }
     }
