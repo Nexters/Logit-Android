@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,7 +21,6 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
 import com.useai.core.data.repository.ProjectRepository
-import com.useai.core.data.repository.TokenRepository
 import com.useai.core.model.account.UserProfile
 import com.useai.core.model.project.ProjectListItem
 import com.useai.core.navigation.LocalScreenProvider
@@ -32,10 +30,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.components.ActivityRetainedComponent
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -49,22 +43,8 @@ data object HomeScreen : Screen {
         val showProjectDeleteDialog: Boolean,
         val isDeletingProject: Boolean,
         val scrollState: LazyListState,
-        val effects: Flow<Effect> = emptyFlow(),
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState
-
-    sealed interface Effect {
-        data class TokenGranted(
-            val type: TokenGrantType,
-            val amount: Int,
-        ) : Effect
-    }
-
-    enum class TokenGrantType {
-        SIGNUP_BONUS,
-        MONTHLY_GRANT,
-        ATTENDANCE,
-    }
 
     sealed interface Event : CircuitUiEvent {
         data object NewProjectClicked : Event
@@ -82,7 +62,6 @@ class HomePresenter @AssistedInject constructor(
     @Assisted private val navigator: Navigator,
     private val accountRepository: AccountRepository,
     private val projectRepository: ProjectRepository,
-    private val tokenRepository: TokenRepository,
 ) : Presenter<HomeScreen.State> {
     @Composable
     override fun present(): HomeScreen.State {
@@ -104,30 +83,7 @@ class HomePresenter @AssistedInject constructor(
         var openedProjectMenuId by rememberRetained { mutableStateOf<String?>(null) }
         var showProjectDeleteDialog by rememberRetained { mutableStateOf(false) }
         var isDeletingProject by rememberRetained { mutableStateOf(false) }
-        var hasFetchedTokenBalance by rememberRetained { mutableStateOf(false) }
-        val effectChannel = rememberRetained { Channel<HomeScreen.Effect>(Channel.BUFFERED) }
-        val effects = rememberRetained { effectChannel.receiveAsFlow() }
         val screenProvider = LocalScreenProvider.current
-
-        LaunchedEffect(Unit) {
-            if (hasFetchedTokenBalance) return@LaunchedEffect
-
-            hasFetchedTokenBalance = true
-            tokenRepository.getTokenBalance()
-                .onSuccess { balance ->
-                    if (balance > 0) {
-                        effectChannel.send(
-                            HomeScreen.Effect.TokenGranted(
-                                type = HomeScreen.TokenGrantType.SIGNUP_BONUS,
-                                amount = balance,
-                            )
-                        )
-                    }
-                }
-                .onFailure {
-                    Log.e(TAG, "getTokenBalance failed: $it")
-                }
-        }
 
         fun fetchProjects() {
             scope.launch {
@@ -163,7 +119,6 @@ class HomePresenter @AssistedInject constructor(
             showProjectDeleteDialog = showProjectDeleteDialog,
             isDeletingProject = isDeletingProject,
             scrollState = scrollState,
-            effects = effects,
         ) { event ->
             when (event) {
                 HomeScreen.Event.NewProjectClicked -> navigator.goTo(
