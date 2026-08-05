@@ -11,7 +11,10 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
+import androidx.compose.ui.res.stringResource
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -23,6 +26,9 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.useai.core.data.repository.AccountRepository
+import com.useai.core.designsystem.R as DesignSystemR
+import com.useai.core.designsystem.component.snackbar.LocalLogitSnackbarHostState
+import com.useai.core.designsystem.component.snackbar.showLogitSnackbar
 import com.useai.core.model.account.Login
 import com.useai.core.navigation.LocalScreenProvider
 import dagger.assisted.Assisted
@@ -57,6 +63,9 @@ class LoginPresenter @AssistedInject constructor(
         val context = LocalContext.current
         val credentialManager = CredentialManager.create(context)
         val screenProvider = LocalScreenProvider.current
+        val snackbarHostState = LocalLogitSnackbarHostState.current
+        val googleAccountReauthMessage = stringResource(R.string.google_account_reauth_required)
+        val googleAccountUnavailableMessage = stringResource(R.string.google_account_unavailable)
 
         return LoginScreen.State { event ->
             when (event) {
@@ -67,6 +76,22 @@ class LoginPresenter @AssistedInject constructor(
                             credentialManager = credentialManager,
                             context = context,
                             scope = scope,
+                            onReauthRequired = {
+                                scope.launch {
+                                    snackbarHostState.showLogitSnackbar(
+                                        message = googleAccountReauthMessage,
+                                        iconResId = DesignSystemR.drawable.ic_close,
+                                    )
+                                }
+                            },
+                            onCredentialUnavailable = {
+                                scope.launch {
+                                    snackbarHostState.showLogitSnackbar(
+                                        message = googleAccountUnavailableMessage,
+                                        iconResId = DesignSystemR.drawable.ic_close,
+                                    )
+                                }
+                            },
                             onSuccess = { loginResult ->
                                 scope.launch {
                                     Log.d(TAG, "Google login success: $loginResult")
@@ -102,6 +127,8 @@ class LoginPresenter @AssistedInject constructor(
         credentialManager: CredentialManager,
         context: Context,
         scope: CoroutineScope,
+        onReauthRequired: () -> Unit,
+        onCredentialUnavailable: () -> Unit,
         onSuccess: (Login) -> Unit,
     ) {
         val nonce = generateNonce()
@@ -137,6 +164,8 @@ class LoginPresenter @AssistedInject constructor(
                         signUp(
                             credentialManager = credentialManager,
                             context = context,
+                            onReauthRequired = onReauthRequired,
+                            onCredentialUnavailable = onCredentialUnavailable,
                             onSuccess = { googleIdTokenCredential ->
                                 scope.launch {
                                     accountRepository.requestLogin(
@@ -150,11 +179,18 @@ class LoginPresenter @AssistedInject constructor(
                     }
                 }
             )
+        } catch (e: GetCredentialCancellationException) {
+            handleCredentialCancellation(
+                exception = e,
+                onReauthRequired = onReauthRequired,
+            )
         } catch (e: GetCredentialException) {
-            Log.e(TAG, "GetCredentialException", e)
+            Log.w(TAG, "Google sign-in option unavailable; trying account chooser", e)
             signUp(
                 credentialManager = credentialManager,
                 context = context,
+                onReauthRequired = onReauthRequired,
+                onCredentialUnavailable = onCredentialUnavailable,
                 onSuccess = { googleIdTokenCredential ->
                     scope.launch {
                         accountRepository.requestLogin(
@@ -210,6 +246,8 @@ class LoginPresenter @AssistedInject constructor(
     private suspend fun signUp(
         credentialManager: CredentialManager,
         context: Context,
+        onReauthRequired: () -> Unit,
+        onCredentialUnavailable: () -> Unit,
         onSuccess: (GoogleIdTokenCredential) -> Unit,
     ) {
         val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
@@ -234,8 +272,29 @@ class LoginPresenter @AssistedInject constructor(
                     Log.e(TAG, "Sign up failed")
                 }
             )
+        } catch (e: GetCredentialCancellationException) {
+            handleCredentialCancellation(
+                exception = e,
+                onReauthRequired = onReauthRequired,
+            )
+        } catch (e: NoCredentialException) {
+            Log.e(TAG, "No Google credentials available", e)
+            onCredentialUnavailable()
         } catch (e: GetCredentialException) {
-            Log.e(TAG, "GetCredentialException", e)
+            Log.e(TAG, "Google account chooser failed", e)
+            onCredentialUnavailable()
+        }
+    }
+
+    private fun handleCredentialCancellation(
+        exception: GetCredentialCancellationException,
+        onReauthRequired: () -> Unit,
+    ) {
+        if (exception.message?.contains(ACCOUNT_REAUTH_FAILED, ignoreCase = true) == true) {
+            Log.e(TAG, "Google account reauthentication required", exception)
+            onReauthRequired()
+        } else {
+            Log.i(TAG, "Google credential flow cancelled by user", exception)
         }
     }
 
@@ -250,6 +309,7 @@ class LoginPresenter @AssistedInject constructor(
     companion object {
         private val TAG = LoginPresenter::class.simpleName
         private const val CLIENT_ID = BuildConfig.GOOGLE_OAUTH_CLIENT_ID
+        private const val ACCOUNT_REAUTH_FAILED = "Account reauth failed"
         private const val TERMS_URL = "https://docs.logit.ai.kr/policys/tos"
         private const val PRIVACY_POLICY_URL = "https://docs.logit.ai.kr/policys/privacy-policy"
     }
