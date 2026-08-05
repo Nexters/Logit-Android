@@ -2,6 +2,7 @@ package com.useai.feature.account
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -99,10 +100,12 @@ class AccountPresenter @AssistedInject constructor(
                     Log.e(TAG, "getUser failed: $it")
                 }
         }
-        val tokenBalance by produceRetainedState<TokenBalance?>(initialValue = null) {
+        var tokenBalance by rememberRetained { mutableStateOf<TokenBalance?>(null) }
+        LaunchedEffect(Unit) {
             tokenRepository.getTokenBalance()
                 .onSuccess {
-                    value = it
+                    tokenBalance = it
+                    Log.d(TAG, "getTokenBalance succeeded: $it")
                 }
                 .onFailure {
                     Log.e(TAG, "getTokenBalance failed: $it")
@@ -156,6 +159,16 @@ class AccountPresenter @AssistedInject constructor(
 
                 AccountScreen.Event.DismissProfileWebView -> {
                     showProfileWebView = false
+                    scope.launch {
+                        tokenRepository.getTokenBalance()
+                            .onSuccess {
+                                tokenBalance = it
+                                Log.d(TAG, "getTokenBalance succeeded: $it")
+                            }
+                            .onFailure {
+                                Log.e(TAG, "getTokenBalance failed: $it")
+                            }
+                    }
                 }
 
                 AccountScreen.Event.DismissGuideWebView -> {
