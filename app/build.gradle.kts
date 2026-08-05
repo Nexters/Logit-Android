@@ -8,6 +8,8 @@ plugins {
 }
 
 dependencies {
+    testImplementation(libs.junit)
+
     implementation(projects.feature.onboarding)
     implementation(projects.feature.home)
     implementation(projects.feature.account)
